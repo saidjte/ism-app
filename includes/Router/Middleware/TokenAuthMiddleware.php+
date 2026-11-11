@@ -1,0 +1,166 @@
+<?php
+/**
+ * ===== وسيط مصادقة الرموز (Token Auth Middleware) =====
+ * يتحقق من صحة رمز API (Bearer Token) للطلبات القادمة من الهاتف
+ *
+ * كيفية العمل:
+ *   1. يقرأ رأس Authorization: Bearer <token>
+ *   2. يبحث عن الرمز في جدول api_tokens
+ *   3. يتحقق من: عدم الإبطال + عدم الانتهاء + نشاط المستخدم
+ *   4. يُعدّل $_SESSION ببيانات المستخدم للتوافق مع الكود الموجود
+ *
+ * ميزة رئيسية: لا يُنشئ جلسة حقيقية — فقط يُعدّل المتغيرات المطلوبة
+ * للتوافق مع الكود الموجود (hasPermission, fetchOne, إلخ)
+ *
+ * v4.34.0: إنشاء طبقة API للهاتف
+ */
+
+class TokenAuthMiddleware
+{
+    /**
+     * التحقق من رمز المصادقة
+     *
+     * @return bool هل الرمز صالح؟
+     */
+    public static function handle(): bool
+    {
+        $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+
+        // البحث عن Bearer Token
+        if (!preg_match('/^Bearer\s+(.+)$/i', $authHeader, $matches)) {
+            ApiResponse::error(
+                'رمز المصادقة مفقود. أرسل رأس Authorization: Bearer <token>',
+                'missing_token',
+                401
+            );
+            return false;
+        }
+
+        $token = $matches[1];
+        $tokenHash = hash('sha256', $token);
+
+        try {
+            // البحث عن الرمز في قاعدة البيانات
+            $tokenRow = fetchOne(
+                "SELECT at.*, u.username, u.full_name, u.role, u.is_active
+                 FROM api_tokens at
+                 JOIN users u ON at.user_id = u.id
+                 WHERE at.token = ?",
+                [$tokenHash]
+            );
+
+            // الرمز غير موجود
+            if (!$tokenRow) {
+                ApiResponse::error('رمز المصادقة غير صالح', 'invalid_token', 401);
+                return false;
+            }
+
+            // الرمز مُبطَل
+            if (!empty($tokenRow['is_revoked'])) {
+                ApiResponse::error('تم إبطال رمز المصادقة. يرجى تسجيل الدخول مرة أخرى.', 'token_revoked', 401);
+                return false;
+            }
+
+            // الرمز منتهي الصلاحية
+            if (!empty($tokenRow['expires_at']) && strtotime($tokenRow['expires_at']) < time()) {
+                ApiResponse::error('انتهت صلاحية رمز المصادقة. يرجى تسجيل الدخول مرة أخرى.', 'token_expired', 401);
+                return false;
+            }
+
+            // الحساب غير مفعّل
+            if (empty($tokenRow['is_active'])) {
+                ApiResponse::error('الحساب معطّل. تواصل مع المدير.', 'account_disabled', 403);
+                return false;
+            }
+
+            // ===== تعيين متغيرات الجلسة للتوافق مع الكود الموجود =====
+            // هذا ضروري لأن الدوال مثل hasPermission() و requirePermission()
+            // تعتمد على $_SESSION['user_id'] و $_SESSION['user_role']
+            $_SESSION['user_id'] = intval($tokenRow['user_id']);
+            $_SESSION['username'] = $tokenRow['username'];
+            $_SESSION['user_name'] = $tokenRow['full_name'];
+            $_SESSION['user_role'] = $tokenRow['role'];
+            $_SESSION['logged_in'] = true;
+            $_SESSION['last_activity'] = time();
+
+            // متغير خاص بالهاتف — لتمييز الطلبات
+            $_SESSION['mobile_user_id'] = intval($tokenRow['user_id']);
+            $_SESSION['auth_via_token'] = true;
+
+            // تحديث آخر استخدام للرمز
+            try {
+                $db = AppDatabase::getInstance();
+                $db->query(
+                    "UPDATE api_tokens SET last_used_at = NOW() WHERE id = ?",
+                    [intval($tokenRow['id'])]
+                );
+            } catch (\Throwable $e) {
+                // صامت — لا نوقف الطلب بسبب خطأ في التحديث
+            }
+
+            return true;
+
+        } catch (\Throwable $e) {
+            ErrorHandler::logException($e, 'TokenAuthMiddleware::handle');
+            ApiResponse::serverError('خطأ في التحقق من المصادقة');
+            return false;
+        }
+    }
+
+    /**
+     * التحقق من صلاحية محددة (للاستخدام كـ middleware)
+     *
+     * @param string $permission الصلاحية المطلوبة
+     * @return callable دالة الوسيط
+     */
+    public static function permission(string $permission): callable
+    {
+        return function () use ($permission): bool {
+            // أولاً: التحقق من المصادقة
+            if (!isset($_SESSION['mobile_user_id'])) {
+                // لم يتم التحقق بعد — نفذ التحقق أولاً
+                if (!self::handle()) {
+                    return false;
+                }
+            }
+
+            // التحقق من الصلاحية
+            if (function_exists('hasPermission')) {
+                if (hasPermission($permission)) {
+                    return true;
+                }
+            }
+
+            // المدير يملك كل الصلاحيات
+            if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin') {
+                return true;
+            }
+
+            ApiResponse::error(
+                "ليس لديك صلاحية الوصول. الصلاحية المطلوبة: {$permission}",
+                'permission_denied',
+                403
+            );
+            return false;
+        };
+    }
+
+    /**
+     * التحقق من صلاحية المدير فقط
+     */
+    public static function admin(): bool
+    {
+        if (!isset($_SESSION['mobile_user_id'])) {
+            if (!self::handle()) {
+                return false;
+            }
+        }
+
+        if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
+            ApiResponse::error('هذه العملية تتطلب صلاحية المدير', 'admin_required', 403);
+            return false;
+        }
+
+        return true;
+    }
+}

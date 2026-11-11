@@ -1,0 +1,23 @@
+/* ===================================
+   أنماط الطباعة
+   Print Styles
+   =================================== */
+
+@media print {
+    .navbar, .btn, .search-bar, .footer, .mobile-menu-btn, .mobile-overlay, .user-menu, .mobile-bottom-nav {
+        display: none !important;
+    }
+
+    .container {
+        padding: 0;
+    }
+
+    .card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+
+    body {
+        padding-bottom: 0 !important;
+    }
+}

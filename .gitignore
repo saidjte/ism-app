@@ -1,0 +1,72 @@
+# ============================================
+# ISM POS — Git Ignore Rules
+# أُنشئ في إطار خطة الإصلاح الأمني — لا ترفع الأسرار أو بيانات التشغيل
+# ============================================
+
+# ---- الأسرار والبيئة (حرِج!) ----
+.env
+.env.*
+*.env
+!config/env.example
+
+# ---- بيانات التشغيل (Runtime) ----
+logs/
+backups/
+cache/
+uploads/
+upgrade_backups/
+upgrade_file_backup/
+includes/upgrades/upgrade_backups/
+!logs/.gitkeep
+!uploads/.gitkeep
+
+# ---- ملفات النسخ الاحتياطية والقياسية القديمة ----
+*.old
+*.old.*
+*.bkp
+*.bak
+*.backup
+*.backup.*
+*.pld
+*~
+*.orig
+*.rej
+*.000
+*000[0-9]
+*00[0-9][0-9]
+*0.php.old
+
+# ---- لقطات/نسخ مكررة من نفس الملف ----
+*constants.php.88
+*+constants.php
+*++constants.php
+*--constants.php
+*constants0.php
+DashboardData0.php
+ApiResponse0.php
+
+# ---- قواعد البيانات ----
+*.sql
+*.sql.gz
+!sql/*.sql
+
+# ---- ملفات النظام ----
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- أدوات التطوير ----
+.idea/
+.vscode/
+*.swp
+*.swo
+.phpunit.result.cache
+.phpcs-cache
+
+# ---- مجلدات مساعدة خاصة بالأدوات ----
+.zcode/
+node_modules/
+
+# ---- ملفات التشخيص المؤقتة (تُحذف بعد الاستخدام) ----
+diag-all-mobile.php
+diag-index.php

@@ -1,0 +1,317 @@
+/* ===================================
+   البحث عن المنتجات وماسح الباركود
+   Product Search, Barcode Scanner, Code Mode
+   =================================== */
+
+/* === حقل البحث === */
+.search-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+    align-items: center;
+}
+
+.search-bar .form-control {
+    max-width: 400px;
+}
+
+/* === مكون البحث عن المنتجات (AJAX) === */
+.product-search-wrapper { position: relative; }
+.search-input-container { position: relative; display: flex; align-items: center; }
+.search-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--gray-400); pointer-events: none; z-index: 2; }
+.search-input { padding-right: 40px !important; padding-left: 115px !important; }
+.search-clear-btn { position: absolute; left: 70px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 4px; color: var(--gray-400); border-radius: 4px; display: flex; align-items: center; z-index: 2; }
+.search-clear-btn:hover { color: var(--gray-600); background: var(--gray-100); }
+.search-arrow-btn { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 4px; color: var(--gray-400); border-radius: 4px; display: flex; align-items: center; z-index: 2; }
+.search-arrow-btn:hover { color: var(--gray-600); background: var(--gray-100); }
+
+/* زر مسح الباركود بالكاميرا */
+.search-scan-btn { position: absolute; left: 38px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 4px; color: var(--primary); border-radius: 4px; display: flex; align-items: center; z-index: 2; opacity: 0.7; }
+.search-scan-btn:hover { color: var(--primary-dark); background: var(--primary-light); opacity: 1; }
+
+/* === نافذة مسح الباركود === */
+.barcode-scanner-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.92);
+    z-index: 5000;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    color: var(--white);
+}
+.barcode-scanner-overlay.active { display: flex; }
+
+.scanner-header {
+    width: 100%;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0,0,0,0.5);
+    flex-shrink: 0;
+}
+.scanner-header h3 { font-size: 1.1rem; color: var(--white); display: flex; align-items: center; gap: 8px; }
+
+.scanner-close-btn {
+    background: rgba(255,255,255,0.15);
+    border: none; color: white; width: 40px; height: 40px;
+    border-radius: 50%; cursor: pointer; display: flex;
+    align-items: center; justify-content: center; font-size: 1.3rem;
+}
+.scanner-close-btn:hover { background: rgba(255,255,255,0.3); }
+
+.scanner-body { width: 100%; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; }
+.scanner-container { width: 100%; max-width: 400px; border-radius: 12px; overflow: hidden; background: #000; }
+#barcodeScannerElement { width: 100%; }
+#barcodeScannerElement video { border-radius: 12px; object-fit: cover; }
+#scannerLibraryContainer { width: 100%; max-width: 400px; border-radius: 12px; overflow: hidden; background: #000; }
+#fallbackVideo { object-fit: cover; }
+
+.scanner-hint-text {
+    margin-top: 16px; text-align: center; color: rgba(255,255,255,0.7);
+    font-size: 0.9rem; line-height: 1.6;
+}
+.scanner-hint-text strong { color: var(--white); }
+
+.scanner-result-bar {
+    width: 100%; max-width: 400px; margin-top: 16px;
+    padding: 12px 16px; background: rgba(255,255,255,0.1);
+    border-radius: 8px; display: none; align-items: center;
+    gap: 10px; border: 1px solid rgba(255,255,255,0.2);
+}
+.scanner-result-bar.active { display: flex; }
+.scanner-result-bar .result-icon { width: 32px; height: 32px; background: #22c55e; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.scanner-result-bar .result-code { font-family: monospace; font-size: 1.1rem; font-weight: 700; color: var(--white); }
+
+.scanner-error {
+    padding: 16px; text-align: center; color: #fca5a5;
+    font-size: 0.9rem; margin-top: 8px; display: none;
+    max-width: 380px; margin-left: auto; margin-right: auto;
+    max-height: 60vh; overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.scanner-flash-btn {
+    margin-top: 12px; background: rgba(255,255,255,0.15);
+    border: none; color: white; padding: 10px 24px;
+    border-radius: 8px; cursor: pointer; font-size: 0.9rem;
+    font-weight: 600; display: flex; align-items: center; gap: 8px;
+}
+.scanner-flash-btn:hover { background: rgba(255,255,255,0.25); }
+
+/* === مفتاح تبديل وضع كود المنتج === */
+.code-mode-toggle {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+    background: var(--gray-100);
+    padding: 4px;
+    border-radius: var(--radius);
+    border: 1.5px solid var(--gray-200);
+}
+
+.code-mode-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 9px 14px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--gray-500);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.code-mode-btn:hover {
+    color: var(--gray-700);
+    background: rgba(255,255,255,0.6);
+}
+
+.code-mode-btn.active {
+    background: var(--white);
+    color: var(--primary);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.code-mode-btn svg {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+}
+
+/* === مجموعة حقل الباركود مع زر المسح === */
+.barcode-input-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.barcode-input-group .form-control {
+    flex: 1;
+    min-width: 0;
+}
+
+.btn-scan-barcode {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-light);
+    color: var(--primary);
+    border: 1.5px solid rgba(37, 99, 235, 0.2);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.btn-scan-barcode:hover {
+    background: var(--primary);
+    color: var(--white);
+    border-color: var(--primary);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-scan-barcode:active {
+    transform: translateY(0);
+}
+
+.btn-scan-barcode svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* === المنتج المختار === */
+.selected-product { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: #f0fdf4; border: 2px solid #86efac; border-radius: 8px; margin-top: 6px; }
+.selected-product-info { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.selected-product-code { background: var(--primary-light); color: var(--primary-dark); padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.85rem; font-family: monospace; }
+.selected-product-name { font-weight: 600; color: var(--gray-800); font-size: 0.95rem; }
+.selected-product-stock { background: var(--warning-light); color: #92400e; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
+.selected-product-remove { background: none; border: none; cursor: pointer; padding: 6px; color: var(--gray-400); border-radius: 6px; display: flex; align-items: center; }
+.selected-product-remove:hover { color: var(--danger); background: var(--danger-light); }
+
+/* === القائمة المنسدلة للنتائج === */
+.search-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: var(--white); border: 1.5px solid var(--gray-200); border-radius: 8px; margin-top: 4px; box-shadow: 0 10px 40px rgba(0,0,0,0.12); z-index: 1000; max-height: 320px; overflow: hidden; display: flex; flex-direction: column; }
+.search-results { overflow-y: auto; max-height: 320px; flex: 1; }
+.search-results::-webkit-scrollbar { width: 6px; }
+.search-results::-webkit-scrollbar-track { background: var(--gray-50); }
+.search-results::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 3px; }
+
+.search-product-item { padding: 10px 14px; cursor: pointer; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--gray-100); transition: background 0.15s; }
+.search-product-item:last-child { border-bottom: none; }
+.search-product-item:hover { background: #f0f9ff; }
+.search-product-item.active { background: #e0f2fe; }
+.search-product-item .item-code { background: var(--gray-100); color: var(--gray-600); padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 700; font-family: monospace; min-width: 70px; text-align: center; flex-shrink: 0; }
+.search-product-item .item-details { flex: 1; min-width: 0; }
+.search-product-item .item-name { font-weight: 600; color: var(--gray-800); font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.search-product-item .item-name mark { background: #fef08a; color: var(--gray-800); padding: 0 2px; border-radius: 2px; }
+.search-product-item .item-meta { display: flex; gap: 12px; margin-top: 3px; font-size: 0.78rem; color: var(--gray-500); }
+.search-product-item .item-stock { font-weight: 600; padding: 2px 8px; border-radius: 4px; flex-shrink: 0; font-size: 0.8rem; }
+.item-stock.in-stock { background: #f0fdf4; color: #059669; }
+.item-stock.low-stock { background: var(--warning-light); color: #d97706; }
+.item-stock.out-of-stock { background: var(--danger-light); color: var(--danger); }
+.search-loading { display: flex; align-items: center; gap: 8px; padding: 16px; color: var(--gray-500); font-size: 0.85rem; justify-content: center; }
+.search-no-results { padding: 20px; text-align: center; color: var(--gray-400); font-size: 0.9rem; }
+.search-hint { padding: 16px; text-align: center; color: var(--gray-400); font-size: 0.85rem; }
+.search-product-item.keyboard-nav { background: #e0f2fe; outline: 2px solid var(--primary); outline-offset: -2px; }
+.search-dropdown-footer { padding: 8px 14px; border-top: 1px solid var(--gray-200); font-size: 0.75rem; color: var(--gray-400); text-align: center; background: var(--gray-50); }
+
+/* === حقل البحث المحسّن (للصفحات بدون AJAX dropdown) === */
+.enhanced-search-input { position: relative; flex: 1; min-width: 200px; }
+.enhanced-search-input .form-control { padding-right: 40px !important; }
+.enhanced-search-input .search-icon { right: 12px; }
+.enhanced-search-input .search-clear-btn-inline { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 4px; color: var(--gray-400); border-radius: 4px; display: none; align-items: center; z-index: 2; }
+.enhanced-search-input .search-clear-btn-inline:hover { color: var(--gray-600); background: var(--gray-100); }
+.enhanced-search-input .search-clear-btn-inline.visible { display: flex; }
+
+/* === التجاوب - 768px === */
+@media (max-width: 768px) {
+    .search-bar {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .search-bar .form-control {
+        max-width: 100%;
+    }
+
+    .search-input { padding-left: 115px !important; }
+
+    .product-search-wrapper .search-dropdown {
+        max-height: 50vh;
+        max-height: 50dvh;
+    }
+
+    .product-search-wrapper .selected-product {
+        flex-wrap: wrap;
+        padding: 8px 10px;
+        gap: 6px;
+    }
+
+    .product-search-wrapper .selected-product-info {
+        flex-wrap: wrap;
+    }
+}
+
+/* === التجاوب - 380px (شاشات صغيرة جداً) === */
+@media (max-width: 380px) {
+    .search-input {
+        padding-left: 40px !important;
+        padding-right: 36px !important;
+    }
+    .search-clear-btn {
+        left: 8px !important;
+    }
+    .search-arrow-btn {
+        left: 8px !important;
+    }
+}
+
+/* === التجاوب - 480px === */
+@media (max-width: 480px) {
+    .search-bar {
+        margin-bottom: 1rem;
+    }
+
+    .code-mode-toggle {
+        gap: 3px !important;
+        padding: 3px !important;
+    }
+    .code-mode-btn {
+        padding: 7px 8px !important;
+        font-size: 0.78rem !important;
+    }
+    .code-mode-btn svg {
+        display: none !important;
+    }
+
+    .selected-product {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 6px !important;
+        padding: 8px 10px !important;
+    }
+    .selected-product-info {
+        justify-content: center !important;
+    }
+    .selected-product-remove {
+        align-self: flex-end !important;
+        position: absolute !important;
+        top: 4px !important;
+        left: 4px !important;
+    }
+    .selected-product {
+        position: relative !important;
+    }
+}

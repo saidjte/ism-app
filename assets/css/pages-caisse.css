@@ -1,0 +1,526 @@
+/* ===================================
+   صفحة الصندوق - تحسينات الهاتف
+   Caisse Page Styles — ISM v4.29.0
+   =================================== */
+
+/* === POS spinner utilities === */
+.spinner-lg { width: 32px; height: 32px; }
+.spinner-sm-white { width: 20px; height: 20px; border-top-color: #fff; }
+
+
+/* ========================================
+   مكونات صفحة الصندوق — Caisse Components
+   ======================================== */
+
+/* === شارة الإشعار — Notification Badge === */
+.caisse-badge-notification {
+    font-size: 0.85rem;
+    padding: 6px 14px;
+}
+.caisse-badge-danger {
+    font-size: 0.85rem;
+    padding: 6px 14px;
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+/* === بطاقة رصيد المشروع (حد ذهبي) — Project Balance Card === */
+.caisse-card--project {
+    border: 2px solid #f59e0b;
+    margin-bottom: 1.5rem;
+}
+.caisse-card-header--project {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    padding: 1rem 1.25rem;
+}
+
+/* === بطاقة إضافة حركة (حد أخضر) — Transaction Card === */
+.caisse-card--transaction {
+    border: 2px solid #10b981;
+    margin-bottom: 1.5rem;
+}
+.caisse-card-header--transaction {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    padding: 1rem 1.25rem;
+}
+
+/* === بطاقة الحالة اليومية (حد نيلي) — Daily Status Card === */
+.caisse-card--daily {
+    border-right: 4px solid #6366f1;
+    margin-bottom: 1.5rem;
+}
+
+/* === عنوان البطاقة الملونة — Colored Card Title === */
+.caisse-card-title {
+    color: white;
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+/* === جسم البطاقة — Card Body Variants === */
+.caisse-card-body {
+    padding: 1.25rem;
+}
+.caisse-card-body--flush {
+    padding: 0;
+}
+
+/* === بطاقات الإحصائيات الملونة — Stat Card Color Variants === */
+.caisse-stat-card--amber {
+    border-right-color: #f59e0b;
+}
+.caisse-stat-icon--amber {
+    background: #fef3c7;
+    color: #f59e0b;
+}
+.caisse-stat-value--amber {
+    color: #d97706;
+}
+
+.caisse-stat-card--rose {
+    border-right-color: #be123c;
+}
+.caisse-stat-icon--rose {
+    background: #ffe4e6;
+    color: #be123c;
+}
+.caisse-stat-value--rose {
+    color: #be123c;
+}
+
+.caisse-stat-card--purple {
+    border-right-color: #7c3aed;
+}
+.caisse-stat-icon--purple {
+    background: #f3e8ff;
+    color: #7c3aed;
+}
+.caisse-stat-value--purple {
+    color: #7c3aed;
+}
+
+.caisse-stat-icon--deposit {
+    background: #d1fae5;
+    color: #059669;
+}
+
+/* === صناديق ملخص الإيداع/المسحوب — Deposit/Withdrawal Summary Boxes === */
+.caisse-summary-box--deposit {
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    text-align: center;
+}
+.caisse-summary-box--withdrawal {
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    text-align: center;
+}
+.caisse-summary-label {
+    font-size: 0.8rem;
+    color: var(--gray-500);
+}
+.caisse-summary-value--deposit {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #059669;
+}
+.caisse-summary-value--withdrawal {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #dc2626;
+}
+
+/* === عرض الرصيد الحالي — Current Balance Display === */
+.caisse-balance-box {
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    margin-bottom: 1.25rem;
+}
+.caisse-balance-label {
+    font-size: 0.9rem;
+    color: var(--gray-600);
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+.caisse-balance-value {
+    font-size: 2.5rem;
+    font-weight: 900;
+    font-family: monospace;
+    letter-spacing: 1px;
+}
+.caisse-balance-value--lg {
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: #4f46e5;
+    font-family: monospace;
+    letter-spacing: 1px;
+}
+.caisse-balance-breakdown {
+    font-size: 0.72rem;
+    color: var(--gray-400);
+    margin-top: 6px;
+}
+
+/* === المبلغ المتوقع (خلفية نيلية) — Expected Amount Box === */
+.caisse-expected-box {
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+    border: 2px solid #a5b4fc;
+}
+
+/* === حقول الإدخال — Form Inputs === */
+.caisse-input--amber {
+    font-size: 1.3rem;
+    font-weight: 800;
+    text-align: center;
+    padding: 14px;
+    border: 2px solid #f59e0b;
+    border-radius: 10px;
+}
+.caisse-input--green {
+    font-size: 1.2rem;
+    font-weight: 800;
+    text-align: center;
+    padding: 12px;
+    border: 2px solid #10b981;
+    border-radius: 10px;
+}
+.caisse-input--amount {
+    font-size: 1.1rem;
+    font-weight: 800;
+    text-align: center;
+    padding: 10px;
+}
+.caisse-input--note {
+    font-size: 0.95rem;
+    padding: 10px;
+}
+.caisse-input--select {
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 12px;
+}
+.caisse-input--date {
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 12px;
+}
+
+/* === الأزرار — Buttons === */
+.caisse-btn--amber {
+    width: 100%;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    border: none;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.caisse-btn--green {
+    width: 100%;
+    max-width: 400px;
+    display: block;
+    margin: 0 auto;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    padding: 14px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.caisse-btn--danger {
+    width: 100%;
+    padding: 12px;
+    font-weight: 700;
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.caisse-btn--cancel {
+    display: block;
+    text-align: center;
+    padding: 12px;
+    font-weight: 700;
+    background: var(--gray-100);
+    color: var(--gray-600);
+    border-radius: 10px;
+    text-decoration: none;
+    border: 1px solid var(--gray-200);
+}
+
+/* === فاصل القسم — Section Divider === */
+.caisse-divider {
+    text-align: center;
+    margin: 2rem 0 1.5rem;
+    position: relative;
+}
+.caisse-divider-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--gray-200);
+}
+.caisse-divider-label {
+    position: relative;
+    background: var(--bg-primary, #f9fafb);
+    padding: 0 1rem;
+    font-size: 0.85rem;
+    color: var(--gray-400);
+    font-weight: 600;
+}
+
+/* === شارة تلقائي — Auto Badge === */
+.caisse-badge--auto {
+    background: #dcfce7;
+    color: #059669;
+    font-size: 0.7rem;
+    margin-right: 6px;
+}
+
+/* === نافذة تأكيد الحذف — Delete Confirmation Modal === */
+.caisse-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.caisse-modal-dialog {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.caisse-modal-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+.caisse-modal-icon {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+.caisse-modal-title {
+    margin: 0;
+    color: #dc2626;
+    font-size: 1.2rem;
+}
+.caisse-modal-info {
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+.caisse-modal-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem;
+}
+.caisse-modal-actions--2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+
+/* === صندوق الفرق — Difference Box === */
+.caisse-difference-box {
+    margin-top: 1rem;
+    padding: 1.25rem;
+    border-radius: 10px;
+    text-align: center;
+}
+.caisse-difference-label {
+    font-size: 0.85rem;
+    color: var(--gray-600);
+    margin-bottom: 4px;
+}
+.caisse-difference-value {
+    font-size: 2rem;
+    font-weight: 900;
+    font-family: monospace;
+}
+.caisse-difference-status {
+    font-size: 0.85rem;
+    margin-top: 4px;
+    font-weight: 600;
+}
+.caisse-difference-status--balanced {
+    font-size: 0.85rem;
+    margin-top: 4px;
+    color: #059669;
+    font-weight: 600;
+}
+
+/* === قسم التحقق اليدوي — Manual Check Section === */
+.caisse-manual-check {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--gray-200);
+}
+.caisse-manual-check-label {
+    text-align: center;
+    margin-bottom: 0.75rem;
+    font-size: 0.82rem;
+    color: var(--gray-400);
+}
+
+/* === رابط حذف الحركة — Transaction Delete Link === */
+.caisse-tx-delete-link {
+    color: #dc2626;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* === تسميات النماذج — Form Labels === */
+.caisse-label {
+    font-weight: 700;
+}
+.caisse-label--sm {
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+.caisse-label--lg {
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+/* === شبكات التخطيط — Grid Layouts === */
+.caisse-grid-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+.caisse-grid-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+.caisse-grid-form-2col {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+/* === حاوية النموذج المركزية — Centered Form Container === */
+.caisse-form-center {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* === صف سجل يومي مميز — Daily Record Row Highlight === */
+.caisse-daily-row--today {
+    background: #eff6ff;
+    font-weight: 600;
+}
+
+
+/* ========================================
+   التجاوب مع الهاتف — Mobile Responsive
+   ======================================== */
+
+/* === تحسين الوافقية مع الهواتف لصفحة الصندوق === */
+@media (max-width: 768px) {
+    .card-body [style*="grid-template-columns: 1fr 1fr"],
+    .card-body [style*="grid-template-columns:1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+    }
+
+    .table-responsive {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .caisse-balance-value {
+        font-size: 1.8rem !important;
+    }
+    .caisse-balance-value--lg {
+        font-size: 1.8rem !important;
+    }
+    .caisse-difference-value {
+        font-size: 1.5rem !important;
+    }
+
+    .card-body form input[type="number"],
+    .card-body form input[type="text"] {
+        font-size: 16px !important;
+    }
+
+    .card-header h2 {
+        font-size: 0.95rem !important;
+    }
+
+    .table-responsive table {
+        min-width: 500px !important;
+    }
+
+    /* منع التمدد الزائد للجداول داخل بطاقات الصندوق */
+    .card-body > .table-responsive:first-child table {
+        min-width: auto !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .caisse-balance-value {
+        font-size: 1.4rem !important;
+    }
+    .caisse-balance-value--lg {
+        font-size: 1.4rem !important;
+    }
+    .caisse-difference-value {
+        font-size: 1.2rem !important;
+    }
+
+    .card-body input,
+    .card-body select {
+        padding: 10px 8px !important;
+    }
+
+    .caisse-grid-summary,
+    .caisse-grid-form,
+    .caisse-grid-form-2col,
+    .caisse-modal-actions {
+        grid-template-columns: 1fr !important;
+    }
+
+    .card-body button[type="submit"],
+    .card-body .btn {
+        width: 100% !important;
+    }
+
+    .container {
+        padding: 0.5rem !important;
+    }
+}

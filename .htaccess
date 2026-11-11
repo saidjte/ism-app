@@ -1,0 +1,172 @@
+# ===== حماية ملفات حساسة =====
+# منع الوصول المباشر إلى ملف .env وجميع الملفات المخفية
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# منع الوصول إلى ملفات البيئة البديلة (.env.backup, .env.old, etc.)
+<FilesMatch "\.env">
+    Require all denied
+</FilesMatch>
+
+# ===== حماية ملفات المصدر والنسخ الاحتياطي =====
+<FilesMatch "\.(bak|backup|old|orig|save|swp|sql|log|ini|conf|sh|yml|yaml|toml|dist|map|inc|tpl)$">
+    Require all denied
+</FilesMatch>
+
+# حماية ملفات composer و package manager
+<FilesMatch "^(composer\.(json|lock)|package\.json|package-lock\.json|yarn\.lock|\.npmrc)$">
+    Require all denied
+</FilesMatch>
+
+# حماية ملفات الإعداد المحلية
+<FilesMatch "^(php\.ini|\.htpasswd|\.htaccess)$">
+    Require all denied
+</FilesMatch>
+
+# ===== حماية مجلدات حساسة =====
+# منع تصفح المجلدات
+Options -Indexes
+
+# منع تنفيذ PHP في مجلد التحميلات
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # ===== تمرير رأس المصادقة إلى PHP =====
+    # Apache CGI/FastCGI يزيل رأس Authorization قبل وصوله إلى PHP
+    # هذه القاعدة تنقله كمتغير بيئة HTTP_AUTHORIZATION حتى يتمكن Laravel من قراءته
+    # ⚠️ يجب أن تكون قبل أي RewriteRule آخر
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # حماية مجلد السجلات
+    RewriteRule ^logs/ - [F,L]
+
+    # حماية مجلد النسخ الاحتياطي (لكن السماح بملف list-backups.php)
+    RewriteCond %{REQUEST_URI} !list-backups\.php$
+    RewriteRule ^backups/ - [F,L]
+
+    # منع الوصول إلى ملفات git
+    RewriteRule ^(git|\.git) - [F,L]
+
+    # منع تنفيذ PHP في مجلد upload (الملفات المرفوعة)
+    RewriteCond %{REQUEST_URI} ^/upload/
+    RewriteRule \.php$ - [F,L]
+
+    # حماية مجلدات النشر الذري (staging + old + releases)
+    RewriteRule ^(upgrade_staging|upgrade_old|upgrade_file_backup|releases)/ - [F,L]
+
+    # ===== توجيه طلبات API عبر نقطة الدخول المركزية =====
+    # كل طلبات /api/* تُوجَّه إلى api/index.php ما عدا الملفات المباشرة القديمة
+    # هذا يضمن: مصادقة موحدة، CSRF موحد، استجابات موحدة
+    #
+    # آلية العمل:
+    #   1. الطلب: /api/search-products → يُوجَّه إلى api/index.php
+    #   2. api/index.php يُحمّل ApiRouter ويُسجّل المسارات
+    #   3. ApiRouter يُنفّذ الوسطاء (auth, csrf, permission) ثم المعالج
+    #
+    # التوافق العكسي: الوصول المباشر للملفات القديمة لا يزال يعمل
+    # لكن التوجيه المركزي هو الطريقة الموصى بها
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^api/mobile/(.*)$ api/mobile/index.php [QSA,L]
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^api/(.*)$ api/index.php [QSA,L]
+</IfModule>
+
+# ===== إعدادات أمنية عامة =====
+# إخفاء معلومات الخادم
+ServerSignature Off
+<IfModule mod_headers.c>
+    Header unset X-Powered-By
+    Header unset X-AspNet-Version
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+
+    # ===== سياسة أمان المحتوى (Content Security Policy) =====
+    # ⚠️ تم نقل CSP بالكامل إلى PHP (SecurityHeaders.php) لدعم nonce الديناميكي
+    # لا تُضف Header set Content-Security-Policy هنا — يتعارض مع nonce الديناميكي
+    #
+    # التوجيهات:
+    #   default-src 'self' — السياسة الافتراضية: السماح فقط من نفس المصدر
+    #   script-src — السماح بالسكربتات من نفس المصدر + inline (لاستخدامات Chart.js والتهيئة)
+    #              + مكتبات الباركود/QR المجمّعة محلياً
+    #   style-src  — السماح بالأنماط من نفس المصدر + inline (مطلوب لمعظم واجهات CSS)
+    #   img-src    — السماح بالصور من نفس المصدر + data: (للأيقونات المضمّنة) + blob: (للمسح الضوئي)
+    #   font-src   — السماح بالخطوط من نفس المصدر + خطوط Google CDN
+    #   connect-src — السماح بالاتصال من نفس المصدر (AJAX/WebSocket/Service Worker)
+    #               + ws: للاتصال بالطابعة الحرارية عبر WebSocket
+    #   frame-ancestors 'self' — منع تضمين الموقع في إطارات خارجية (حماية Clickjacking)
+    #   form-action 'self' — إرسال النماذج فقط إلى نفس المصدر
+    #   base-uri 'self' — منع تعديل العنوان الأساسي
+    #   object-src 'none' — منع إضافة كائنات Flash/Java
+    #   worker-src 'self' blob: — السماح لـ Service Workers من نفس المصدر
+    #
+    # ملاحظة: الرأس الديناميكي من PHP (مع nonce) هو المصدر الوحيد لـ CSP الآن
+
+    # سياسة مرجعية (Referrer Policy) — إرسال المصدر فقط عند التنقل لنفس الموقع
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # سياسة أذونات المتصفح (Permissions Policy) — تقييد الوصول لميزات المتصفح
+    # يُسمح بالكاميرا فقط من نفس المصدر (لمسح الباركود)
+    Header set Permissions-Policy "camera=(self), microphone=(), geolocation=(), payment=()"
+</IfModule>
+
+# ===== ضغط وتخزين مؤقت =====
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css application/json application/javascript image/svg+xml
+</IfModule>
+
+# ===== v5.29.0: تخزين مؤقت للأصول الثابتة =====
+# يُقلل طلبات HTTP المتكررة للملفات التي لا تتغير كثيراً
+# الاستراتيجية: إضافة رقم الإصدار في اسم الملف (cache busting) + ETag للتحقق التلقائي
+<IfModule mod_expires.c>
+    ExpiresActive On
+
+    # CSS/JS: 7 أيام (تتغير غالباً مع التحديثات)
+    ExpiresByType text/css "access plus 7 days"
+    ExpiresByType application/javascript "access plus 7 days"
+
+    # الصور: 30 يوم (نادراً ما تتغير)
+    ExpiresByType image/png "access plus 30 days"
+    ExpiresByType image/jpeg "access plus 30 days"
+    ExpiresByType image/gif "access plus 30 days"
+    ExpiresByType image/webp "access plus 30 days"
+    ExpiresByType image/svg+xml "access plus 30 days"
+    ExpiresByType image/x-icon "access plus 30 days"
+
+    # الخطوط: 90 يوم (نادراً ما تتغير)
+    ExpiresByType font/woff2 "access plus 90 days"
+    ExpiresByType font/woff "access plus 90 days"
+    ExpiresByType application/font-woff2 "access plus 90 days"
+    ExpiresByType application/font-woff "access plus 90 days"
+
+    # JSON/XML: 1 ساعة (قد تتغير بشكل متكرر)
+    ExpiresByType application/json "access plus 1 hour"
+    ExpiresByType application/xml "access plus 1 hour"
+</IfModule>
+
+# ETag تلقائي + تحكم بالتحقق المشروط
+<IfModule mod_headers.c>
+    # تفعيل ETag (مُفعّل افتراضياً لكن نضمنه)
+    FileETag MTime Size
+
+    # Cache-Control للأصول مع إمكانية التحقق المشروط
+    <FilesMatch "\.(css|js)$">
+        Header set Cache-Control "public, max-age=604800, must-revalidate"
+    </FilesMatch>
+    <FilesMatch "\.(png|jpe?g|gif|webp|svg|ico)$">
+        Header set Cache-Control "public, max-age=2592000, immutable"
+    </FilesMatch>
+    <FilesMatch "\.(woff2?|ttf|eot)$">
+        Header set Cache-Control "public, max-age=7776000, immutable"
+    </FilesMatch>
+</IfModule>
+
+# ===== دعم WebP MIME type =====
+<IfModule mod_mime.c>
+    AddType image/webp .webp
+</IfModule>

@@ -1,0 +1,197 @@
+/* ===================================
+   النماذج
+   Forms: Grid, Controls, Units, Pickers
+   =================================== */
+
+/* === شبكة النماذج === */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: var(--gray-700);
+    font-size: 0.9rem;
+}
+
+.form-group label .required {
+    color: var(--danger);
+    margin-right: 2px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--gray-300);
+    border-radius: var(--radius);
+    font-size: 0.95rem;
+    transition: var(--transition);
+    background: var(--white);
+    color: var(--gray-800);
+    font-family: inherit;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-control::placeholder {
+    color: var(--gray-400);
+}
+
+select.form-control {
+    cursor: pointer;
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-text {
+    font-size: 0.8rem;
+    color: var(--gray-500);
+    margin-top: 4px;
+}
+
+/* === وحدات القياس الإضافية === */
+.additional-units-section {
+    border: 2px dashed var(--gray-300);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    margin-top: 1rem;
+    background: var(--gray-50);
+}
+
+.additional-units-section h3 {
+    font-size: 1rem;
+    color: var(--gray-700);
+    margin-bottom: 1rem;
+}
+
+.unit-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    gap: 10px;
+    align-items: end;
+    margin-bottom: 10px;
+}
+
+.unit-row .form-group {
+    margin-bottom: 0;
+}
+
+.btn-remove-unit {
+    background: var(--danger-light);
+    color: var(--danger);
+    border: none;
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    margin-bottom: 0;
+}
+
+.btn-remove-unit:hover {
+    background: var(--danger);
+    color: var(--white);
+}
+
+/* === خانة الاختيار المنسقة === */
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding-top: 4px;
+    margin-bottom: 0 !important;
+    font-weight: 600;
+    color: var(--gray-700);
+    font-size: 0.9rem;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--primary);
+}
+
+/* === التجاوب - 768px === */
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .unit-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .unit-row .form-group:first-child {
+        grid-column: 1 / -1;
+    }
+}
+
+/* === التجاوب - 480px === */
+@media (max-width: 480px) {
+    .form-grid {
+        gap: 0.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 0.75rem;
+    }
+
+    .form-control {
+        padding: 9px 12px;
+        font-size: 16px; /* منع تكبير تلقائي في iOS */
+    }
+
+    .unit-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+}
+
+/* === تحسين تجربة اللمس === */
+@media (max-width: 768px) {
+    .form-control,
+    select.form-control,
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    input[type="email"],
+    input[type="password"],
+    textarea {
+        min-height: 44px;
+        font-size: 16px !important;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+        width: 22px;
+        height: 22px;
+    }
+
+    .btn-remove-unit {
+        width: 44px;
+        height: 44px;
+        font-size: 1.2rem;
+    }
+}

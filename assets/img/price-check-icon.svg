@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- خلفية -->
+  <rect width="512" height="512" rx="96" fill="#1a56db"/>
+  
+  <!-- علامة السعر الكبيرة -->
+  <g transform="translate(256, 230)">
+    <!-- شكل العلامة -->
+    <path d="M-110,-100 L110,-100 L160,-50 L160,50 L110,100 L-110,100 L-160,50 L-160,-50 Z" 
+          fill="#fff" opacity="0.95"/>
+    
+    <!-- رمز العملة -->
+    <text x="0" y="20" text-anchor="middle" font-family="Arial, sans-serif" 
+          font-size="120" font-weight="bold" fill="#1a56db">د.م</text>
+  </g>
+  
+  <!-- أيقونة الباركود -->
+  <g transform="translate(256, 420)" opacity="0.9">
+    <rect x="-60" y="-20" width="8" height="40" rx="2" fill="#fff"/>
+    <rect x="-48" y="-20" width="4" height="40" rx="1" fill="#fff"/>
+    <rect x="-40" y="-20" width="12" height="40" rx="2" fill="#fff"/>
+    <rect x="-24" y="-20" width="4" height="40" rx="1" fill="#fff"/>
+    <rect x="-16" y="-20" width="8" height="40" rx="2" fill="#fff"/>
+    <rect x="-4" y="-20" width="16" height="40" rx="2" fill="#fff"/>
+    <rect x="16" y="-20" width="4" height="40" rx="1" fill="#fff"/>
+    <rect x="24" y="-20" width="8" height="40" rx="2" fill="#fff"/>
+    <rect x="36" y="-20" width="4" height="40" rx="1" fill="#fff"/>
+    <rect x="44" y="-20" width="12" height="40" rx="2" fill="#fff"/>
+  </g>
+</svg>

@@ -1,0 +1,136 @@
+/* ===================================
+   التخطيط الرئيسي
+   Layout: Container, Page Header, Footer, Grids
+   =================================== */
+
+/* === المحتوى الرئيسي === */
+.container {
+    max-width: 1324px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 1.75rem;
+    color: var(--gray-800);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.page-header h1 svg {
+    width: 28px;
+    height: 28px;
+    color: var(--primary);
+}
+
+/* === شبكة عمودين === */
+.two-col-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+/* === فلتر التاريخ === */
+.date-filter-grid {
+    grid-template-columns: 1fr 1fr auto;
+    align-items: end;
+}
+
+/* === التذييل === */
+.footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--gray-500);
+    font-size: 0.85rem;
+    margin-top: 2rem;
+    border-top: 1px solid var(--gray-200);
+}
+
+/* === حالة فارغة === */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--gray-400);
+}
+
+.empty-state svg {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 1rem;
+    opacity: 0.4;
+}
+
+.empty-state p {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state .hint {
+    font-size: 0.85rem;
+    color: var(--gray-400);
+}
+
+/* === التجاوب - 768px === */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .page-header h1 {
+        font-size: 1.3rem;
+    }
+
+    .page-header h1 svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .footer {
+        padding: 1.5rem 1rem;
+    }
+
+    .two-col-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .date-filter-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .date-filter-grid .btn {
+        width: 100%;
+    }
+}
+
+/* === التجاوب - 480px === */
+@media (max-width: 480px) {
+    .container {
+        padding: 0.75rem;
+    }
+
+    .page-header h1 {
+        font-size: 1.15rem;
+    }
+
+    .footer {
+        padding: 1rem;
+        font-size: 0.8rem;
+    }
+}

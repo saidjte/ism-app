@@ -1,0 +1,825 @@
+/* ===================================
+   صفحة إعدادات النظام
+   System Settings Page Styles — ISM v4.29.0
+   =================================== */
+
+/* === شبكة الإحصائيات السريعة — Quick Stats Grid === */
+.settings-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+    margin-bottom: 1.5rem;
+}
+
+.settings-stat-card {
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+}
+
+.settings-stat-card--blue {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border: 1px solid #bfdbfe;
+}
+.settings-stat-card--blue .settings-stat-value { color: #2563eb; }
+.settings-stat-card--blue .settings-stat-label { color: #3b82f6; }
+
+.settings-stat-card--green {
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    border: 1px solid #bbf7d0;
+}
+.settings-stat-card--green .settings-stat-value { color: #16a34a; }
+.settings-stat-card--green .settings-stat-label { color: #22c55e; }
+
+.settings-stat-card--amber {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border: 1px solid #fcd34d;
+}
+.settings-stat-card--amber .settings-stat-value { color: #d97706; }
+.settings-stat-card--amber .settings-stat-label { color: #ca8a04; }
+
+.settings-stat-card--red {
+    background: linear-gradient(135deg, #fef2f2, #fecaca);
+    border: 1px solid #fca5a5;
+}
+.settings-stat-card--red .settings-stat-value { color: #dc2626; }
+.settings-stat-card--red .settings-stat-label { color: #ef4444; }
+
+.settings-stat-card--purple {
+    background: linear-gradient(135deg, #f5f3ff, #e9d5ff);
+    border: 1px solid #d8b4fe;
+}
+.settings-stat-card--purple .settings-stat-value { color: #7c3aed; }
+.settings-stat-card--purple .settings-stat-label { color: #8b5cf6; }
+
+.settings-stat-card--sky {
+    background: linear-gradient(135deg, #f0f9ff, #bae6fd);
+    border: 1px solid #7dd3fc;
+}
+.settings-stat-card--sky .settings-stat-value { color: #0284c7; }
+.settings-stat-card--sky .settings-stat-label { color: #0ea5e9; }
+
+.settings-stat-value {
+    font-size: 1.6rem;
+    font-weight: 900;
+}
+
+.settings-stat-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+
+/* === بطاقة القسم — Section Card === */
+.settings-section-card {
+    margin-bottom: 1.5rem;
+}
+
+.settings-section-card--highlighted {
+    border: 2px solid var(--primary, #2563eb);
+    position: relative;
+    overflow: hidden;
+}
+
+/* === شريط التدرج العلوي — Top Gradient Bar === */
+.settings-card-gradient-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary, #2563eb), #7c3aed, #2563eb);
+}
+
+/* === رأس البطاقة المتدرج — Card Header with Gradient === */
+.settings-card-header--gradient {
+    background: linear-gradient(135deg, rgba(37,99,235,0.05), rgba(124,58,237,0.05));
+}
+
+
+/* === خيار الراديو (حبة دائرية) — Radio Option Pill === */
+.settings-radio-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.15s;
+}
+
+.settings-radio-option--sm {
+    padding: 8px 14px;
+}
+
+
+/* === ملصق التبديل (toggle/checkbox) — Toggle Switch Label === */
+.settings-toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 10px 14px;
+    border-radius: 8px;
+    transition: all 0.15s;
+}
+
+.settings-toggle-label--lg {
+    padding: 12px 16px;
+    border-radius: 10px;
+}
+
+
+/* === نص عنوان التبديل — Toggle Title === */
+.settings-toggle-title {
+    font-weight: 700;
+    font-size: 0.88rem;
+}
+
+.settings-toggle-subtitle {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+
+/* === ملصق النموذج — Form Label === */
+.settings-form-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 4px;
+    font-size: 0.85rem;
+}
+
+.settings-form-label--lg {
+    margin-bottom: 6px;
+}
+
+
+/* === نص المساعدة — Help Text === */
+.settings-help-text {
+    color: #94a3b8;
+    font-size: 0.75rem;
+}
+
+.settings-help-text--block {
+    display: block;
+    margin-top: 4px;
+}
+
+
+/* === صندوق المعلومات/النصيحة — Info/Tip Box === */
+.settings-tip-box {
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    margin-top: 10px;
+}
+
+.settings-tip-box--success {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+}
+
+.settings-tip-box--warning {
+    background: #fef3c7;
+    border: 1px solid #fde68a;
+    color: #92400e;
+}
+
+.settings-tip-box--danger {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+}
+
+.settings-tip-box--info {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+}
+
+.settings-tip-box--indigo {
+    background: #eef2ff;
+    border: 1px solid #c7d2fe;
+    color: #3730a3;
+}
+
+.settings-tip-box--info-row {
+    padding: 10px 14px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.settings-tip-box--info-row-blue {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+}
+
+.settings-tip-box--info-row-amber {
+    background: #fef3c7;
+    border: 1px solid #fde68a;
+}
+
+
+/* === شبكة النموذج — Form Grid === */
+.settings-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.settings-form-grid--sm {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.settings-form-grid--lg {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 10px;
+}
+
+.settings-form-grid--spacious {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+/* === عمود كامل — Full Span === */
+.settings-grid-full-span {
+    grid-column: 1 / -1;
+}
+
+
+/* === معاينة شريط التنقل — App Preview Navbar === */
+.settings-app-preview {
+    background: var(--dark, #1e293b);
+    border-radius: var(--radius-lg, 12px);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #334155;
+}
+
+.settings-preview-logo {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.settings-preview-name {
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.settings-preview-icons {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+}
+
+.settings-preview-icon {
+    width: 18px;
+    height: 18px;
+    background: #475569;
+}
+
+.settings-preview-icon--square {
+    border-radius: 4px;
+}
+
+.settings-preview-icon--circle {
+    border-radius: 50%;
+}
+
+
+/* === مجموعة منتقي الألوان — Color Picker Group === */
+.settings-color-picker-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+/* === تنبيه مع أيقونة — Alert with Icon === */
+.settings-alert-icon {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1rem;
+}
+
+
+/* === شارة المدير — Admin Badge === */
+.settings-admin-badge {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: #94a3b8;
+    margin-right: 8px;
+}
+
+/* === تلميح القسم — Section Hint === */
+.settings-section-hint {
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: #94a3b8;
+    margin-right: 6px;
+}
+
+
+/* === عنصر معلومات النظام — System Info Item === */
+.settings-sysinfo-item {
+    padding: 12px 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+}
+
+.settings-sysinfo-label {
+    font-size: 0.72rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.settings-sysinfo-value {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #1e293b;
+}
+
+
+/* === كتلة الكود — Code Block === */
+.settings-code-block {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 0.78rem;
+    line-height: 1.8;
+    overflow-x: auto;
+}
+
+.settings-code-comment {
+    color: #94a3b8;
+}
+
+
+/* === صندوق إعداد Cron — Cron Setup Box === */
+.settings-cron-box {
+    padding: 12px 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+}
+
+
+/* === فاصل متقطع — Dashed Separator === */
+.settings-dashed-sep {
+    border-top: 1px dashed #e2e8f0;
+}
+
+/* === فاصل متقطع مع حشو — Dashed Separator with Padding === */
+.settings-dashed-sep--padded {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed #e2e8f0;
+}
+
+
+/* === أزرار الحفظ — Save Actions === */
+.settings-save-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+
+/* === عنوان فرعي — Sub Header (h3) === */
+.settings-sub-header {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+
+/* === خيارات الطابعة الحرارية — Thermal Printer Options === */
+.settings-thermal-options {
+    padding: 16px;
+    border: 1px solid #fed7aa;
+    border-radius: 10px;
+    background: #fffbf5;
+}
+
+.settings-thermal-subfields {
+    margin-bottom: 16px;
+    padding: 12px;
+    border: 1px dashed #fdba74;
+    border-radius: 8px;
+    background: #fff;
+}
+
+
+/* === شبكة أنواع الإشعارات — Notification Type Grid === */
+.settings-notif-type-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 8px;
+}
+
+
+/* === شبكة معلومات النظام — System Info Grid === */
+.settings-sysinfo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+}
+
+/* === إحصائيات السجلات — Record Stats === */
+.settings-record-stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 8px;
+}
+
+.settings-record-stat--blue {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+}
+
+.settings-record-stat--green {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+}
+
+.settings-record-stat--amber {
+    background: #fef3c7;
+    border: 1px solid #fde68a;
+}
+
+.settings-record-stat--purple {
+    background: #f5f3ff;
+    border: 1px solid #e9d5ff;
+}
+
+.settings-record-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.settings-record-dot--blue { background: #2563eb; }
+.settings-record-dot--green { background: #059669; }
+.settings-record-dot--amber { background: #d97706; }
+.settings-record-dot--purple { background: #7c3aed; }
+
+.settings-record-value {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #1e293b;
+}
+
+.settings-record-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+
+.settings-record-label--blue { color: #3b82f6; }
+.settings-record-label--green { color: #16a34a; }
+.settings-record-label--amber { color: #ca8a04; }
+.settings-record-label--purple { color: #8b5cf6; }
+
+
+/* === شبكة سجلات — Records Grid === */
+.settings-records-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+}
+
+
+/* === حقل إدخال LTR — LTR Input Field === */
+.settings-input-ltr {
+    direction: ltr;
+    text-align: right;
+}
+
+.settings-input-ltr-left {
+    direction: ltr;
+    text-align: left;
+}
+
+
+/* === حقل منتقي الألوان — Color Picker Input === */
+.settings-color-input {
+    width: 44px;
+    height: 44px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 2px;
+}
+
+
+/* === حقل نص اللون — Color Text Input === */
+.settings-color-text-input {
+    max-width: 120px;
+    direction: ltr;
+    text-align: center;
+    font-family: monospace;
+    font-size: 0.85rem;
+}
+
+
+/* === حقل إدخال التطبيق — App Name Input === */
+.settings-app-name-input {
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 12px 14px;
+}
+
+
+/* === خانة اختيار التبديل — Toggle Checkbox Input === */
+.settings-toggle-checkbox {
+    width: 20px;
+    height: 20px;
+    accent-color: #2563eb;
+}
+
+
+/* === زر توليد المفتاح — Key Generate Button === */
+.settings-key-gen-btn {
+    padding: 6px 12px;
+    font-size: 0.78rem;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+
+/* === حقل مفتاح Cron — Cron Key Input === */
+.settings-cron-key-input {
+    font-family: monospace;
+    font-size: 0.8rem;
+    flex: 1;
+}
+
+
+/* === فاصل الضرائب — Tax Section Divider === */
+.settings-tax-divider {
+    padding-top: 1rem;
+    border-top: 2px dashed #e2e8f0;
+}
+
+
+/* === شبكة خيارات إضافية — Extra Options Grid === */
+.settings-extra-options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+
+/* === شبكة إعدادات الطابعة الحرارية — Thermal Settings Grid === */
+.settings-thermal-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 12px;
+}
+
+
+/* === حقول إدخال الطابعة — Thermal Input Fields === */
+.settings-thermal-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    direction: ltr;
+    text-align: left;
+}
+
+
+/* === حقل إدخال إيصال — Receipt Footer Input === */
+.settings-receipt-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+
+/* === تنبيه صلاحية مع خيارات — Expiry Alert with Options === */
+.settings-expiry-options {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
+
+/* === ملخص الإشعارات — Notification Types Header === */
+.settings-notif-types-header {
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+}
+
+
+/* === تنبيه الطابعة الرئيسي — Thermal Main Toggle === */
+.settings-thermal-main-toggle {
+    margin-bottom: 16px;
+}
+
+.settings-thermal-main-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.settings-thermal-main-subtitle {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+
+/* === عنوان فرعي لخيارات الطابعة — Thermal Option Title === */
+.settings-thermal-opt-title {
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.settings-thermal-opt-subtitle {
+    font-size: 0.72rem;
+    color: #64748b;
+}
+
+
+/* === حقل مخصص في الطابعة — Thermal Custom Label === */
+.settings-thermal-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+}
+
+.settings-thermal-label--sm {
+    margin-bottom: 4px;
+    font-size: 0.82rem;
+}
+
+
+/* === صندوق حالة آخر نسخة — Last Backup Status === */
+.settings-backup-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+}
+
+.settings-backup-status--success {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+}
+
+.settings-backup-status--warning {
+    background: #fef3c7;
+    border: 1px solid #fde68a;
+}
+
+.settings-backup-status-title {
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: #1e40af;
+}
+
+.settings-backup-status-time {
+    font-size: 0.8rem;
+    color: #3b82f6;
+}
+
+.settings-backup-status-hint {
+    font-size: 0.82rem;
+    color: #92400e;
+}
+
+.settings-backup-status-icon {
+    font-size: 1.2rem;
+}
+
+
+/* === شبكة حقول النسخ الاحتياطي — Backup Fields Grid === */
+.settings-backup-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+
+/* === وصف Cron — Cron Description === */
+.settings-cron-desc {
+    font-size: 0.8rem;
+    color: #475569;
+    margin-bottom: 8px;
+    line-height: 1.7;
+}
+
+
+/* === حقل إدخال مخصص — Custom Input Field === */
+.settings-input-limited {
+    max-width: 200px;
+}
+
+.settings-input-small-limited {
+    max-width: 160px;
+}
+
+
+/* === عنوان إحصائيات السجلات — Records Stats Header === */
+.settings-records-header {
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+    color: #64748b;
+}
+
+
+/* === استجابة — Responsive === */
+@media (max-width: 768px) {
+    .settings-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .settings-form-grid,
+    .settings-form-grid--sm,
+    .settings-form-grid--spacious {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-form-grid--lg {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-thermal-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-sysinfo-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .settings-records-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .settings-notif-type-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .settings-extra-options-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-save-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+@media (max-width: 480px) {
+    .settings-stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+    }
+
+    .settings-sysinfo-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-records-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-notif-type-grid {
+        grid-template-columns: 1fr;
+    }
+}

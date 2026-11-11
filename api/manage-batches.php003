@@ -1,0 +1,218 @@
+<?php
+/**
+ * API لإدارة الدفعات (مسح، تفريغ، تعديل الكمية)
+ * v5.13.0: ميزة جديدة — إدارة الدفعات في نظام FEFO
+ */
+
+require_once __DIR__ . '/../includes/bootstrap.php';
+requireLogin();
+
+$action = trim($_POST['action'] ?? $_GET['action'] ?? '');
+
+if (empty($action)) {
+    ApiResponse::custom(['success' => false, 'message' => 'الإجراء مطلوب']);
+}
+
+// التحقق من CSRF
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $csrf = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+    if (!AppCsrf::verify($csrf)) {
+        ApiResponse::custom(['success' => false, 'message' => 'رمز الأمان غير صالح']);
+    }
+}
+
+try {
+    $pdo = AppDatabase::getInstance()->getConnection();
+
+    switch ($action) {
+        case 'delete_batch':
+            // حذف دفعة واحدة
+            if (!hasPermission('products.edit')) {
+                jsonResponse(false, 'ليس لديك صلاحية تعديل المنتجات');
+            }
+            $batch_id = intval($_POST['batch_id'] ?? 0);
+            if ($batch_id <= 0) {
+                jsonResponse(false, 'معرف الدفعة مطلوب');
+            }
+
+            $batch = AppDatabase::getInstance()->fetchOne("SELECT * FROM purchase_batches WHERE id = ?", [$batch_id]);
+            if (!$batch) {
+                jsonResponse(false, 'الدفعة غير موجودة');
+            }
+
+            $pdo->beginTransaction();
+
+            // تحديث كمية المنتج (خصم الكمية المتبقية)
+            $remainingQty = floatval($batch['remaining_quantity'] ?? 0);
+            if ($remainingQty > 0) {
+                $pdo->prepare("UPDATE products SET quantity = GREATEST(0, quantity - ?) WHERE id = ?")
+                    ->execute([$remainingQty, intval($batch['product_id'])]);
+            }
+
+            // حذف سجلات sale_batch_items المرتبطة
+            try {
+                $pdo->prepare("DELETE FROM sale_batch_items WHERE batch_id = ?")->execute([$batch_id]);
+            } catch (\Throwable $e) {}
+
+            // حذف الدفعة
+            $pdo->prepare("DELETE FROM purchase_batches WHERE id = ?")->execute([$batch_id]);
+
+            // تحديث سعر شراء المنتج
+            syncProductPurchasePrice($pdo, intval($batch['product_id']));
+
+            $pdo->commit();
+
+            addAuditLog('batch_delete', "حذف دفعة #{$batch_id} للمنتج");
+            jsonResponse(true, 'تم حذف الدفعة بنجاح وتحديث المخزون');
+            break;
+
+        case 'clear_batches':
+            // تفريغ كل دفعات منتج معين
+            if (!hasPermission('products.edit')) {
+                jsonResponse(false, 'ليس لديك صلاحية تعديل المنتجات');
+            }
+            $product_id = intval($_POST['product_id'] ?? 0);
+            if ($product_id <= 0) {
+                jsonResponse(false, 'معرف المنتج مطلوب');
+            }
+
+            $product = AppDatabase::getInstance()->fetchOne("SELECT id FROM products WHERE id = ?", [$product_id]);
+            if (!$product) {
+                jsonResponse(false, 'المنتج غير موجود');
+            }
+
+            $pdo->beginTransaction();
+
+            // حساب إجمالي الكمية المتبقية في الدفعات
+            $totalRemaining = AppDatabase::getInstance()->fetchOne(
+                "SELECT COALESCE(SUM(remaining_quantity), 0) as total FROM purchase_batches WHERE product_id = ?",
+                [$product_id]
+            );
+            $totalQty = floatval($totalRemaining['total'] ?? 0);
+
+            // حذف سجلات sale_batch_items المرتبطة
+            try {
+                $batchIds = AppDatabase::getInstance()->fetchAll("SELECT id FROM purchase_batches WHERE product_id = ?", [$product_id]);
+                foreach ($batchIds as $bid) {
+                    try {
+                        $pdo->prepare("DELETE FROM sale_batch_items WHERE batch_id = ?")->execute([intval($bid['id'])]);
+                    } catch (\Throwable $e) {}
+                }
+            } catch (\Throwable $e) {}
+
+            // حذف كل الدفعات
+            $pdo->prepare("DELETE FROM purchase_batches WHERE product_id = ?")->execute([$product_id]);
+
+            // v5.13.1: تحديث كمية المنتج (خصم إجمالي الكميات المتبقية من الدفعات)
+            if ($totalQty > 0) {
+                $pdo->prepare("UPDATE products SET quantity = GREATEST(0, quantity - ?) WHERE id = ?")
+                    ->execute([$totalQty, $product_id]);
+            }
+
+            // تحديث سعر الشراء
+            syncProductPurchasePrice($pdo, $product_id);
+
+            $pdo->commit();
+
+            addAuditLog('batch_clear', "تفريغ كل دفعات المنتج #{$product_id}");
+            jsonResponse(true, 'تم تفريغ كل الدفعات بنجاح');
+            break;
+
+        case 'update_batch_quantity':
+            // تعديل كمية دفعة
+            if (!hasPermission('products.edit')) {
+                jsonResponse(false, 'ليس لديك صلاحية تعديل المنتجات');
+            }
+            $batch_id = intval($_POST['batch_id'] ?? 0);
+            $new_quantity = floatval($_POST['remaining_quantity'] ?? -1);
+            if ($batch_id <= 0) {
+                jsonResponse(false, 'معرف الدفعة مطلوب');
+            }
+            if ($new_quantity < 0) {
+                jsonResponse(false, 'الكمية يجب أن تكون أكبر من أو تساوي صفر');
+            }
+
+            $batch = AppDatabase::getInstance()->fetchOne("SELECT * FROM purchase_batches WHERE id = ?", [$batch_id]);
+            if (!$batch) {
+                jsonResponse(false, 'الدفعة غير موجودة');
+            }
+
+            $pdo->beginTransaction();
+
+            $oldRemaining = floatval($batch['remaining_quantity'] ?? 0);
+            $diff = $new_quantity - $oldRemaining;
+
+            // تحديث كمية الدفعة
+            $pdo->prepare("UPDATE purchase_batches SET remaining_quantity = ? WHERE id = ?")
+                ->execute([$new_quantity, $batch_id]);
+
+            // مزامنة كمية المنتج
+            $pdo->prepare("UPDATE products SET quantity = GREATEST(0, quantity + ?) WHERE id = ?")
+                ->execute([$diff, intval($batch['product_id'])]);
+
+            // تحديث سعر الشراء
+            syncProductPurchasePrice($pdo, intval($batch['product_id']));
+
+            $pdo->commit();
+
+            addAuditLog('batch_edit', "تعديل كمية الدفعة #{$batch_id}: {$oldRemaining} → {$new_quantity}");
+            jsonResponse(true, 'تم تعديل كمية الدفعة بنجاح وتحديث المخزون');
+            break;
+
+        case 'sync_product_quantity':
+            // مزامنة كمية المنتج مع مجموع الدفعات
+            if (!hasPermission('products.edit')) {
+                jsonResponse(false, 'ليس لديك صلاحية تعديل المنتجات');
+            }
+            $product_id = intval($_POST['product_id'] ?? 0);
+            if ($product_id <= 0) {
+                jsonResponse(false, 'معرف المنتج مطلوب');
+            }
+
+            $pdo->beginTransaction();
+
+            $batchTotal = AppDatabase::getInstance()->fetchOne(
+                "SELECT COALESCE(SUM(remaining_quantity), 0) as total FROM purchase_batches WHERE product_id = ?",
+                [$product_id]
+            );
+            $totalFromBatches = floatval($batchTotal['total'] ?? 0);
+
+            $pdo->prepare("UPDATE products SET quantity = ? WHERE id = ?")
+                ->execute([$totalFromBatches, $product_id]);
+
+            syncProductPurchasePrice($pdo, $product_id);
+
+            $pdo->commit();
+
+            jsonResponse(true, "تمت مزامنة كمية المنتج: {$totalFromBatches}");
+            break;
+
+        default:
+            jsonResponse(false, 'إجراء غير معروف');
+    }
+} catch (\Throwable $e) {
+    if (isset($pdo) && $pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+    ApiResponse::custom(['success' => false, 'message' => 'حدث خطأ أثناء المعالجة']);
+}
+
+function jsonResponse(bool $success, string $message): void
+{
+    ApiResponse::custom(['success' => $success, 'message' => $message]);
+}
+
+function syncProductPurchasePrice($pdo, int $product_id): void
+{
+    try {
+        $newPrice = AppDatabase::getInstance()->fetchOne(
+            "SELECT SUM(remaining_quantity * purchase_price) / NULLIF(SUM(remaining_quantity), 0) as wp
+             FROM purchase_batches WHERE product_id = ? AND remaining_quantity > 0",
+            [$product_id]
+        );
+        if ($newPrice && floatval($newPrice['wp'] ?? 0) > 0) {
+            $pdo->prepare("UPDATE products SET purchase_price = ? WHERE id = ?")
+                ->execute([floatval($newPrice['wp']), $product_id]);
+        }
+    } catch (\Throwable $e) {}
+}

@@ -1,0 +1,8 @@
+{
+    "name": "is-app/inventory",
+    "description": "نظام إدارة المخزون",
+    "type": "project",
+    "require": {
+        "php": ">=8.1"
+    }
+}

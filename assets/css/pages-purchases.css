@@ -1,0 +1,738 @@
+/* ===================================
+   صفحة المشتريات - أنماط مخصصة
+   Purchases Page — Custom Styles
+   =================================== */
+
+/* === تنسيق صفوف المنتجات === */
+.product-row {
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 12px;
+    background: #ffffff;
+    position: relative;
+    transition: border-color 0.2s;
+}
+.product-row:hover {
+    border-color: #93c5fd;
+}
+.product-row.has-product {
+    border-color: #059669;
+    background: #f0fdf4;
+}
+.product-row-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+.product-row-number {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #6b7280;
+    background: #f3f4f6;
+    padding: 4px 12px;
+    border-radius: 6px;
+}
+.product-row-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #ef4444;
+    padding: 4px 8px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+.product-row-remove:hover {
+    background: #fee2e2;
+}
+.product-row-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.product-row-grid .form-group {
+    margin-bottom: 0;
+}
+.product-row-grid .product-search-wrapper {
+    grid-column: 1 / -1;
+}
+.product-row-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+}
+.product-row-fields .form-group {
+    margin-bottom: 0;
+}
+.product-row-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #e5e7eb;
+}
+.product-row-summary .form-group {
+    margin-bottom: 0;
+}
+.product-row-summary label {
+    font-size: 0.78rem;
+}
+
+/* === تحسينات الهاتف === */
+@media (max-width: 768px) {
+    .product-row-grid,
+    .product-row-fields,
+    .product-row-summary {
+        grid-template-columns: 1fr;
+    }
+    .product-row {
+        padding: 12px;
+    }
+}
+@media (max-width: 480px) {
+    .alert {
+        padding: 10px 12px !important;
+        font-size: 0.82rem !important;
+    }
+    .alert svg {
+        display: none !important;
+    }
+    table table {
+        font-size: 0.75rem !important;
+    }
+    table table th,
+    table table td {
+        padding: 3px 5px !important;
+        font-size: 0.72rem !important;
+    }
+}
+
+/* === أزرار الباركود والإضافة اليدوية === */
+.purchase-barcode-btn {
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+    flex: 1;
+    min-width: 200px;
+}
+.purchase-barcode-btn:hover {
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+    transform: translateY(-1px);
+}
+.purchase-add-manual-btn {
+    background: #eff6ff;
+    color: #2563eb;
+    border: 2px dashed #93c5fd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    flex: 1;
+    min-width: 200px;
+}
+.purchase-add-manual-btn:hover {
+    background: #dbeafe;
+    border-color: #60a5fa;
+}
+
+/* === حاوية أزرار المسح والإضافة === */
+.purchase-buttons-row {
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* === زر إضافة صف منتج (أصغر) === */
+.purchase-add-row-btn {
+    background: #f8fafc;
+    color: #64748b;
+    border: 1.5px dashed #cbd5e1;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px;
+    font-size: 0.85rem;
+}
+.purchase-add-row-btn:hover {
+    background: #f1f5f9;
+    color: #475569;
+    border-color: #94a3b8;
+}
+
+/* === ملخص المشتريات === */
+.purchase-summary-box {
+    display: none;
+    border: 2px solid #2563eb;
+    border-radius: 10px;
+    padding: 16px;
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    margin-bottom: 1rem;
+}
+.purchase-summary-box.visible {
+    display: block;
+}
+.purchase-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+.purchase-summary-item {
+    text-align: center;
+}
+.purchase-summary-label {
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin-bottom: 4px;
+}
+.purchase-summary-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #374151;
+}
+.purchase-summary-value--total {
+    color: #1d4ed8;
+}
+.purchase-summary-value--profit {
+    color: #059669;
+}
+
+/* === زر التسجيل === */
+.purchase-submit-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* === أزرار الإجراءات (تعديل/حذف) === */
+.purchase-action-btn--edit {
+    background: #dbeafe;
+    color: #1d4ed8;
+    border: 1px solid #93c5fd;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s;
+}
+.purchase-action-btn--edit:hover {
+    background: #bfdbfe;
+}
+.purchase-action-btn--delete {
+    background: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #fca5a5;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s;
+}
+.purchase-action-btn--delete:hover {
+    background: #fecaca;
+}
+
+/* === خلايا الإجراءات === */
+.purchase-actions-cell {
+    white-space: nowrap;
+}
+
+/* === حقل الإدخال للإجمالي (للقراءة فقط) === */
+.purchase-line-total-input {
+    background: #f8fafc;
+    font-weight: 700;
+}
+
+/* === مجموعة حقول بمحاذاة سفلية === */
+.purchase-align-end {
+    display: flex;
+    align-items: flex-end;
+}
+
+/* === أيقونة SVG بمحاذاة وسطية === */
+.icon-inline {
+    vertical-align: middle;
+    margin-left: 4px;
+}
+.icon-inline-sm {
+    vertical-align: middle;
+    margin-left: 3px;
+}
+
+/* === عنوان القسم مع حد سفلي === */
+.purchase-section-header {
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--gray-200);
+}
+
+/* === زر إضافة منتج === */
+.purchase-add-product-btn {
+    background: var(--primary-light, #eff6ff);
+    color: var(--primary, #2563eb);
+    border: 1px solid var(--primary-border, #93c5fd);
+    padding: 8px 18px;
+    gap: 6px;
+}
+
+/* === شريط ملخص المشتريات === */
+.purchase-summary-bar {
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    border: 2px solid var(--gray-200);
+}
+.purchase-summary-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+.purchase-summary-label {
+    margin-bottom: 2px;
+}
+.purchase-summary-count {
+    color: var(--primary, #2563eb);
+}
+.purchase-summary-gross {
+    color: #0f172a;
+}
+.purchase-summary-tax {
+    color: #4f46e5;
+}
+.purchase-summary-grand {
+    color: #7c3aed;
+}
+
+/* === قسم الضرائب === */
+.purchase-tax-section {
+    padding-top: 1rem;
+    border-top: 2px dashed #c7d2fe;
+}
+.purchase-tax-toggle {
+    padding: 6px 14px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    background: #fff;
+    transition: all 0.15s;
+}
+.purchase-tax-toggle.active {
+    border-color: #6366f1;
+    background: #eef2ff;
+}
+.purchase-tax-checkbox {
+    width: 18px;
+    height: 18px;
+    accent-color: #6366f1;
+}
+.purchase-tax-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+.purchase-tax-calculated {
+    padding: 0.6rem 1rem;
+    background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+    border: 1.5px solid #c7d2fe;
+}
+.purchase-tax-label-color {
+    color: #4338ca;
+}
+.purchase-tax-amount-color {
+    color: #4f46e5;
+}
+.purchase-tax-currency-color {
+    color: #6366f1;
+}
+
+/* === قسم التخفيضات === */
+.purchase-remise-section {
+    padding-top: 1rem;
+    border-top: 2px dashed #e5e7eb;
+}
+.purchase-remise-material-btn {
+    border: 1px solid #86efac;
+    padding: 6px 14px;
+}
+.purchase-remise-financial-btn {
+    border: 1px solid #fcd34d;
+    padding: 6px 14px;
+}
+.purchase-remise-summary-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+.purchase-remise-material-card {
+    border: 1px solid #86efac;
+    padding: 0.6rem 0.75rem;
+}
+.purchase-remise-financial-card {
+    border: 1px solid #fcd34d;
+    padding: 0.6rem 0.75rem;
+}
+
+/* === خلية الضريبة في الجدول === */
+.purchase-tax-cell {
+    background: #eef2ff;
+    padding: 2px 6px;
+}
+.purchase-tax-name-color {
+    color: #6366f1;
+}
+.purchase-tax-value-color {
+    color: #4f46e5;
+}
+
+/* === خلية التخفيضات في الجدول === */
+.purchase-material-remise-cell {
+    padding: 2px 6px;
+    margin-bottom: 2px;
+}
+.purchase-financial-remise-cell {
+    padding: 2px 6px;
+}
+
+/* === صف المنتج الديناميكي (JS) === */
+.purchase-row-badge {
+    background: var(--primary, #2563eb);
+    width: 28px;
+    height: 28px;
+}
+.purchase-prod-remise-btn {
+    border: 1px solid #fcd34d;
+    padding: 3px 10px;
+}
+.purchase-remove-btn {
+    background: none;
+    padding: 4px 8px;
+    transition: background 0.2s;
+}
+.purchase-fields-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+.purchase-line-total-area {
+    padding: 0.4rem 0;
+}
+.purchase-line-total-value {
+    color: #0f172a;
+    margin-right: 6px;
+}
+
+/* === قسم تواريخ الانتهاء لكل منتج === */
+.purchase-expiry-section {
+    padding-top: 0.75rem;
+    border-top: 2px dashed #93c5fd;
+}
+.purchase-add-expiry-btn {
+    border: 1px solid #93c5fd;
+    padding: 5px 12px;
+}
+.purchase-expiry-alert {
+    padding: 6px 10px;
+}
+.purchase-expiry-total-card {
+    border: 1px solid #93c5fd;
+    padding: 5px 10px;
+}
+.purchase-expiry-required-card {
+    padding: 5px 10px;
+}
+.purchase-expiry-diff-card {
+    padding: 5px 10px;
+}
+
+/* === قسم تخفيضات المنتج === */
+.purchase-prod-remise-section {
+    padding-top: 0.75rem;
+    border-top: 2px dashed #fcd34d;
+}
+.purchase-prod-remise-material-btn {
+    border: 1px solid #86efac;
+    padding: 4px 10px;
+}
+.purchase-prod-remise-financial-btn {
+    border: 1px solid #fcd34d;
+    padding: 4px 10px;
+}
+
+/* === صفوف المنتج المنشأة ديناميكياً === */
+.product-row-dynamic {
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    animation: fadeSlideDown 0.3s ease;
+    position: relative;
+}
+
+/* === القوائم المنسدلة للبحث === */
+.search-dropdown-positioned {
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 40;
+}
+.remise-dropdown-positioned {
+    top: 100%;
+    left: 0;
+    right: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    max-height: 220px;
+    margin-top: 2px;
+    z-index: 50;
+}
+.prm-dropdown-positioned {
+    top: 100%;
+    left: 0;
+    right: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    max-height: 200px;
+    margin-top: 2px;
+    z-index: 55;
+}
+
+/* === عناصر نتائج البحث === */
+.search-product-item-default {
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background 0.15s;
+    font-size: 0.85rem;
+}
+.search-result-code {
+    font-family: monospace;
+    padding: 1px 6px;
+}
+.search-result-code-margin {
+    font-family: monospace;
+    padding: 1px 6px;
+    margin-left: 6px;
+}
+.search-result-name {
+    color: #0f172a;
+}
+.search-result-price-info {
+    font-size: 0.72rem;
+}
+.search-message {
+    padding: 10px;
+}
+.search-spinner-inline {
+    margin: 0 auto 4px;
+    width: 14px;
+    height: 14px;
+    border-width: 2px;
+}
+
+/* === صف تاريخ الانتهاء === */
+.expiry-row-styled {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    padding: 8px 12px;
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border: 1px solid #93c5fd;
+    border-radius: 8px;
+    margin-bottom: 6px;
+}
+.expiry-field-date {
+    flex: 1;
+    min-width: 150px;
+}
+.expiry-field-qty {
+    min-width: 120px;
+}
+.expiry-input-styled {
+    border-color: #93c5fd;
+    padding: 6px 8px;
+}
+
+/* === صف التخفيض (مادي/مالي) === */
+.remise-row-material {
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    border-radius: 10px;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    position: relative;
+}
+.remise-row-financial {
+    background: #fef3c7;
+    border: 1px solid #fcd34d;
+    border-radius: 10px;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    position: relative;
+}
+
+/* === صف تخفيض المنتج (أصغر) === */
+.prod-remise-row-material {
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    border-radius: 8px;
+    padding: 0.6rem;
+    margin-bottom: 0.4rem;
+    position: relative;
+    animation: fadeSlideDown 0.3s ease;
+}
+.prod-remise-row-financial {
+    background: #fef3c7;
+    border: 1px solid #fcd34d;
+    border-radius: 8px;
+    padding: 0.6rem;
+    margin-bottom: 0.4rem;
+    position: relative;
+    animation: fadeSlideDown 0.3s ease;
+}
+
+/* === أزرار الحذف الصغيرة === */
+.row-delete-btn {
+    background: none;
+    padding: 2px 6px;
+}
+
+/* === حقول إدخال متنوعة === */
+.remise-search-input-padding {
+    padding: 8px 32px 8px 40px;
+}
+.prm-search-input-padding {
+    padding: 6px 30px 6px 36px;
+}
+.input-padding-sm {
+    padding: 6px;
+}
+.input-border-warning {
+    border-color: #f59e0b;
+}
+
+/* === أيقونة البحث === */
+.search-icon-position {
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    pointer-events: none;
+}
+.search-clear-position {
+    left: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    color: #9ca3af;
+    padding: 2px;
+}
+
+/* === بطاقات المنتج المحدد === */
+.remise-selected-card {
+    border: 1px solid #86efac;
+    padding: 6px 10px;
+    gap: 6px;
+}
+.prm-selected-card {
+    border: 1px solid #86efac;
+    padding: 5px 8px;
+    margin-top: 3px;
+    gap: 5px;
+}
+.prm-code-badge {
+    font-family: monospace;
+    padding: 1px 5px;
+}
+
+/* === شبكات التخفيض === */
+.remise-material-grid {
+    grid-template-columns: 1fr;
+}
+.remise-material-field {
+    min-width: 0;
+}
+.prod-remise-material-grid {
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+}
+.prod-remise-financial-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
+}
+
+/* === مساعدات متنوعة === */
+.label-mb-3px {
+    margin-bottom: 3px;
+}
+.label-mb-2px {
+    margin-bottom: 2px;
+}
+.label-xs {
+    font-size: 0.72rem;
+}
+.text-2xs {
+    font-size: 0.72rem;
+}
+.text-line-through {
+    text-decoration: line-through;
+    margin-left: 6px;
+}
+.row-header-mb {
+    margin-bottom: 0.4rem;
+}
+.stock-margin-top {
+    margin-top: 1px;
+}
+
+/* === زر إضافة صف منتج (أصغر) === */
+.Purchases-add-row-btn {
+    background: #f8fafc;
+    color: #64748b;
+    border: 1.5px dashed #cbd5e1;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px;
+    font-size: 0.85rem;
+}
+.Purchases-add-row-btn:hover {
+    background: #f1f5f9;
+    color: #475569;
+    border-color: #94a3b8;
+}
+
+/* ===================================
+   صفحة تعديل عملية الشراء — أنماط إضافية
+   Edit Purchase Page — Additional Styles
+   =================================== */
+
+.bg-blue-gradient-header { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); }
+.bg-amber-gradient-header { background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%); }
+.border-success-light { border: 1px solid #86efac; }
+.stat-box-compact { padding: 0.6rem 1rem; border-radius: 8px; text-align: center; }
+.remise-item-spacing { padding: 4px 0; }

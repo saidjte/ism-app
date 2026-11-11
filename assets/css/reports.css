@@ -1,0 +1,647 @@
+/* ============================================
+   التقارير - أنماط عامة
+   ============================================ */
+
+/* فلاتر التقارير */
+.report-filters {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+    margin-bottom: 1.5rem;
+}
+
+.report-filters .filter-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.report-filters .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 140px;
+}
+
+.report-filters .filter-group label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--gray-600);
+}
+
+.report-filters .filter-actions {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+}
+
+/* بطاقات ملخص التقارير */
+.report-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 1.5rem;
+}
+
+.summary-card {
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.summary-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.summary-card .summary-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.summary-card .summary-info h4 {
+    font-size: 0.75rem;
+    color: var(--gray-500);
+    font-weight: 600;
+    margin: 0 0 4px;
+}
+
+.summary-card .summary-value {
+    font-size: 1.25rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.summary-card .summary-sub {
+    font-size: 0.7rem;
+    color: var(--gray-400);
+    margin-top: 2px;
+}
+
+/* مقارنة فترات */
+.period-comparison {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0;
+    align-items: stretch;
+    margin-bottom: 1.5rem;
+}
+
+.period-panel {
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+}
+
+.period-panel.current {
+    border-color: #3b82f6;
+    border-width: 2px;
+}
+
+.period-panel.previous {
+    border-color: var(--gray-300);
+}
+
+.period-panel-header {
+    text-align: center;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+    border-bottom: 2px solid var(--gray-100);
+}
+
+.period-panel.current .period-panel-header {
+    border-bottom-color: #dbeafe;
+}
+
+.period-panel-header h3 {
+    font-size: 0.85rem;
+    margin: 0 0 4px;
+}
+
+.period-panel-header .period-dates {
+    font-size: 0.72rem;
+    color: var(--gray-400);
+}
+
+.period-vs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--gray-300);
+}
+
+.period-metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--gray-100);
+}
+
+.period-metric:last-child {
+    border-bottom: none;
+}
+
+.period-metric-label {
+    font-size: 0.82rem;
+    color: var(--gray-600);
+}
+
+.period-metric-value {
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+/* تغيير النسبة */
+.change-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.change-badge.up {
+    background: #d1fae5;
+    color: #059669;
+}
+
+.change-badge.down {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.change-badge.neutral {
+    background: var(--gray-100);
+    color: var(--gray-500);
+}
+
+/* حاويات الرسوم البيانية */
+.chart-container {
+    position: relative;
+    width: 100%;
+    padding: 8px 0;
+}
+
+.chart-container canvas {
+    max-width: 100%;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.chart-card {
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.chart-card-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--gray-100);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.chart-card-header h3 {
+    font-size: 0.9rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chart-card-body {
+    padding: 16px 20px;
+}
+
+.chart-card-body.pie-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-height: 340px;
+}
+
+/* جدول المقارنة الجانبي */
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.comparison-table th {
+    background: var(--gray-50);
+    padding: 10px 14px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-align: right;
+    border-bottom: 2px solid var(--gray-200);
+}
+
+.comparison-table td {
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    border-bottom: 1px solid var(--gray-100);
+}
+
+.comparison-table tr:hover td {
+    background: var(--gray-50);
+}
+
+.comparison-table .metric-name {
+    font-weight: 600;
+    color: var(--gray-700);
+}
+
+.comparison-table .current-val {
+    text-align: center;
+    font-weight: 700;
+    color: #2563eb;
+}
+
+.comparison-table .previous-val {
+    text-align: center;
+    font-weight: 700;
+    color: var(--gray-600);
+}
+
+.comparison-table .change-val {
+    text-align: center;
+    font-weight: 800;
+}
+
+/* جدول تصنيفات المبيعات */
+.category-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.category-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    transition: all 0.15s;
+}
+
+.category-item:hover {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-sm);
+}
+
+.category-color-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.category-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.category-item-name {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--gray-700);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.category-item-stats {
+    font-size: 0.72rem;
+    color: var(--gray-400);
+    margin-top: 2px;
+}
+
+.category-item-value {
+    font-size: 0.9rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* روابط سريعة */
+.quick-periods {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.quick-periods .qp-btn {
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    color: var(--gray-600);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+}
+
+.quick-periods .qp-btn:hover,
+.quick-periods .qp-btn.active {
+    background: #eff6ff;
+    border-color: #3b82f6;
+    color: #2563eb;
+}
+
+/* رتب المنتجات */
+.top-products-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.top-products-list li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--gray-100);
+}
+
+.top-products-list li:last-child {
+    border-bottom: none;
+}
+
+.top-rank {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+.top-rank.gold {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.top-rank.silver {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.top-rank.bronze {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.top-rank.default {
+    background: var(--gray-100);
+    color: var(--gray-500);
+}
+
+.top-product-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.top-product-name {
+    font-size: 0.82rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.top-product-bar {
+    height: 4px;
+    background: var(--gray-100);
+    border-radius: 2px;
+    margin-top: 6px;
+    overflow: hidden;
+}
+
+.top-product-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.5s ease;
+}
+
+.top-product-value {
+    font-size: 0.85rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* تحسينات الهاتف */
+@media (max-width: 768px) {
+    .period-comparison {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .period-vs {
+        padding: 8px 0;
+        font-size: 0.9rem;
+    }
+
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .report-filters .filter-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .report-filters .filter-group {
+        min-width: auto;
+    }
+
+    .report-summary {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .comparison-table {
+        font-size: 0.75rem;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+        padding: 8px 6px;
+    }
+
+    /* تحسين بطاقات الملخص على الهاتف */
+    .summary-card {
+        padding: 14px;
+        gap: 10px;
+    }
+    .summary-card .summary-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+    }
+    .summary-card .summary-value {
+        font-size: 1.1rem;
+    }
+
+    /* تحسين الرسوم البيانية */
+    .chart-card-header {
+        padding: 10px 14px;
+    }
+    .chart-card-body {
+        padding: 12px 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .report-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .category-breakdown {
+        grid-template-columns: 1fr;
+    }
+
+    .summary-card {
+        padding: 12px;
+    }
+    .summary-card .summary-value {
+        font-size: 1rem;
+    }
+}
+
+/* ============================================
+   v4.29.0 — الأنماط المستخرجة من inline styles
+   ============================================ */
+
+/* أيقونات ملخص التقارير — متغيرات الألوان */
+.summary-icon.icon-blue { background: #eff6ff; color: #2563eb; }
+.summary-icon.icon-red { background: #fef2f2; color: #dc2626; }
+.summary-icon.icon-green { background: #d1fae5; color: #059669; }
+.summary-icon.icon-green-alt { background: #f0fdf4; color: #16a34a; }
+.summary-icon.icon-amber { background: #fef3c7; color: #d97706; }
+.summary-icon.icon-pink { background: #fce7f3; color: #be185d; }
+
+/* قيم ملخص التقارير — متغيرات الألوان */
+.summary-value.val-blue { color: #2563eb; }
+.summary-value.val-red { color: #dc2626; }
+.summary-value.val-green { color: #059669; }
+.summary-value.val-green-alt { color: #16a34a; }
+.summary-value.val-amber { color: #d97706; }
+.summary-value.val-pink { color: #be185d; }
+.summary-value.val-net-profit { font-size: 1.4rem; font-weight: 800; }
+
+/* أزرار التصدير */
+.btn-export { display: inline-flex; align-items: center; gap: 6px; }
+.export-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* تخطيط الرسوم البيانية */
+.chart-card-span-2 { grid-column: span 2; }
+.chart-h-280 { height: 280px; }
+.chart-h-300 { height: 300px; }
+.chart-h-320 { height: 320px; }
+.pie-canvas-wrapper { width: 100%; max-width: 320px; }
+.pie-canvas-wrapper-lg { max-width: 350px; }
+.empty-state-sm { text-align: center; padding: 1rem; }
+
+/* شبكة العمودين */
+.dual-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+.dual-grid-top { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
+
+/* ألوان خلايا الجداول الدلالية */
+.cell-sales { font-weight: 700; color: #2563eb; }
+.cell-cost { color: #dc2626; }
+.cell-profit { color: #059669; }
+.cell-expense { color: #d97706; }
+.cell-tax { color: #be185d; }
+.cell-semibold { font-weight: 600; }
+.cell-muted-sm { font-size: 0.8rem; color: var(--gray-500); }
+.table-footer-row { background: var(--gray-50); font-weight: 800; }
+
+/* شارة التصنيف (الجزء الثابت — أبقِ background ديناميكي inline) */
+.category-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.78rem; font-weight: 600; color: #fff; }
+
+/* مؤشرات الأداء KPI */
+.kpi-grid { display: grid; gap: 12px; }
+.kpi-row { display: flex; justify-content: space-between; padding: 8px 12px; background: #f8fafc; border-radius: 8px; }
+.kpi-label { color: var(--gray-600); }
+.kpi-value { font-weight: 700; }
+
+/* عناصر حساب الربح */
+.profit-item { padding: 10px 14px; border-radius: 8px; }
+.profit-highlight { padding: 12px 14px; }
+
+/* مقارنة الفترات */
+.comparison-filter-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; margin-top: 12px; align-items: end; }
+.period-current-panel { border: 2px solid #3b82f6; border-radius: var(--radius-lg); padding: 16px; }
+.period-previous-panel { border: 2px solid var(--gray-300); border-radius: var(--radius-lg); padding: 16px; }
+.period-label-current { margin: 0 0 12px; color: #2563eb; font-size: 0.85rem; }
+.period-label-previous { margin: 0 0 12px; color: var(--gray-500); font-size: 0.85rem; }
+.vs-divider { font-size: 1.5rem; font-weight: 900; color: var(--gray-300); padding-bottom: 20px; }
+.auto-period-label { padding: 12px; background: var(--gray-50); border-radius: 8px; text-align: center; color: var(--gray-500); font-size: 0.85rem; }
+.chart-legend-inline { display: flex; gap: 16px; font-size: 0.78rem; }
+.chart-legend-item { display: flex; align-items: center; gap: 4px; }
+
+/* متنوع */
+.btn-compare { padding: 10px 40px; font-size: 1rem; }
+.empty-state { text-align: center; padding: 2rem; }
+.text-muted-xs { font-size: 0.68rem; color: var(--gray-400); }
+.text-blue { color: #2563eb; }
+.category-value-accent { color: #d97706; font-weight: 600; }
+.table-scroll-lg { max-height: 400px; overflow-y: auto; }
+.dot-amber { background: #d97706; }
+.legend-line { display: inline-block; width: 12px; height: 4px; border-radius: 2px; }
+.legend-line-blue { background: #2563eb; }
+.legend-line-gray { background: #94a3b8; }
+
+/* أعمدة جدول المقارنة */
+.comparison-table .col-label { width: 30%; }
+.comparison-table .col-period { width: 20%; }
+.comparison-table .col-change { width: 15%; }
+
+/* تحسينات الطباعة */
+@media print {
+    .report-filters,
+    .chart-container,
+    .quick-periods {
+        display: none !important;
+    }
+
+    .report-summary {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .period-comparison {
+        grid-template-columns: 1fr auto 1fr;
+    }
+}

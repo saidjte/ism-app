@@ -1,0 +1,1261 @@
+
+<style>
+/* === حقل الوحدة المخصصة === */
+.custom-unit-section {
+    display: none;
+    animation: fadeSlideDown 0.3s ease;
+}
+.custom-unit-section.active {
+    display: block;
+}
+@keyframes fadeSlideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.custom-unit-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border: 1px solid #fde68a;
+    border-radius: 10px;
+    margin-top: 8px;
+}
+.custom-unit-row .form-group {
+    margin-bottom: 0;
+}
+.custom-unit-row .form-group.cu-name {
+    flex: 1;
+    min-width: 150px;
+}
+.custom-unit-row .form-group.cu-type {
+    min-width: 150px;
+}
+.custom-unit-row .form-group.cu-conversion {
+    min-width: 180px;
+}
+.custom-unit-row .form-group.cu-price {
+    min-width: 140px;
+}
+.custom-unit-row label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #92400e;
+    margin-bottom: 4px;
+    display: block;
+}
+.custom-unit-row .form-control {
+    border-color: #fbbf24;
+    background: white;
+}
+.custom-unit-row .form-control:focus {
+    border-color: #d97706;
+    box-shadow: 0 0 0 3px rgba(217,119,6,0.1);
+}
+.conversion-hint-custom {
+    font-size: 0.75rem;
+    color: #92400e;
+    margin-top: 3px;
+}
+.conversion-hint-custom strong {
+    color: #78350f;
+}
+.custom-unit-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fef3c7;
+    color: #92400e;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid #fde68a;
+    margin-bottom: 4px;
+}
+
+/* === حقل اسم مخصص داخل صف الوحدة الإضافية === */
+.au-custom-name-wrap {
+    display: none;
+    margin-top: 4px;
+    animation: fadeSlideDown 0.3s ease;
+}
+.au-custom-name-wrap.active {
+    display: block;
+}
+.au-custom-name-wrap input {
+    border-color: #fbbf24;
+    background: white;
+}
+/* === منطقة رفع الصور === */
+.image-drop-zone {
+    border: 2px dashed var(--gray-200);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s;
+    background: var(--gray-50);
+}
+.image-drop-zone:hover, .image-drop-zone.drag-over {
+    border-color: var(--primary);
+    background: rgba(37, 99, 235, 0.04);
+}
+.image-drop-zone.drag-over {
+    transform: scale(1.01);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+.product-image-item:hover {
+    border-color: var(--primary) !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+    transform: translateY(-2px);
+}
+.product-image-item {
+    transition: all 0.2s;
+}
+
+</style>
+
+<div class="container">
+    <div class="page-header">
+        <h1>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v16m8-8H4"/></svg>
+            <?php echo t('products_add_new_product'); ?>
+        </h1>
+        <a href="list-products.php" class="btn btn-outline">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            <?php echo t('products_list'); ?>
+        </a>
+    </div>
+
+    <?php if (!empty($errors)): ?>
+        <div class="alert alert-error">
+            <strong><?php echo t('please_correct_errors'); ?></strong>
+            <ul style="margin: 5px 20px 0;">
+                <?php foreach ($errors as $error): ?>
+                    <li><?php echo htmlspecialchars($error); ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($show_success): ?>
+        <div class="alert alert-success">
+            <?php echo t('product_added_success'); ?>: <strong><?php echo htmlspecialchars($created_code); ?></strong>
+            <a href="edit-product.php?id=<?php echo $created_id; ?>" style="font-weight:bold; margin-right:10px;"><?php echo t('products_edit'); ?></a>
+            <a href="add-product.php" style="font-weight:bold; margin-right:10px;"><?php echo t('add_another_product'); ?></a>
+        </div>
+    <?php endif; ?>
+
+    <form method="POST" action="">
+        <div class="card">
+            <div class="card-header">
+                <h2><?php echo t('product_basic_info'); ?></h2>
+            </div>
+            <div class="card-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><?php echo t('products_code'); ?> <span class="required">*</span></label>
+                        <div class="code-mode-toggle">
+                            <button type="button" class="code-mode-btn active" id="codeModeAuto" onclick="setCodeMode('auto')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+                                <?php echo t('products_auto_code'); ?>
+                            </button>
+                            <button type="button" class="code-mode-btn" id="codeModeBarcode" onclick="setCodeMode('barcode')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M3 7V5a2 2 0 012-2h2"/><path d="M17 3h2a2 2 0 012 2v2"/><path d="M21 17v2a2 2 0 01-2 2h-2"/><path d="M7 21H5a2 2 0 01-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
+                                <?php echo t('products_scan_barcode'); ?>
+                            </button>
+                        </div>
+                        <!-- وضع الكود التلقائي -->
+                        <div id="codeAutoSection" class="code-mode-section">
+                            <input type="text" class="form-control" value="<?php echo htmlspecialchars($next_code); ?>" readonly style="background:#f1f5f9; color:#64748b; cursor:not-allowed; font-family:monospace; font-weight:700; font-size:1.05rem; letter-spacing:0.5px;">
+                            <div class="form-text"><?php echo t('products_code_auto_generated'); ?></div>
+                        </div>
+                        <!-- وضع مسح الباركود -->
+                        <div id="codeBarcodeSection" class="code-mode-section" style="display:none;">
+                            <div class="barcode-input-group">
+                                <input type="text" id="barcodeCodeInput" class="form-control" placeholder="<?php echo t('products_enter_barcode'); ?>" style="font-family:monospace; font-weight:600;">
+                                <button type="button" class="btn-scan-barcode" onclick="openBarcodeScanner()" title="<?php echo t('scan_with_camera'); ?>">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                                </button>
+                            </div>
+                            <div class="form-text"><?php echo t('products_scan_barcode_hint'); ?></div>
+                        </div>
+                        <input type="hidden" name="code" id="productCodeInput" value="<?php echo htmlspecialchars($success ? $next_code : ($code ?? $next_code)); ?>">
+                    </div>
+
+                    <div class="form-group">
+                        <label><?php echo t('products_name'); ?> <span class="required">*</span></label>
+                        <input type="text" name="name" class="form-control" placeholder="<?php echo t('products_example_name'); ?>" value="<?php echo htmlspecialchars($name ?? ''); ?>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label><?php echo t('purchase_price_current'); ?> <span class="required">*</span></label>
+                        <input type="number" name="purchase_price" class="form-control" step="0.01" min="0" placeholder="0.00" value="<?php echo $purchase_price ?? 0; ?>" required>
+                        <div class="form-text"><?php echo t('price_which_you_buy'); ?></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><?php echo t('selling_price_current'); ?> <span class="required">*</span></label>
+                        <input type="number" name="selling_price" class="form-control" step="0.01" min="0" placeholder="0.00" value="<?php echo $selling_price ?? 0; ?>" required>
+                        <div class="form-text"><?php echo t('price_which_you_sell'); ?></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><?php echo t('base_unit'); ?> <span class="required">*</span></label>
+                        <select name="unit" id="unitSelect" class="form-control" required>
+                            <option value=""><?php echo t('choose_unit'); ?></option>
+                            <?php foreach ($units as $u):
+                                $is_selected = (isset($unit) && $unit == $u['abbreviation']) ? 'selected' : '';
+                            ?>
+                            <option value="<?php echo htmlspecialchars($u['abbreviation']); ?>" <?php echo $is_selected; ?>>
+                                <?php echo htmlspecialchars($u['name']); ?> (<?php echo htmlspecialchars($u['abbreviation']); ?>)
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label><?php echo t('purchase_base_unit'); ?></label>
+                        <div class="form-text" style="margin-bottom:4px;"><?php echo t('leave_empty_use_sale_unit'); ?></div>
+                        <select name="purchase_unit" id="purchaseUnitSelect" class="form-control" onchange="onPurchaseUnitChange()">
+                            <option value=""><?php echo t('sale_unit'); ?></option>
+                            <?php foreach ($units as $u): ?>
+                            <option value="<?php echo htmlspecialchars($u['abbreviation']); ?>" <?php echo (isset($purchase_unit) && $purchase_unit == $u['abbreviation']) ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($u['name']); ?> (<?php echo htmlspecialchars($u['abbreviation']); ?>)
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="purchaseUnitFactorGroup" style="<?php echo empty($purchase_unit) ? 'display:none;' : ''; ?>">
+                        <label><?php echo t('conversion_factor'); ?> <span class="form-text" id="purchaseUnitFactorHint" style="font-weight:400; font-size:0.78rem;"></span></label>
+                        <input type="number" name="purchase_unit_factor" id="purchaseUnitFactor" class="form-control" step="0.0001" min="0.0001" value="<?php echo floatval($purchase_unit_factor ?? 1); ?>">
+                        <div class="form-text"><?php echo t('one_purchase_unit_equals_x_sale_unit'); ?></div>
+                    </div>
+
+                    <?php if (!empty($categories)): ?>
+                    <div class="form-group">
+                        <label><?php echo t('category'); ?></label>
+                        <select name="category_id" class="form-control">
+                            <option value=""><?php echo t('products_no_category'); ?></option>
+                            <?php foreach ($categories as $cat): ?>
+                            <option value="<?php echo $cat['id']; ?>" <?php echo (isset($category_id) && $category_id == $cat['id']) ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($cat['name']); ?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <?php endif; ?>
+
+                    <div class="form-group">
+                        <label><?php echo t('current_quantity'); ?> <span class="required">*</span></label>
+                        <input type="number" name="quantity" class="form-control" step="0.01" min="0" placeholder="0" value="<?php echo $quantity ?? 0; ?>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label><?php echo t('min_stock_level'); ?></label>
+                        <input type="number" name="min_quantity" class="form-control" step="0.01" min="0" placeholder="0" value="<?php echo $min_quantity ?? 0; ?>">
+                        <div class="form-text"><?php echo t('min_stock_alert_text'); ?></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                            <input type="checkbox" name="has_expiry" id="has_expiry" value="1" onchange="toggleExpirySection()" style="width:18px; height:18px; cursor:pointer;" <?php echo $has_expiry ? 'checked' : ''; ?>>
+                            <span style="font-weight:600;"><?php echo t('requires_expiry_date'); ?></span>
+                        </label>
+                        <div class="form-text"><?php echo t('enable_expiry_tracking'); ?></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- وحدات القياس الإضافية -->
+        <div class="card">
+            <div class="card-header">
+                <h2><?php echo t('additional_units_for_sale'); ?></h2>
+                <button type="button" class="btn btn-sm btn-outline" onclick="addUnitRow()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 4v16m8-8H4"/></svg>
+                    <?php echo t('add_unit'); ?>
+                </button>
+            </div>
+            <div class="card-body">
+                <p class="text-muted" style="margin-bottom: 1rem;"><?php echo t('add_alternative_units_description'); ?></p>
+
+                <!-- وحدة مخصصة (مع معامل تحويل) -->
+                <div class="custom-unit-section <?php echo !empty($custom_unit_name) ? 'active' : ''; ?>" id="customUnitSection">
+                    <div class="custom-unit-badge" style="cursor:pointer;" onclick="toggleCustomUnitSection()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 4v16m8-8H4"/></svg>
+                        <?php echo t('custom_unit_with_conversion'); ?>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" id="customUnitArrow" style="transition:transform 0.2s; <?php echo !empty($custom_unit_name) ? '' : 'transform:rotate(-90deg);'; ?>"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
+                    <div id="customUnitBody" style="<?php echo !empty($custom_unit_name) ? '' : 'display:none;'; ?>">
+                        <div class="custom-unit-row">
+                            <div class="form-group cu-name">
+                                <label><?php echo t('unit_name'); ?> <span class="required">*</span></label>
+                                <input type="text" name="custom_unit_name" id="customUnitName" class="form-control" placeholder="<?php echo t('example_custom_unit'); ?>" value="<?php echo htmlspecialchars($custom_unit_name); ?>">
+                            </div>
+                            <div class="form-group cu-type">
+                                <label><?php echo t('unit_type'); ?></label>
+                                <select name="custom_unit_type" id="customUnitType" class="form-control">
+                                    <?php foreach ($unit_types_for_custom as $ck => $cl): ?>
+                                    <option value="<?php echo $ck; ?>" <?php echo ($custom_unit_type == $ck) ? 'selected' : ''; ?>>
+                                        <?php echo $cl; ?>
+                                    </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="form-group cu-conversion">
+                                <label><?php echo t('conversion_factor'); ?></label>
+                                <input type="number" name="custom_unit_conversion" id="customUnitConversion" class="form-control" step="0.0001" min="0.0001" value="<?php echo $custom_unit_conversion; ?>" placeholder="1">
+                                <div class="conversion-hint-custom" id="customConversionHint">
+                                    <?php echo t('custom_unit_conversion_default'); ?>
+                                </div>
+                            </div>
+                            <div class="form-group cu-price">
+                                <label><?php echo t('selling_price'); ?></label>
+                                <input type="number" name="custom_unit_selling_price" id="customUnitSellingPrice" class="form-control" step="0.01" min="0" value="<?php echo $custom_unit_selling_price; ?>" placeholder="0.00">
+                                <div class="conversion-hint-custom"><?php echo t('selling_price_for_custom_unit'); ?></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="additional-units-container">
+                    <!-- وحدات إضافية ستضاف هنا -->
+                </div>
+
+                <div id="no-units-msg" class="text-muted" style="text-align:center; padding: 1rem; color: var(--gray-400);">
+                    <?php echo t('no_additional_units_yet'); ?>
+                </div>
+            </div>
+        </div>
+
+        <!-- وحدات القياس الإضافية للشراء -->
+        <div class="card">
+            <div class="card-header">
+                <h2><?php echo t('additional_purchase_units'); ?></h2>
+                <button type="button" class="btn btn-sm btn-outline" onclick="addPuUnitRow()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 4v16m8-8H4"/></svg>
+                    <?php echo t('add_purchase_unit'); ?>
+                </button>
+            </div>
+            <div class="card-body">
+                <p class="text-muted" style="margin-bottom: 1rem;"><?php echo t('purchase_additional_units_description'); ?></p>
+                <div id="purchase-additional-units-container"></div>
+                <div id="no-pu-units-msg" class="text-muted" style="text-align:center; padding: 1rem; color: var(--gray-400);"><?php echo t('no_purchase_units_yet'); ?></div>
+            </div>
+        </div>
+
+        <!-- تواريخ انتهاء الصلاحية -->
+        <div class="card" id="expiryDatesCard" style="<?php echo !$has_expiry ? 'display:none;' : ''; ?>">
+            <div class="card-header">
+                <h2>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20" style="vertical-align:middle; margin-left:4px;">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                        <path d="M9 16l2 2 4-4"/>
+                    </svg>
+                    <?php echo t('expiry_dates'); ?>
+                </h2>
+                <button type="button" class="btn btn-sm btn-outline" onclick="addExpiryRow()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 4v16m8-8H4"/></svg>
+                    <?php echo t('add_expiry_date'); ?>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info" id="expiryInfoAlert">
+                    <strong><?php echo t('note'); ?>:</strong> <?php echo t('expiry_total_must_equal_current'); ?> (<span id="expiryQtyHint">0</span>)
+                </div>
+                <div id="expiry-rows-container"></div>
+                <div id="expiry-summary" style="display:none; margin-top:0.75rem;">
+                    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                        <div style="background:#f0fdf4; border:1px solid #86efac; border-radius:8px; padding:8px 14px; text-align:center;">
+                            <div style="font-size:0.75rem; color:var(--gray-500);">مجموع كميات التواريخ</div>
+                            <div id="expiryTotalQty" style="font-weight:800; color:#059669; font-size:1.1rem;">0</div>
+                        </div>
+                        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 14px; text-align:center;">
+                            <div style="font-size:0.75rem; color:var(--gray-500);">الكمية المطلوبة</div>
+                            <div id="expiryRequiredQty" style="font-weight:800; color:#1e40af; font-size:1.1rem;">0</div>
+                        </div>
+                        <div id="expiryDiffBox" style="border-radius:8px; padding:8px 14px; text-align:center; display:none;">
+                            <div style="font-size:0.75rem; color:var(--gray-500);">الفارق</div>
+                            <div id="expiryDiff" style="font-weight:800; font-size:1.1rem;">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- صور المنتج — اختيار الصور قبل الإنشاء -->
+        <div class="card" id="productImagesCard">
+            <div class="card-header">
+                <h2>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20" style="vertical-align:middle; margin-left:4px;">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>
+                    </svg>
+                    صور المنتج
+                </h2>
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <label class="btn btn-sm btn-outline" style="cursor:pointer; margin:0;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 4v16m8-8H4"/></svg>
+                        إضافة صورة
+                        <input type="file" id="productImageInput" accept="image/jpeg,image/png,image/gif,image/webp" multiple style="display:none;" onchange="handleImageSelect(this.files)">
+                    </label>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="image-drop-zone" id="imageDropZone" onclick="document.getElementById('productImageInput').click()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40" style="color:var(--gray-300); margin-bottom:8px;">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    <p style="color:var(--gray-400); margin:0; font-weight:600;">اسحب الصور هنا أو انقر للاختيار</p>
+                    <p style="color:var(--gray-300); margin:4px 0 0; font-size:0.78rem;">JPEG, PNG, GIF, WebP — الحد الأقصى 5 ميغابايت</p>
+                    <p style="color:var(--primary); margin:6px 0 0; font-size:0.75rem; font-weight:600;">سيتم رفع الصور تلقائياً بعد إنشاء المنتج</p>
+                </div>
+                <div style="display:flex; align-items:center; gap:12px; margin-top:12px; flex-wrap:wrap;">
+                    <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:0.85rem;">
+                        <input type="checkbox" id="removeBgCheckbox" value="1" style="width:16px; height:16px; cursor:pointer;">
+                        <span style="font-weight:600;">إزالة الخلفية</span>
+                    </label>
+                    <select id="bgToleranceSelect" class="form-control" style="width:auto; min-width:120px; padding:4px 8px; font-size:0.82rem; display:none;">
+                        <option value="low">منخفض (دقيق)</option>
+                        <option value="medium" selected>متوسط</option>
+                        <option value="high">عالي (قوي)</option>
+                    </select>
+                </div>
+                <div id="imageUploadProgress" style="display:none; margin-top:12px;">
+                    <div style="background:var(--gray-100); border-radius:8px; overflow:hidden; height:8px;">
+                        <div id="imageProgressBar" style="background:var(--primary); height:100%; width:0%; transition:width 0.3s;"></div>
+                    </div>
+                    <p id="imageUploadStatus" style="font-size:0.8rem; color:var(--gray-500); margin-top:4px;">جاري الرفع...</p>
+                </div>
+                <div id="pendingImageGallery" style="display:flex; gap:12px; flex-wrap:wrap; margin-top:16px;"></div>
+                <p id="noImagesMsg" style="text-align:center; color:var(--gray-400); margin-top:16px;">لا توجد صور مختارة بعد — اختر الصور الآن</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 1.5rem; display: flex; gap: 10px;">
+            <?php echo csrfField(); ?>
+            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M5 13l4 4L19 7"/></svg>
+                <?php echo t('save_product'); ?>
+            </button>
+            <a href="list-products.php" class="btn btn-outline btn-lg"><?php echo t('cancel'); ?></a>
+        </div>
+    </form>
+</div>
+
+<?php require_once '../includes/barcode-scanner.php'; ?>
+
+<script <?php echo class_exists('SecurityHeaders') ? SecurityHeaders::nonceAttr() : ''; ?>>
+// === بيانات الوحدات (من PHP) ===
+var unitsList = <?php echo json_encode(array_map(function($u) { return ['name' => $u['name'], 'abbr' => $u['abbreviation'], 'type' => isset($u['unit_type']) ? $u['unit_type'] : 'other', 'conv' => isset($u['conversion_to_base']) ? floatval($u['conversion_to_base']) : 1, 'isBase' => isset($u['is_base_unit']) ? intval($u['is_base_unit']) : 0]; }, $units)); ?>;
+var baseUnitsByType = <?php echo json_encode($base_units_by_type); ?>;
+
+// محليّات JS
+var i18n = <?php echo json_encode([
+    'choose_unit' => t('choose_unit'),
+    'other_option' => t('other_option'),
+    'unit_name' => t('unit_name'),
+    'enter_custom_unit_name' => t('enter_custom_unit_name'),
+    'conversion_factor_label' => t('conversion_factor'),
+    'selling_price_label' => t('selling_price'),
+    'remove_button' => t('remove'),
+    'expiry_date_label' => t('expiry_date'),
+    'expiry_quantity_label' => t('expiry_quantity'),
+    'delete' => t('delete'),
+    'no_additional_units' => t('no_additional_units_yet'),
+    'no_pu_units' => t('no_purchase_units_yet'),
+    'custom_unit_conversion_prefix' => t('custom_unit_conversion_prefix'),
+    'base_unit_label' => t('base_unit')
+]); ?>;
+
+// === وضع كود المنتج ===
+var currentCodeMode = 'auto';
+var autoCodeValue = <?php echo json_encode($next_code); ?>;
+
+function setCodeMode(mode) {
+    currentCodeMode = mode;
+    var autoSection = document.getElementById('codeAutoSection');
+    var barcodeSection = document.getElementById('codeBarcodeSection');
+    var autoBtn = document.getElementById('codeModeAuto');
+    var barcodeBtn = document.getElementById('codeModeBarcode');
+    var hiddenInput = document.getElementById('productCodeInput');
+
+    if (mode === 'auto') {
+        autoSection.style.display = 'block';
+        barcodeSection.style.display = 'none';
+        autoBtn.classList.add('active');
+        barcodeBtn.classList.remove('active');
+        hiddenInput.value = autoCodeValue;
+    } else {
+        autoSection.style.display = 'none';
+        barcodeSection.style.display = 'block';
+        autoBtn.classList.remove('active');
+        barcodeBtn.classList.add('active');
+        hiddenInput.value = document.getElementById('barcodeCodeInput').value;
+    }
+}
+
+// تحديث القيمة المخفية عند الكتابة يدوياً
+document.addEventListener('DOMContentLoaded', function() {
+    var barcodeInput = document.getElementById('barcodeCodeInput');
+    if (barcodeInput) {
+        barcodeInput.addEventListener('input', function() {
+            if (currentCodeMode === 'barcode') {
+                document.getElementById('productCodeInput').value = this.value;
+            }
+        });
+    }
+
+    // === مستمع الإرسال الموحد (تحقق + AJAX + منع مزدوج) ===
+    var form = document.querySelector('form[method="POST"]');
+    var submitBtn = document.getElementById('submitBtn');
+    if (form && submitBtn) {
+        function enableSubmitBtn() {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '';
+            submitBtn.style.pointerEvents = '';
+        }
+        form.addEventListener('submit', function(e) {
+            var validationError = false;
+
+            if (currentCodeMode === 'barcode') {
+                var barcodeVal = document.getElementById('barcodeCodeInput').value.trim();
+                if (!barcodeVal) {
+                    e.preventDefault();
+                    enableSubmitBtn();
+                    document.getElementById('barcodeCodeInput').style.borderColor = 'var(--danger)';
+                    document.getElementById('barcodeCodeInput').focus();
+                    alert(<?php echo json_encode(t('enter_barcode_or_scan')); ?>);
+                    return;
+                }
+            }
+            var customName = document.getElementById('customUnitName');
+            var customSection = document.getElementById('customUnitSection');
+            if (customSection && customSection.classList.contains('active') && customName && customName.value.trim()) {
+                var customConv = document.getElementById('customUnitConversion');
+                if (parseFloat(customConv.value) <= 0) {
+                    e.preventDefault();
+                    enableSubmitBtn();
+                    customConv.style.borderColor = 'var(--danger)';
+                    customConv.focus();
+                    alert(<?php echo json_encode(t('conversion_must_be_positive')); ?>);
+                    return;
+                }
+            }
+            var rows = document.querySelectorAll('#additional-units-container .unit-row');
+            for (var r = 0; r < rows.length; r++) {
+                var sel = rows[r].querySelector('select[name="au_name[]"]');
+                var customInput = rows[r].querySelector('input[name="au_custom_name[]"]');
+                if (sel && sel.value === '__custom__' && customInput && !customInput.value.trim()) {
+                    e.preventDefault(); enableSubmitBtn();
+                    customInput.style.borderColor = 'var(--danger)'; customInput.focus();
+                    alert(<?php echo json_encode(t('enter_custom_unit_name')); ?>);
+                    validationError = true; break;
+                }
+            }
+            if (validationError) return;
+            var puRows = document.querySelectorAll('#purchase-additional-units-container .unit-row');
+            for (var p = 0; p < puRows.length; p++) {
+                var puSel = puRows[p].querySelector('select[name="pau_name[]"]');
+                var puCustom = puRows[p].querySelector('input[name="pau_custom_name[]"]');
+                if (puSel && puSel.value === '__custom__' && puCustom && !puCustom.value.trim()) {
+                    e.preventDefault(); enableSubmitBtn();
+                    puCustom.style.borderColor = 'var(--danger)'; puCustom.focus();
+                    alert(<?php echo json_encode(t('enter_purchase_custom_unit_name')); ?>);
+                    validationError = true; break;
+                }
+            }
+            if (validationError) return;
+
+            // تعطيل الزر لمنع الإرسال المزدوج
+            submitBtn.disabled = true; submitBtn.style.opacity = '0.6'; submitBtn.style.pointerEvents = 'none';
+
+            // إذا لا توجد صور معلّقة — إرسال عادي (PRG يمنع المزدوج)
+            if (pendingImages.length === 0) return;
+
+            // صور معلّقة — اعتراض AJAX + رفع الصور بعد الإنشاء
+            e.preventDefault();
+            var fd = new FormData(form);
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '', true);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    try {
+                        var result = JSON.parse(xhr.responseText);
+                        if (result.success && result.product_id) {
+                            uploadPendingImages(result.product_id);
+                        } else if (result.errors && result.errors.length > 0) {
+                            alert(result.errors.join('\n'));
+                            enableSubmitBtn();
+                        } else {
+                            enableSubmitBtn();
+                        }
+                    } catch(ex) {
+                        // فشل تحليل JSON — إرسال عادي كاحتياط
+                        enableSubmitBtn();
+                        form.submit();
+                    }
+                } else {
+                    alert('خطأ في الخادم: HTTP ' + xhr.status);
+                    enableSubmitBtn();
+                }
+            };
+            xhr.onerror = function() {
+                alert('خطأ في الاتصال بالخادم');
+                enableSubmitBtn();
+            };
+            xhr.send(fd);
+        });
+    }
+
+    // عند تغيير الوحدة الأساسية، حدّث قوائم الوحدات الإضافية
+    var unitSelectMain = document.getElementById('unitSelect');
+    if (unitSelectMain) {
+        unitSelectMain.addEventListener('change', function() {
+            refreshAllAdditionalUnitDropdowns();
+        });
+    }
+
+    // تهيئة وحدات الشراء الإضافية عند تحميل الصفحة
+    initPurchaseUnitSystem();
+});
+
+// === رد اتصال ماسح الباركود ===
+window.onBarcodeScanned = function(scannedCode) {
+    var barcodeInput = document.getElementById('barcodeCodeInput');
+    if (barcodeInput) {
+        barcodeInput.value = scannedCode;
+        document.getElementById('productCodeInput').value = scannedCode;
+        barcodeInput.style.borderColor = '#22c55e';
+        barcodeInput.style.backgroundColor = '#f0fdf4';
+        setTimeout(function() {
+            barcodeInput.style.borderColor = '';
+            barcodeInput.style.backgroundColor = '';
+        }, 2000);
+    }
+    var nameField = document.querySelector('input[name="name"]');
+    if (nameField) nameField.focus();
+};
+
+// === فتح/إغلاق قسم الوحدة المخصصة ===
+function toggleCustomUnitSection() {
+    var section = document.getElementById('customUnitSection');
+    var body = document.getElementById('customUnitBody');
+    var arrow = document.getElementById('customUnitArrow');
+    if (!section.classList.contains('active')) {
+        section.classList.add('active');
+        body.style.display = '';
+        arrow.style.transform = '';
+        document.getElementById('customUnitName').focus();
+    } else {
+        body.style.display = 'none';
+        arrow.style.transform = 'rotate(-90deg)';
+    }
+}
+
+// === وحدات القياس الإضافية ===
+let unitCounter = 0;
+
+// === نوع الوحدة الأساسية المحددة ===
+function getSelectedBaseUnitType() {
+    var sel = document.getElementById('unitSelect');
+    if (!sel || !sel.value) return '';
+    for (var i = 0; i < unitsList.length; i++) {
+        if (unitsList[i].abbr === sel.value) return unitsList[i].type;
+    }
+    return '';
+}
+
+function buildUnitOptionsHTML(selectedVal) {
+    var baseType = getSelectedBaseUnitType();
+    var html = '<option value="">' + i18n.choose_unit + '</option>';
+    for (var i = 0; i < unitsList.length; i++) {
+        var u = unitsList[i];
+        // تصفية حسب نوع الوحدة الأساسية
+        if (baseType && u.type !== baseType) continue;
+        var sel = (selectedVal === u.abbr) ? ' selected' : '';
+        html += '<option value="' + u.abbr + '"' + sel + '>' + u.name + ' (' + u.abbr + ')</option>';
+    }
+    var selCustom = (selectedVal === '__custom__') ? ' selected' : '';
+    html += '<option value="__custom__"' + selCustom + '>' + i18n.other_option + '</option>';
+    return html;
+}
+
+// === تحديث جميع قوائم الوحدات الإضافية عند تغيير الوحدة الأساسية ===
+function refreshAllAdditionalUnitDropdowns() {
+    var rows = document.querySelectorAll('#additional-units-container .unit-row');
+    rows.forEach(function(row) {
+        var rowId = row.id;
+        var sel = row.querySelector('select[name="au_name[]"]');
+        var factorInput = row.querySelector('input[name="au_factor[]"]');
+        var customWrap = row.querySelector('.au-custom-name-wrap');
+        if (!sel) return;
+        var prevVal = sel.value;
+        sel.innerHTML = buildUnitOptionsHTML('');
+        // إذا كانت القيمة السابقة لا تزال موجودة في القائمة، حافظ عليها
+        if (prevVal && prevVal !== '__custom__') {
+            var opts = sel.querySelectorAll('option');
+            var found = false;
+            for (var i = 0; i < opts.length; i++) {
+                if (opts[i].value === prevVal) { found = true; break; }
+            }
+            if (found) {
+                sel.value = prevVal;
+                // إعادة حساب معامل التحويل النسبي بعد تغيير الوحدة الأساسية
+                handleAuUnitChange(rowId);
+            } else {
+                sel.value = '';
+                if (factorInput) { factorInput.value = '1'; factorInput.removeAttribute('readonly'); factorInput.style.opacity = '1'; }
+            }
+        } else {
+            sel.value = '';
+            if (customWrap) customWrap.classList.remove('active');
+            var customInput = row.querySelector('input[name="au_custom_name[]"]');
+            if (customInput) customInput.value = '';
+        }
+    });
+}
+
+function addUnitRow() {
+    unitCounter++;
+    var container = document.getElementById('additional-units-container');
+    document.getElementById('no-units-msg').style.display = 'none';
+
+    var row = document.createElement('div');
+    row.className = 'unit-row';
+    row.id = 'unit-row-' + unitCounter;
+    row.innerHTML = `
+        <div class="form-group" style="min-width:160px;">
+            <label>${i18n.unit_name}</label>
+            <select name="au_name[]" class="form-control" onchange="handleAuUnitChange('unit-row-${unitCounter}')">
+                ${buildUnitOptionsHTML('')}
+            </select>
+            <div class="au-custom-name-wrap" id="au-custom-${unitCounter}">
+                <input type="text" name="au_custom_name[]" class="form-control" placeholder="${i18n.enter_custom_unit_name}" style="margin-top:4px; border-color:#fbbf24;">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>${i18n.conversion_factor_label} <span class="form-text au-conv-hint" style="font-weight:400; font-size:0.78rem;"></span></label>
+            <input type="number" name="au_factor[]" class="form-control" step="0.0001" min="0.0001" value="1" placeholder="1">
+        </div>
+        <div class="form-group">
+            <label>${i18n.selling_price_label}</label>
+            <input type="number" name="au_price[]" class="form-control" step="0.01" min="0" value="0" placeholder="0.00">
+        </div>
+        <button type="button" class="btn-remove-unit" onclick="removeUnitRow('unit-row-${unitCounter}')" title="${i18n.remove_button}">✕</button>
+    `;
+    container.appendChild(row);
+}
+
+function getBaseUnitConv() {
+    var sel = document.getElementById('unitSelect');
+    if (!sel || !sel.value) return 1;
+    for (var i = 0; i < unitsList.length; i++) {
+        if (unitsList[i].abbr === sel.value) return unitsList[i].conv;
+    }
+    return 1;
+}
+
+function getBaseUnitAbbr() {
+    var sel = document.getElementById('unitSelect');
+    if (!sel || !sel.value) return '';
+    return sel.value;
+}
+
+function handleAuUnitChange(rowId) {
+    var row = document.getElementById(rowId);
+    if (!row) return;
+    var sel = row.querySelector('select[name="au_name[]"]');
+    var customWrap = row.querySelector('.au-custom-name-wrap');
+    var customInput = row.querySelector('input[name="au_custom_name[]"]');
+    var factorInput = row.querySelector('input[name="au_factor[]"]');
+    if (!sel || !customWrap) return;
+
+    if (sel.value === '__custom__') {
+        customWrap.classList.add('active');
+        if (customInput) customInput.focus();
+        if (factorInput) { factorInput.value = '1'; factorInput.removeAttribute('readonly'); factorInput.style.opacity = '1'; }
+    } else {
+        customWrap.classList.remove('active');
+        if (customInput) customInput.value = '';
+        // حساب معامل التحويل النسبي بين الوحدة الإضافية ووحدة المنتج الأساسية
+        // المعامل = conversion_to_base للوحدة الإضافية / conversion_to_base للوحدة الأساسية
+        // مثال: إذا الوحدة الأساسية هي أوقية (conv=0.05) والإضافية كلغ (conv=1)
+        // المعامل = 1 / 0.05 = 20  أي 1 كلغ = 20 أوقية
+        if (factorInput) {
+            for (var i = 0; i < unitsList.length; i++) {
+                if (unitsList[i].abbr === sel.value) {
+                    var baseConv = getBaseUnitConv();
+                    var auConv = unitsList[i].conv;
+                    var relativeConv = (baseConv > 0) ? (auConv / baseConv) : 1;
+                    if (relativeConv > 0) {
+                        factorInput.value = relativeConv;
+                    } else {
+                        factorInput.value = '1';
+                    }
+                    // تحديث التلميح ليوضح الوحدة الأساسية الفعلية
+                    var hintSpan = row.querySelector('.au-conv-hint');
+                    if (hintSpan) {
+                        var baseAbbr = getBaseUnitAbbr();
+                        hintSpan.textContent = '(1 ' + sel.value + ' = ? ' + baseAbbr + ')';
+                    }
+                    if (relativeConv === 1) {
+                        factorInput.setAttribute('readonly', true);
+                        factorInput.style.opacity = '0.5';
+                    } else {
+                        factorInput.removeAttribute('readonly');
+                        factorInput.style.opacity = '1';
+                    }
+                    break;
+                }
+            }
+        }
+    }
+}
+
+function removeUnitRow(id) {
+    var row = document.getElementById(id);
+    if (row) {
+        row.remove();
+        var container = document.getElementById('additional-units-container');
+        if (container.children.length === 0) {
+            document.getElementById('no-units-msg').style.display = 'block';
+        }
+    }
+}
+
+// === تحديث معامل التحويل المخصص ===
+var customUnitType = document.getElementById('customUnitType');
+var customUnitConversion = document.getElementById('customUnitConversion');
+var customConversionHint = document.getElementById('customConversionHint');
+
+function updateCustomConversionHint() {
+    if (!customUnitType || !customUnitConversion || !customConversionHint) return;
+    var type = customUnitType.value;
+    var bu = baseUnitsByType[type];
+    var val = parseFloat(customUnitConversion.value) || 1;
+
+    if (bu) {
+        customConversionHint.innerHTML = i18n.custom_unit_conversion_prefix + '<strong>' + val + '</strong> ' + bu.name + ' (' + bu.abbreviation + ')';
+    } else {
+        customConversionHint.innerHTML = i18n.custom_unit_conversion_prefix + '<strong>' + val + '</strong> ' + i18n.base_unit_label;
+    }
+}
+
+if (customUnitType) {
+    customUnitType.addEventListener('change', updateCustomConversionHint);
+}
+if (customUnitConversion) {
+    customUnitConversion.addEventListener('input', updateCustomConversionHint);
+}
+
+// === نظام وحدات الشراء ===
+var purchaseUnitCounter = 0;
+
+function onPurchaseUnitChange() {
+    var puSel = document.getElementById('purchaseUnitSelect');
+    var factorGroup = document.getElementById('purchaseUnitFactorGroup');
+    var factorInput = document.getElementById('purchaseUnitFactor');
+    var hintSpan = document.getElementById('purchaseUnitFactorHint');
+    if (!puSel || !factorGroup) return;
+
+    if (puSel.value) {
+        factorGroup.style.display = '';
+        // حساب معامل التحويل النسبي (كما في handleAuUnitChange)
+        var baseConv = getBaseUnitConv();
+        for (var i = 0; i < unitsList.length; i++) {
+            if (unitsList[i].abbr === puSel.value) {
+                var auConv = unitsList[i].conv;
+                var relativeConv = (baseConv > 0) ? (auConv / baseConv) : 1;
+                factorInput.value = relativeConv;
+                if (hintSpan) {
+                    var baseAbbr = getBaseUnitAbbr();
+                    hintSpan.textContent = '(1 ' + puSel.value + ' = ? ' + baseAbbr + ')';
+                }
+                break;
+            }
+        }
+        refreshAllPurchaseUnitDropdowns();
+    } else {
+        factorGroup.style.display = 'none';
+        factorInput.value = '1';
+        refreshAllPurchaseUnitDropdowns();
+    }
+}
+
+function getPurchaseBaseUnitConv() {
+    var sel = document.getElementById('purchaseUnitSelect');
+    if (!sel || !sel.value) return getBaseUnitConv();
+    for (var i = 0; i < unitsList.length; i++) {
+        if (unitsList[i].abbr === sel.value) return unitsList[i].conv;
+    }
+    return 1;
+}
+
+function getPurchaseBaseUnitAbbr() {
+    var sel = document.getElementById('purchaseUnitSelect');
+    if (!sel || !sel.value) return getBaseUnitAbbr();
+    return sel.value;
+}
+
+function getSelectedPurchaseBaseUnitType() {
+    var sel = document.getElementById('purchaseUnitSelect');
+    if (!sel || !sel.value) return getSelectedBaseUnitType();
+    for (var i = 0; i < unitsList.length; i++) {
+        if (unitsList[i].abbr === sel.value) return unitsList[i].type;
+    }
+    return '';
+}
+
+function buildPuUnitOptionsHTML(selectedVal) {
+    var puBaseType = getSelectedPurchaseBaseUnitType();
+    var html = '<option value="">' + i18n.choose_unit + '</option>';
+    for (var i = 0; i < unitsList.length; i++) {
+        var u = unitsList[i];
+        if (puBaseType && u.type !== puBaseType) continue;
+        var sel = (selectedVal === u.abbr) ? ' selected' : '';
+        html += '<option value="' + u.abbr + '"' + sel + '>' + u.name + ' (' + u.abbr + ')</option>';
+    }
+    html += '<option value="__custom__">' + i18n.other_option + '</option>';
+    return html;
+}
+
+function refreshAllPurchaseUnitDropdowns() {
+    var rows = document.querySelectorAll('#purchase-additional-units-container .unit-row');
+    rows.forEach(function(row) {
+        var rowId = row.id;
+        var sel = row.querySelector('select[name="pau_name[]"]');
+        var factorInput = row.querySelector('input[name="pau_factor[]"]');
+        var customWrap = row.querySelector('.au-custom-name-wrap');
+        if (!sel) return;
+        var prevVal = sel.value;
+        sel.innerHTML = buildPuUnitOptionsHTML('');
+        if (prevVal && prevVal !== '__custom__') {
+            var opts = sel.querySelectorAll('option');
+            var found = false;
+            for (var i = 0; i < opts.length; i++) {
+                if (opts[i].value === prevVal) { found = true; break; }
+            }
+            if (found) {
+                sel.value = prevVal;
+                handlePuUnitChange(rowId);
+            } else {
+                sel.value = '';
+                if (factorInput) { factorInput.value = '1'; factorInput.removeAttribute('readonly'); factorInput.style.opacity = '1'; }
+            }
+        } else {
+            sel.value = '';
+            if (customWrap) customWrap.classList.remove('active');
+            var customInput = row.querySelector('input[name="pau_custom_name[]"]');
+            if (customInput) customInput.value = '';
+        }
+    });
+}
+
+function addPuUnitRow() {
+    purchaseUnitCounter++;
+    var container = document.getElementById('purchase-additional-units-container');
+    document.getElementById('no-pu-units-msg').style.display = 'none';
+    var row = document.createElement('div');
+    row.className = 'unit-row';
+    row.id = 'pu-row-' + purchaseUnitCounter;
+    row.innerHTML = `
+        <div class="form-group" style="min-width:160px;">
+            <label>${i18n.unit_name}</label>
+            <select name="pau_name[]" class="form-control" onchange="handlePuUnitChange('pu-row-${purchaseUnitCounter}')">
+                ${buildPuUnitOptionsHTML('')}
+            </select>
+            <div class="au-custom-name-wrap" id="pu-custom-${purchaseUnitCounter}">
+                <input type="text" name="pau_custom_name[]" class="form-control" placeholder="${i18n.enter_custom_unit_name}" style="margin-top:4px; border-color:#fbbf24;">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>${i18n.conversion_factor_label} <span class="form-text pu-conv-hint" style="font-weight:400; font-size:0.78rem;"></span></label>
+            <input type="number" name="pau_factor[]" class="form-control" step="0.0001" min="0.0001" value="1" placeholder="1">
+        </div>
+        <button type="button" class="btn-remove-unit" onclick="removePuUnitRow('pu-row-${purchaseUnitCounter}')" title="${i18n.remove_button}">✕</button>
+    `;
+    container.appendChild(row);
+}
+
+function handlePuUnitChange(rowId) {
+    var row = document.getElementById(rowId);
+    if (!row) return;
+    var sel = row.querySelector('select[name="pau_name[]"]');
+    var customWrap = row.querySelector('.au-custom-name-wrap');
+    var customInput = row.querySelector('input[name="pau_custom_name[]"]');
+    var factorInput = row.querySelector('input[name="pau_factor[]"]');
+    if (!sel || !customWrap) return;
+
+    if (sel.value === '__custom__') {
+        customWrap.classList.add('active');
+        if (customInput) customInput.focus();
+        if (factorInput) { factorInput.value = '1'; factorInput.removeAttribute('readonly'); factorInput.style.opacity = '1'; }
+    } else {
+        customWrap.classList.remove('active');
+        if (customInput) customInput.value = '';
+        if (factorInput) {
+            var puBaseConv = getPurchaseBaseUnitConv();
+            for (var i = 0; i < unitsList.length; i++) {
+                if (unitsList[i].abbr === sel.value) {
+                    var auConv = unitsList[i].conv;
+                    var relativeConv = (puBaseConv > 0) ? (auConv / puBaseConv) : 1;
+                    factorInput.value = relativeConv;
+                    var hintSpan = row.querySelector('.pu-conv-hint');
+                    if (hintSpan) {
+                        var puBaseAbbr = getPurchaseBaseUnitAbbr();
+                        hintSpan.textContent = '(1 ' + sel.value + ' = ? ' + puBaseAbbr + ')';
+                    }
+                    if (relativeConv === 1) {
+                        factorInput.setAttribute('readonly', true);
+                        factorInput.style.opacity = '0.5';
+                    } else {
+                        factorInput.removeAttribute('readonly');
+                        factorInput.style.opacity = '1';
+                    }
+                    break;
+                }
+            }
+        }
+    }
+}
+
+function removePuUnitRow(id) {
+    var row = document.getElementById(id);
+    if (row) {
+        row.remove();
+        var container = document.getElementById('purchase-additional-units-container');
+        if (container.children.length === 0) {
+            document.getElementById('no-pu-units-msg').style.display = 'block';
+        }
+    }
+}
+
+function initPurchaseUnitSystem() {
+    // تهيئة معامل التحويل لوحدة الشراء الأساسية
+    var puSel = document.getElementById('purchaseUnitSelect');
+    if (puSel && puSel.value) {
+        onPurchaseUnitChange();
+    }
+    // تهيئة تلميحات وحدات الشراء الإضافية
+    var puRows = document.querySelectorAll('#purchase-additional-units-container .unit-row');
+    puRows.forEach(function(row) {
+        var sel = row.querySelector('select[name="pau_name[]"]');
+        if (sel && sel.value && sel.value !== '' && sel.value !== '__custom__') {
+            handlePuUnitChange(row.id);
+        }
+    });
+}
+
+// === تواريخ انتهاء الصلاحية ===
+let expiryCounter = 0;
+
+function toggleExpirySection() {
+    var checkbox = document.getElementById('has_expiry');
+    var card = document.getElementById('expiryDatesCard');
+    if (checkbox.checked) {
+        card.style.display = '';
+        updateExpiryHint();
+        if (expiryCounter === 0) addExpiryRow();
+    } else {
+        card.style.display = 'none';
+    }
+}
+
+function addExpiryRow() {
+    expiryCounter++;
+    var container = document.getElementById('expiry-rows-container');
+    var row = document.createElement('div');
+    row.className = 'expiry-row';
+    row.id = 'expiry-row-' + expiryCounter;
+    row.style.cssText = 'display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; padding:10px 14px; background:linear-gradient(135deg, #eff6ff, #dbeafe); border:1px solid #93c5fd; border-radius:10px; margin-bottom:8px; animation: fadeSlideDown 0.3s ease;';
+    row.innerHTML = `
+        <div style="flex:1; min-width:160px;">
+            <label style="font-size:0.78rem; font-weight:600; color:#1e40af; display:block; margin-bottom:3px;">تاريخ الانتهاء</label>
+            <input type="date" name="expiry_date[]" class="form-control" style="border-color:#93c5fd; font-weight:600;" onchange="updateExpirySummary()">
+        </div>
+        <div style="min-width:140px;">
+            <label style="font-size:0.78rem; font-weight:600; color:#1e40af; display:block; margin-bottom:3px;">الكمية</label>
+            <input type="number" name="expiry_quantity[]" class="form-control" step="0.01" min="0.01" value="0" style="border-color:#93c5fd; font-weight:700;" oninput="updateExpirySummary()">
+        </div>
+        <button type="button" onclick="removeExpiryRow('expiry-row-${expiryCounter}')" style="background:none; border:none; color:#dc2626; cursor:pointer; font-size:1.2rem; padding:6px;" title="حذف">✕</button>
+    `;
+    container.appendChild(row);
+    updateExpirySummary();
+}
+
+function removeExpiryRow(id) {
+    var row = document.getElementById(id);
+    if (row) row.remove();
+    updateExpirySummary();
+}
+
+function updateExpiryHint() {
+    var qtyInput = document.querySelector('input[name="quantity"]');
+    var hint = document.getElementById('expiryQtyHint');
+    if (qtyInput && hint) {
+        hint.textContent = parseFloat(qtyInput.value || 0).toFixed(2);
+    }
+}
+
+function updateExpirySummary() {
+    var totalQty = 0;
+    var rows = document.querySelectorAll('.expiry-row');
+    rows.forEach(function(row) {
+        var qty = parseFloat(row.querySelector('input[name="expiry_quantity[]"]').value) || 0;
+        totalQty += qty;
+    });
+    
+    var totalEl = document.getElementById('expiryTotalQty');
+    var requiredEl = document.getElementById('expiryRequiredQty');
+    var diffBox = document.getElementById('expiryDiffBox');
+    var diffEl = document.getElementById('expiryDiff');
+    var summary = document.getElementById('expiry-summary');
+    
+    if (!totalEl) return;
+    
+    var requiredQty = parseFloat(document.querySelector('input[name="quantity"]').value) || 0;
+    
+    totalEl.textContent = totalQty.toFixed(2);
+    requiredEl.textContent = requiredQty.toFixed(2);
+    
+    if (totalQty > 0 || requiredQty > 0) {
+        summary.style.display = '';
+        diffBox.style.display = '';
+        var diff = totalQty - requiredQty;
+        diffEl.textContent = (diff >= 0 ? '+' : '') + diff.toFixed(2);
+        if (Math.abs(diff) < 0.01) {
+            diffBox.style.background = '#f0fdf4';
+            diffBox.style.borderColor = '#86efac';
+            diffBox.style.color = '#059669';
+        } else {
+            diffBox.style.background = '#fef2f2';
+            diffBox.style.borderColor = '#fca5a5';
+            diffBox.style.color = '#dc2626';
+        }
+    } else {
+        summary.style.display = 'none';
+    }
+    updateExpiryHint();
+}
+
+// مراقبة تغيير الكمية لتحديث ملخص تواريخ الانتهاء
+document.addEventListener('DOMContentLoaded', function() {
+    var qtyInput = document.querySelector('input[name="quantity"]');
+    if (qtyInput) {
+        qtyInput.addEventListener('input', function() {
+            updateExpiryHint();
+            updateExpirySummary();
+        });
+    }
+});
+
+// === نظام صور المنتج (إضافة) ===
+var pendingImages = [];
+var createdProductId = null;
+
+document.getElementById('removeBgCheckbox').addEventListener('change', function() {
+    document.getElementById('bgToleranceSelect').style.display = this.checked ? 'inline-block' : 'none';
+});
+
+var imageDropZone = document.getElementById('imageDropZone');
+if (imageDropZone) {
+    ['dragenter', 'dragover'].forEach(function(ev) {
+        imageDropZone.addEventListener(ev, function(e) { e.preventDefault(); e.stopPropagation(); imageDropZone.classList.add('drag-over'); });
+    });
+    ['dragleave', 'drop'].forEach(function(ev) {
+        imageDropZone.addEventListener(ev, function(e) { e.preventDefault(); e.stopPropagation(); imageDropZone.classList.remove('drag-over'); });
+    });
+    imageDropZone.addEventListener('drop', function(e) { handleImageSelect(e.dataTransfer.files); });
+}
+
+function handleImageSelect(files) {
+    if (!files || files.length === 0) return;
+    for (var i = 0; i < files.length; i++) {
+        (function(file) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                pendingImages.push({ file: file, dataUrl: e.target.result });
+                renderPendingImages();
+            };
+            reader.readAsDataURL(file);
+        })(files[i]);
+    }
+}
+
+function renderPendingImages() {
+    var gallery = document.getElementById('pendingImageGallery');
+    var noMsg = document.getElementById('noImagesMsg');
+    gallery.innerHTML = '';
+    if (pendingImages.length === 0) { noMsg.style.display = ''; return; }
+    noMsg.style.display = 'none';
+    pendingImages.forEach(function(img, idx) {
+        var div = document.createElement('div');
+        div.style.cssText = 'width:100px; height:100px; border-radius:10px; overflow:hidden; border:2px solid var(--gray-200); background:#fff; display:flex; align-items:center; justify-content:center; position:relative;';
+        div.innerHTML = '<img src="' + img.dataUrl + '" style="max-width:100%; max-height:100%; object-fit:contain;">' +
+            '<button type="button" onclick="removePendingImage(' + idx + ')" style="position:absolute; top:2px; left:2px; background:rgba(220,38,38,0.8); color:#fff; border:none; border-radius:50%; width:22px; height:22px; cursor:pointer; font-size:0.7rem; display:flex; align-items:center; justify-content:center;">&times;</button>';
+        gallery.appendChild(div);
+    });
+}
+
+function removePendingImage(idx) {
+    pendingImages.splice(idx, 1);
+    renderPendingImages();
+}
+
+function uploadPendingImages(productId) {
+    if (!productId || pendingImages.length === 0) return;
+    var removeBg = document.getElementById('removeBgCheckbox').checked;
+    var bgTolerance = document.getElementById('bgToleranceSelect').value;
+    var progressDiv = document.getElementById('imageUploadProgress');
+    var progressBar = document.getElementById('imageProgressBar');
+    var statusText = document.getElementById('imageUploadStatus');
+    progressDiv.style.display = 'block';
+    var total = pendingImages.length;
+    var uploaded = 0;
+    var csrfField = document.querySelector('input[name="csrf_token"]');
+    pendingImages.forEach(function(img) {
+        var fd = new FormData();
+        fd.append('image', img.file);
+        fd.append('product_id', productId);
+        if (csrfField) { fd.append('csrf_token', csrfField.value); }
+        if (removeBg) { fd.append('remove_bg', '1'); fd.append('bg_tolerance', bgTolerance); }
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '../api/upload-product-image.php', true);
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.onload = function() {
+            uploaded++;
+            progressBar.style.width = Math.round(uploaded / total * 100) + '%';
+            statusText.textContent = 'تم رفع ' + uploaded + ' من ' + total + ' صورة';
+            if (uploaded === total) {
+                setTimeout(function() {
+                    window.location.href = 'edit-product.php?id=' + productId + '&created=1&img_count=' + total;
+                }, 1200);
+            }
+        };
+        xhr.onerror = function() {
+            uploaded++;
+            progressBar.style.width = Math.round(uploaded / total * 100) + '%';
+            statusText.textContent = 'فشل رفع صورة (' + uploaded + '/' + total + ')';
+            if (uploaded === total) {
+                setTimeout(function() {
+                    window.location.href = 'edit-product.php?id=' + productId + '&created=1';
+                }, 2000);
+            }
+        };
+        xhr.send(fd);
+    });
+}
+
+// (مستمع AJAX مدمج أعلاه في مستمع الإرسال الموحد)
+
+</script>
+

@@ -1,0 +1,177 @@
+/* ===================================
+   المتغيرات والإعدادات الأساسية
+   Base Variables & Reset
+   =================================== */
+
+:root {
+    /* === الألوان الأساسية === */
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --primary-light: #dbeafe;
+    --secondary: #059669;
+    --secondary-dark: #047857;
+    --secondary-light: #d1fae5;
+    --danger: #dc2626;
+    --danger-light: #fee2e2;
+    --warning: #d97706;
+    --warning-light: #fef3c7;
+    --info: #0891b2;
+    --info-light: #cffafe;
+    --dark: #1e293b;
+
+    /* === الدرجات الرمادية === */
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-300: #cbd5e1;
+    --gray-400: #94a3b8;
+    --gray-500: #64748b;
+    --gray-600: #475569;
+    --gray-700: #334155;
+    --gray-800: #1e293b;
+    --gray-900: #0f172a;
+    --white: #ffffff;
+
+    /* === ألوان الحالة === */
+    --success: #059669;
+    --success-light: #d1fae5;
+    --error: #dc2626;
+    --error-light: #fee2e2;
+
+    /* === ألوان إضافية للتنبيهات === */
+    --rose-50: #fff1f2;
+    --rose-100: #ffe4e6;
+    --rose-500: #f43f5e;
+    --rose-800: #9f1239;
+    --amber-50: #fffbeb;
+    --amber-200: #fde68a;
+    --amber-500: #f59e0b;
+    --amber-600: #d97706;
+    --amber-800: #92400e;
+    --blue-50: #eff6ff;
+    --blue-100: #dbeafe;
+    --blue-200: #bfdbfe;
+    --blue-300: #93c5fd;
+    --blue-600: #2563eb;
+    --blue-700: #1d4ed8;
+    --blue-800: #1e40af;
+    --red-200: #fecaca;
+    --red-300: #fca5a5;
+    --red-600: #dc2626;
+    --red-700: #b91c1c;
+    --yellow-300: #fcd34d;
+
+    /* === تدرجات البطاقات (Card Gradients) === */
+    --gradient-primary: linear-gradient(135deg, #2563eb, #1d4ed8);
+    --gradient-secondary: linear-gradient(135deg, #059669, #047857);
+    --gradient-danger: linear-gradient(135deg, #dc2626, #b91c1c);
+    --gradient-warning: linear-gradient(135deg, #d97706, #b45309);
+    --gradient-info: linear-gradient(135deg, #0891b2, #0e7490);
+    --gradient-dark: linear-gradient(135deg, #1e293b, #0f172a);
+
+    /* === خلفيات أيقونات بطاقات الإحصائيات === */
+    --stat-icon-bg-primary: rgba(37, 99, 235, 0.12);
+    --stat-icon-bg-secondary: rgba(5, 150, 105, 0.12);
+    --stat-icon-bg-danger: rgba(220, 38, 38, 0.12);
+    --stat-icon-bg-warning: rgba(217, 119, 6, 0.12);
+    --stat-icon-bg-info: rgba(8, 145, 178, 0.12);
+
+    /* === الظلال === */
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+    --shadow-xl: 0 20px 25px rgba(0,0,0,0.1), 0 8px 10px rgba(0,0,0,0.04);
+
+    /* === الحدود المستديرة === */
+    --radius: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-full: 9999px;
+
+    /* === الانتقالات === */
+    --transition: all 0.2s ease;
+    --transition-fast: all 0.15s ease;
+    --transition-slow: all 0.3s ease;
+
+    /* === أحجام الخطوط === */
+    --text-xs: 0.7rem;
+    --text-sm: 0.8rem;
+    --text-base: 0.9rem;
+    --text-lg: 1rem;
+    --text-xl: 1.15rem;
+    --text-2xl: 1.35rem;
+    --text-3xl: 1.75rem;
+    --text-4xl: 2.25rem;
+
+    /* === المسافات === */
+    --spacing-1: 0.25rem;
+    --spacing-2: 0.5rem;
+    --spacing-3: 0.75rem;
+    --spacing-4: 1rem;
+    --spacing-5: 1.5rem;
+    --spacing-6: 2rem;
+    --spacing-8: 3rem;
+
+    /* === طبقات z-index === */
+    --z-base: 0;
+    --z-dropdown: 100;
+    --z-sticky: 500;
+    --z-modal: 2000;
+    --z-tooltip: 3000;
+    --z-max: 9999;
+
+    /* === خطوط العرض === */
+    --container-max: 1200px;
+    --container-sm: 640px;
+    --container-md: 768px;
+
+    /* === متغيرات ديناميكية (تُحدَّث بـ JavaScript أو PHP) === */
+    --cat-color: #64748b;
+    --stat-value-color: var(--gray-800);
+}
+
+/* === إعادة التعيين === */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--gray-100);
+    color: var(--gray-800);
+    line-height: 1.6;
+    direction: rtl;
+    min-height: 100vh;
+    min-height: 100dvh;
+}
+
+/* === الحركات === */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.85; transform: scale(1.03); }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.card, .stat-card {
+    animation: fadeIn 0.3s ease;
+}
+
+.spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--gray-200);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}

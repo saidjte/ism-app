@@ -1,0 +1,1065 @@
+/* ===================================
+   أنماط خاصة بالصفحات
+   Page-Specific Styles: Install, Invoice, Profit, Categories, Units
+   =================================== */
+
+/* === صفحة التثبيت === */
+.install-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 2rem;
+}
+
+.install-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
+    box-shadow: var(--shadow-lg);
+    max-width: 550px;
+    width: 100%;
+    text-align: center;
+}
+
+.install-card h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--primary-dark);
+}
+
+.install-card p {
+    color: var(--gray-600);
+    margin-bottom: 1.5rem;
+}
+
+.install-info {
+    margin-top: 2rem;
+    text-align: right;
+}
+
+.install-info h3 {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+    color: var(--gray-700);
+}
+
+.install-info ul {
+    list-style: none;
+    padding: 0;
+}
+
+.install-info li {
+    padding: 6px 0;
+    color: var(--gray-600);
+    font-size: 0.9rem;
+}
+
+.install-info li strong {
+    color: var(--gray-800);
+    font-family: monospace;
+    background: var(--gray-100);
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 6px;
+}
+
+/* === ملخص الأرباح === */
+.profit-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.profit-item {
+    background: var(--gray-50);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    text-align: center;
+    border: 1px solid var(--gray-200);
+}
+
+.profit-item h4 {
+    font-size: 0.85rem;
+    color: var(--gray-500);
+    margin-bottom: 6px;
+}
+
+.profit-item .value {
+    font-size: 1.35rem;
+    font-weight: 700;
+}
+
+.profit-item .value.profit-positive { color: var(--secondary); }
+.profit-item .value.profit-negative { color: var(--danger); }
+
+/* === تنسيق الفاتورة === */
+.invoice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--primary);
+}
+
+.invoice-total {
+    background: var(--primary-light);
+    padding: 1rem;
+    border-radius: var(--radius);
+    margin-top: 1rem;
+    text-align: left;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+}
+
+/* === صفحة التصنيفات === */
+.category-form {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.category-form .form-group {
+    flex: 2;
+    min-width: 200px;
+    margin-bottom: 0;
+}
+
+.category-form .form-group.grow-1 {
+    flex: 1;
+    min-width: 120px;
+}
+
+.category-form .form-group.grow-0 {
+    flex: 0 0 auto;
+    min-width: 110px;
+}
+
+.category-form .form-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+    align-items: flex-end;
+}
+
+/* منتقي الألوان */
+.color-picker-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.color-picker-group input[type="color"] {
+    width: 42px;
+    height: 38px;
+    padding: 2px;
+    border: 1.5px solid var(--gray-300);
+    border-radius: var(--radius);
+    cursor: pointer;
+    background: var(--white);
+    transition: var(--transition);
+}
+
+.color-picker-group input[type="color"]:hover {
+    border-color: var(--primary);
+}
+
+.color-preview-swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: inline-block;
+    border: 1px solid rgba(0,0,0,0.1);
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+}
+
+/* جدول التصنيفات */
+.category-color-dot {
+    display: inline-block;
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    vertical-align: middle;
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+
+.category-color-dot:hover {
+    transform: scale(1.15);
+}
+
+.category-name-text {
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: var(--transition);
+}
+
+.category-description {
+    color: var(--gray-500);
+    font-size: 0.85rem;
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.products-count-link {
+    text-decoration: none;
+    font-weight: 600;
+    color: var(--primary);
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--primary-light);
+    transition: var(--transition);
+    display: inline-block;
+    font-size: 0.85rem;
+}
+
+.products-count-link:hover {
+    background: var(--primary);
+    color: var(--white);
+    transform: translateY(-1px);
+}
+
+.products-count-zero {
+    color: var(--gray-400);
+    font-size: 0.85rem;
+}
+
+.category-inactive {
+    opacity: 0.55;
+}
+
+.category-inactive:hover {
+    opacity: 0.8;
+}
+
+.category-errors {
+    margin: 5px 20px;
+    padding: 0;
+    list-style: disc inside;
+}
+
+/* === صفحة وحدات القياس === */
+.unit-form {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.unit-form .form-group {
+    flex: 2;
+    min-width: 200px;
+    margin-bottom: 0;
+}
+
+.unit-form .form-group.grow-0 {
+    flex: 0 0 auto;
+    min-width: 110px;
+}
+
+.unit-form .form-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+    align-items: flex-end;
+}
+
+/* شريط إحصائيات أنواع الوحدات */
+.unit-type-stats {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+.unit-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1.5px solid var(--gray-200);
+    background: var(--white);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+
+.unit-type-badge:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow);
+}
+
+.unit-type-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.unit-type-name {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--gray-600);
+}
+
+.unit-type-count {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--gray-800);
+    background: var(--gray-100);
+    padding: 1px 8px;
+    border-radius: 10px;
+    min-width: 22px;
+    text-align: center;
+}
+
+.unit-type-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.unit-abbreviation {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    font-family: monospace;
+}
+
+/* === التجاوب - 768px (ملخص الأرباح) === */
+@media (max-width: 768px) {
+    .profit-summary {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+    }
+
+    .profit-item {
+        padding: 1rem;
+    }
+
+    .profit-item .value {
+        font-size: 1.15rem;
+    }
+}
+
+/* === التجاوب - 768px (التصنيفات) === */
+@media (max-width: 768px) {
+    .category-form {
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: stretch;
+    }
+
+    .category-form .form-group {
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+
+    .category-form .form-group.grow-1,
+    .category-form .form-group.grow-0 {
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+
+    .category-form .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .category-form .form-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .category-description {
+        max-width: 150px;
+    }
+}
+
+/* === التجاوب - 768px (الوحدات) === */
+@media (max-width: 768px) {
+    .unit-form {
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: stretch;
+    }
+
+    .unit-form .form-group {
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+
+    .unit-form .form-group.grow-0 {
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+
+    .unit-form .form-group.grow-0 .form-control {
+        max-width: 100% !important;
+    }
+
+    .unit-form .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .unit-form .form-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .unit-type-stats {
+        gap: 0.5rem;
+    }
+
+    .unit-type-badge {
+        padding: 4px 10px;
+    }
+}
+
+/* === التجاوب - 480px === */
+@media (max-width: 480px) {
+    .profit-summary {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .install-card {
+        padding: 1.5rem 1.25rem;
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+    }
+
+    .install-card h1 {
+        font-size: 1.2rem;
+    }
+
+    .install-card .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .category-form .form-actions {
+        flex-direction: row;
+    }
+
+    .category-form .form-actions .btn {
+        flex: 1;
+    }
+
+    .unit-form .form-actions {
+        flex-direction: row;
+    }
+
+    .unit-form .form-actions .btn {
+        flex: 1;
+    }
+}
+
+/* === صفحة تسجيل الدخول - الهاتف === */
+@media (max-width: 480px) {
+    .login-card {
+        padding: 1.75rem 1.5rem;
+        border-radius: 16px;
+    }
+
+    .login-card h1 {
+        font-size: 1.3rem;
+    }
+
+    .login-card .login-logo {
+        margin-bottom: 1.5rem;
+    }
+
+    .login-card .login-logo .icon-box {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+    }
+
+    .login-card .login-logo .icon-box svg {
+        width: 32px;
+        height: 32px;
+    }
+
+    .login-card .form-control {
+        padding: 14px 16px;
+        border-radius: 12px;
+    }
+
+    .login-card .btn-login {
+        padding: 14px;
+        font-size: 1rem;
+    }
+
+    .login-card .login-footer {
+        margin-top: 1rem;
+    }
+}
+
+/* === صفحة التحديث - الهاتف === */
+@media (max-width: 480px) {
+    .upgrade-card {
+        padding: 1.5rem 1.25rem;
+        border-radius: 16px;
+    }
+
+    .upgrade-card h1 {
+        font-size: 1.2rem;
+    }
+
+    .upgrade-card .version-box {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .upgrade-card .ver-arrow {
+        transform: rotate(90deg);
+    }
+
+    .update-item {
+        padding: 10px 12px;
+    }
+}
+
+/* === Semantic classes for inline style replacement === */
+
+/* Icon alignment in headings/buttons */
+.icon-align { vertical-align: middle; margin-inline-start: 6px; }
+.icon-align-sm { vertical-align: middle; margin-inline-start: 4px; }
+
+/* Grid spans */
+.col-span-full { grid-column: 1 / -1; }
+.grid-auto-fit-180 { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+.grid-auto-fill-180 { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+.grid-auto-fit-140 { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+.grid-auto-fit-200 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.grid-auto-fit-250 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+
+/* Max width containers */
+.max-w-600 { max-width: 600px; }
+.max-w-900 { max-width: 900px; }
+.max-w-150 { max-width: 150px; }
+.max-w-250 { max-width: 250px; }
+.min-w-120 { min-width: 120px; }
+.min-w-160 { min-width: 160px; }
+.max-h-70vh { max-height: 70vh; }
+
+/* Monospace code badge */
+.code-badge { font-family: 'Courier New', monospace; padding: 4px 10px; }
+.font-mono { font-family: 'Courier New', monospace; }
+
+/* Stat boxes with colored borders */
+.stat-box { padding: 8px 14px; }
+.stat-box-lg { padding: 14px; }
+.stat-box-sm { padding: 6px 14px; }
+.stat-box-green { border: 1px solid #86efac; padding: 8px 14px; }
+.stat-box-red { border: 1px solid #fca5a5; padding: 8px 14px; }
+.stat-box-blue { border: 1px solid #93c5fd; padding: 8px 14px; }
+.stat-box-amber { border: 1px solid #fde68a; padding: 8px 14px; }
+.stat-box-green-lg { border: 1px solid #bbf7d0; padding: 14px; }
+.stat-box-red-lg { border: 1px solid #fecaca; padding: 14px; }
+.stat-box-blue-lg { border: 1px solid #bfdbfe; padding: 14px; }
+.stat-box-amber-lg { border: 1px solid #fde68a; padding: 14px; }
+
+/* Card border variants */
+.border-2-blue-light { border: 2px solid #dbeafe; }
+.border-2-amber-light { border: 2px solid #fef3c7; }
+.border-2-danger-light { border: 2px solid #fecaca; }
+.border-2-blue-setup { border: 2px solid #bfdbfe; }
+
+/* Badge padding */
+.badge-px { padding: 2px 8px; }
+.badge-px-lg { padding: 2px 10px; }
+
+/* Small label gap */
+.field-label-gap { margin-bottom: 2px; }
+
+/* Dashed divider */
+.dashed-divider-blue { margin: 1.25rem 0; border-top: 2px dashed #93c5fd; }
+
+/* Text direction */
+.dir-ltr { direction: ltr; }
+.dir-ltr-mono { direction: ltr; font-family: 'Courier New', monospace; word-break: break-all; }
+
+/* White space utilities */
+.whitespace-nowrap { white-space: nowrap; }
+.whitespace-pre-wrap { white-space: pre-wrap; }
+.break-word { word-break: break-word; }
+.break-words { overflow-wrap: break-word; word-break: break-word; }
+
+/* Opacity */
+.opacity-50 { opacity: 0.5; }
+.opacity-55 { opacity: 0.55; }
+.opacity-9 { opacity: 0.9; }
+.opacity-7 { opacity: 0.7; }
+
+/* Color: rose-700 for expenses */
+.text-rose-700 { color: #be123c; }
+.bg-rose-700 { background: #be123c; }
+
+/* Custom padding overrides */
+.pl-65 { padding-left: 65px; }
+
+/* Version badge gradient */
+.version-badge-gradient {
+    background: linear-gradient(135deg, #059669, #10b981);
+    padding: 6px 16px;
+    border-radius: 20px;
+}
+
+/* Changelog version circle */
+.version-circle {
+    width: 42px; height: 42px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 0.75rem;
+}
+
+/* Changelog change item */
+.change-item {
+    padding: 12px 16px;
+    transition: background 0.15s;
+}
+.change-item + .change-item {
+    border-top: 1px solid #f3f4f6;
+}
+.change-type-icon {
+    min-width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.95rem;
+}
+.change-type-label {
+    font-size: 0.68rem;
+    padding: 1px 8px;
+    border-radius: 4px;
+}
+
+/* Changelog change list container */
+.change-list {
+    border: 1.5px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+}
+
+/* Log row with left border indicator */
+.log-row-indicator { border-right: 3px solid; }
+
+/* Small padding for inline elements */
+.p-px-sm { padding: 2px 8px; }
+
+/* Spinner center */
+.spinner-center { margin: 0 auto 6px; }
+
+/* === صفحة لائحة الأسعار — Price List Page === */
+
+/* شريط المعاينة */
+.pl-preview-bar {
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    border: 1.5px solid #e2e8f0;
+}
+
+/* زر الطباعة */
+.pl-btn-print {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    padding: 10px 24px;
+    box-shadow: 0 2px 8px rgba(220,38,38,0.3);
+}
+
+/* رابط الإعدادات */
+.pl-btn-settings {
+    border: 1.5px solid #e2e8f0;
+    padding: 10px 24px;
+}
+
+/* رسالة فارغة */
+.pl-empty-py {
+    padding: 4rem 0;
+}
+
+/* فاصل داخل شارة السعر */
+.pl-price-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.25);
+    margin: 2px 0;
+}
+
+/* فاصل وحدات إضافية (أعلى/أسفل السعر) */
+.pl-au-sep-top {
+    border-top: 1px dashed #94a3b8;
+    margin-top: 3px;
+    padding-top: 3px;
+}
+
+.pl-au-sep-bottom {
+    border-bottom: 1px dashed #94a3b8;
+    margin-bottom: 3px;
+    padding-bottom: 3px;
+}
+
+/* بطاقات الإحصائيات */
+.pl-stat-danger {
+    background: linear-gradient(135deg, #fef2f2, #fecaca);
+    border: 1px solid #fca5a5;
+    padding: 14px;
+}
+
+.pl-stat-success {
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    border: 1px solid #bbf7d0;
+    padding: 14px;
+}
+
+.pl-stat-primary {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border: 1px solid #bfdbfe;
+    padding: 14px;
+}
+
+.pl-stat-number {
+    font-size: 1.8rem;
+}
+
+.pl-text-green {
+    color: #16a34a;
+}
+
+/* بطاقة راديو كبيرة */
+.pl-radio-card {
+    flex: 1;
+    padding: 14px;
+    border: 2px solid #e2e8f0;
+    transition: all 0.15s;
+    min-width: 250px;
+}
+
+/* بطاقة راديو صغيرة */
+.pl-radio-card-sm {
+    border: 2px solid #e2e8f0;
+    transition: all 0.15s;
+}
+
+/* بطاقة خيار (checkbox) */
+.pl-option-card {
+    padding: 10px 14px;
+    border: 1.5px solid #e2e8f0;
+    transition: all 0.15s;
+}
+
+.pl-option-card-mb {
+    padding: 10px 14px;
+    border: 1.5px solid #e2e8f0;
+    transition: all 0.15s;
+    margin-bottom: 10px;
+}
+
+/* تصنيف لائحة */
+.pl-cat-label {
+    gap: 6px;
+    padding: 8px 14px;
+    border: 1.5px solid #e2e8f0;
+    transition: all 0.15s;
+}
+
+.pl-cat-label-danger {
+    gap: 6px;
+    padding: 8px 14px;
+    border: 1.5px solid #fca5a5;
+}
+
+/* نقطة لون التصنيف */
+.pl-color-dot {
+    width: 8px;
+    height: 8px;
+    display: inline-block;
+}
+
+/* أدوات مساعدة */
+.pl-accent-danger { accent-color: #c0392b; }
+.pl-accent-primary { accent-color: #2563eb; }
+.pl-check-lg { width: 18px; height: 18px; accent-color: #c0392b; }
+.pl-dir-ltr { direction: ltr; }
+.pl-icon-inline { vertical-align: middle; margin-left: 4px; }
+.pl-mx-1 { margin: 0 2px; }
+.pl-min-w-24 { min-width: 24px; }
+.pl-whitespace-normal { white-space: normal; }
+.pl-text-0-68 { font-size: 0.68rem; }
+.pl-leading-relaxed { line-height: 1.6; }
+
+/* شبكة متجاوبة */
+.pl-grid-auto-160 { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+.pl-grid-auto-180 { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+
+/* معاينة عرض العمود */
+.pl-width-preview {
+    padding: 8px 12px;
+    background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+    border: 1px solid #bfdbfe;
+}
+
+.pl-width-bar {
+    flex: 1;
+    height: 6px;
+    background: #dbeafe;
+    border-radius: 3px;
+    margin-right: 4px;
+}
+
+.pl-width-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2563eb, #1d4ed8);
+    border-radius: 3px;
+    transition: width 0.3s;
+}
+
+/* زر التوليد */
+.pl-btn-generate {
+    min-width: 240px;
+    background: #c0392b;
+    border-color: #c0392b;
+}
+
+/* صندوق نطاق الوحدات */
+.pl-au-range-row {
+    padding: 10px 14px;
+    border: 1.5px solid #e2e8f0;
+}
+
+/* شريط معلومات التصنيفات */
+.pl-cat-info-bar {
+    padding: 8px 12px;
+    gap: 6px;
+}
+
+/* === Additional utility classes for inline style replacement === */
+.mt-2px { margin-top: 2px; }
+.min-w-140 { min-width: 140px; }
+.letter-spacing-05 { letter-spacing: 0.5px; }
+.check-lg { width: 18px; height: 18px; }
+.input-border-blue { border-color: #93c5fd; }
+.btn-remove-style { background: none; padding: 6px; }
+.field-label-gap-sm { margin-bottom: 3px; }
+.text-3rem { font-size: 3rem; }
+
+/* Log viewer page */
+.log-raw-box { background: #fefce8; border: 1px solid #fde68a; direction: ltr; }
+
+/* === إصلاحات التوافق مع الهواتف — inline styles === */
+
+/* صفحة قائمة الأسعار — بطاقات الراديو */
+@media (max-width: 600px) {
+    label[style*="min-width:250px"],
+    label[style*="min-width: 250px"] {
+        min-width: 0 !important;
+        flex: 1 1 100% !important;
+    }
+
+    button[style*="min-width:240px"],
+    button[style*="min-width: 240px"] {
+        min-width: 0 !important;
+        width: 100% !important;
+    }
+}
+
+/* صفحة تعديل/إضافة منتج — صفوف الوحدات المخصصة */
+@media (max-width: 640px) {
+    .custom-unit-row {
+        flex-wrap: wrap !important;
+    }
+
+    .custom-unit-row .form-group {
+        min-width: 0 !important;
+        flex: 1 1 100% !important;
+    }
+
+    .custom-unit-row .form-group.cu-name,
+    .custom-unit-row .form-group.cu-type,
+    .custom-unit-row .form-group.cu-conversion,
+    .custom-unit-row .form-group.cu-price {
+        min-width: 0 !important;
+        flex: 1 1 45% !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .custom-unit-row .form-group.cu-name,
+    .custom-unit-row .form-group.cu-type,
+    .custom-unit-row .form-group.cu-conversion,
+    .custom-unit-row .form-group.cu-price {
+        flex: 1 1 100% !important;
+    }
+}
+
+/* صفحة الجرد — أعمدة الجدول */
+@media (max-width: 768px) {
+    .inv-count-table th[style*="width"],
+    .inv-count-table td[style*="width"] {
+        width: auto !important;
+        min-width: 60px !important;
+    }
+
+    .inv-count-table input[style*="width:100px"],
+    .inv-count-table input[style*="width: 100px"] {
+        width: 80px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .inv-count-table input[style*="width:100px"],
+    .inv-count-table input[style*="width: 100px"] {
+        width: 70px !important;
+    }
+}
+
+/* === صفحة تعديل المنتج — Edit Product Page === */
+
+/* Large checkbox for expiry toggle */
+.checkbox-lg { width: 18px; height: 18px; }
+
+/* Min-width utilities (additional) */
+.min-w-90 { min-width: 90px; }
+.min-w-100 { min-width: 100px; }
+.min-w-130 { min-width: 130px; }
+.min-w-140 { min-width: 140px; }
+
+/* Stat box variant: blue with small padding */
+.stat-box-blue-sm { border: 1px solid #93c5fd; padding: 6px 14px; }
+
+/* Expiry batch row (existing batches) */
+.expiry-batch-row {
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    animation: fadeSlideDown 0.3s ease;
+}
+
+/* Expiry batch field widths */
+.expiry-field-130 { flex: 1; min-width: 130px; }
+.expiry-field-100 { min-width: 100px; }
+.expiry-field-120 { min-width: 120px; }
+.expiry-field-90 { min-width: 90px; }
+
+/* Expiry small label inside batch rows */
+.expiry-label-sm { font-size: 0.72rem; margin-bottom: 2px; }
+
+/* Expiry status text inside batch rows */
+.expiry-status-text { font-size: 0.82rem; }
+
+/* New expiry row (for adding new dates) */
+.new-expiry-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border: 1px solid #93c5fd;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    animation: fadeSlideDown 0.3s ease;
+}
+
+/* New expiry field widths */
+.new-expiry-field { flex: 1; min-width: 160px; }
+.new-expiry-field-140 { min-width: 140px; }
+
+/* New expiry label */
+.new-expiry-label { margin-bottom: 3px; }
+
+/* Blue-light border for inputs */
+.border-blue-light-input { border-color: #93c5fd !important; }
+
+/* Remove button (no background) */
+.btn-remove-bg { background: none; padding: 6px; }
+
+/* === صفحة تفاصيل المنتج — وحدات الشراء === */
+.purchase-unit-blue {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border: 1px solid #bfdbfe;
+    padding: 12px 18px;
+}
+
+.purchase-unit-amber {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border: 1px solid #fcd34d;
+    padding: 12px 18px;
+}
+
+/* === صفحة تفاصيل المنتج — تنبيهات الانتهاء === */
+.expiry-border-danger { border-color: #fca5a5; }
+.expiry-border-warning { border-color: #fcd34d; }
+.expiry-border-success { border-color: #86efac; }
+
+.expiry-card-header-danger { background: #fee2e2; }
+.expiry-card-header-warning { background: #fef3c7; }
+.expiry-card-header-success { background: #f0fdf4; }
+
+.expiry-alert-danger {
+    border: 1px solid #fca5a5;
+    padding: 12px 16px;
+}
+
+.expiry-alert-warning {
+    border: 1px solid #fcd34d;
+    padding: 12px 16px;
+}
+
+.expiry-alert-success {
+    border: 1px solid #86efac;
+    padding: 12px 16px;
+}
+
+.expiry-date-expired {
+    color: #dc2626;
+    font-weight: 700;
+    background: #fee2e2;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.expiry-date-expiring {
+    color: #d97706;
+    font-weight: 700;
+    background: #fef3c7;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.expiry-date-valid {
+    color: #059669;
+    font-weight: 600;
+    background: #f0fdf4;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+/* === صفحة المصاريف — رمز العملة === */
+.currency-symbol-position {
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* === صفحة الأرباح — حدود بطاقات الإحصائيات === */
+.stat-card-expense-border { border-right-color: #be123c; }
+.stat-border-success { border-right-color: #059669; }
+.stat-border-danger { border-right-color: #dc2626; }

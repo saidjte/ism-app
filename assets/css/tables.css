@@ -1,0 +1,224 @@
+/* ===================================
+   الجداول والشارات
+   Tables & Badges
+   =================================== */
+
+/* === الجداول === */
+.table-responsive {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table thead {
+    background: var(--gray-50);
+}
+
+table th {
+    padding: 12px 16px;
+    text-align: right;
+    font-weight: 600;
+    color: var(--gray-600);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--gray-200);
+    white-space: nowrap;
+}
+
+table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--gray-100);
+    color: var(--gray-700);
+    font-size: 0.9rem;
+}
+
+table tbody tr:hover {
+    background: var(--gray-50);
+}
+
+table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* === فئات نصية === */
+.text-danger { color: var(--danger); }
+.text-success { color: var(--secondary); }
+.text-warning { color: var(--warning); }
+.text-muted { color: var(--gray-500); }
+.text-bold { font-weight: 700; }
+
+/* === الشارات === */
+.badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-success {
+    background: var(--secondary-light);
+    color: var(--secondary-dark);
+}
+
+.badge-danger {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+
+.badge-warning {
+    background: var(--warning-light);
+    color: var(--warning);
+}
+
+.badge-info {
+    background: var(--info-light);
+    color: var(--info);
+}
+
+/* === مؤشر المنتج المنخفض === */
+.low-stock {
+    background: var(--danger-light) !important;
+}
+
+.low-stock td {
+    color: var(--danger) !important;
+    font-weight: 600;
+}
+
+/* === التجاوب - 768px === */
+@media (max-width: 768px) {
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 0 -1rem;
+        padding: 0 1rem;
+    }
+
+    table {
+        font-size: 0.8rem;
+        min-width: 500px;
+    }
+
+    /* الجداول التي لا تستخدم mobile-card-view تحتاج حد أدنى أكبر */
+    .table-responsive:not(.no-card-view) table {
+        min-width: 600px;
+    }
+
+    table th, table td {
+        padding: 10px 8px;
+    }
+
+    table th {
+        font-size: 0.75rem;
+    }
+}
+
+/* === التجاوب - 480px === */
+@media (max-width: 480px) {
+    table {
+        min-width: 320px;
+        font-size: 0.75rem;
+    }
+
+    .table-responsive:not(.no-card-view) table {
+        min-width: 420px;
+    }
+
+    table th, table td {
+        padding: 8px 6px;
+    }
+}
+
+/* === عرض البطاقات على الهاتف (Mobile Card View) === */
+@media (max-width: 768px) {
+    .mobile-card-view {
+        display: block !important;
+    }
+
+    .mobile-card-view thead {
+        display: none;
+    }
+
+    .mobile-card-view tbody {
+        display: block;
+    }
+
+    .mobile-card-view tbody tr {
+        display: block;
+        background: var(--white);
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius);
+        margin-bottom: 0.75rem;
+        padding: 0.75rem;
+        position: relative;
+    }
+
+    .mobile-card-view tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 0 !important;
+        border-bottom: 1px solid var(--gray-100);
+        font-size: 0.85rem;
+        min-height: auto;
+    }
+
+    .mobile-card-view tbody td:last-child {
+        border-bottom: none;
+    }
+
+    .mobile-card-view tbody td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--gray-500);
+        font-size: 0.8rem;
+        flex-shrink: 0;
+        margin-left: 8px;
+    }
+
+    .mobile-card-view tbody td[data-label="actions"] {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+        padding-top: 8px !important;
+        border-bottom: none;
+    }
+
+    .mobile-card-view tbody td[data-label="actions"]::before {
+        display: none;
+    }
+
+    .mobile-card-view tbody td[data-label="actions"] .btn-group {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .mobile-card-view tbody td[data-label="actions"] .btn-group .btn,
+    .mobile-card-view tbody td[data-label="actions"] .btn-group form .btn {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .mobile-card-view table {
+        min-width: auto !important;
+    }
+
+    .mobile-card-view .table-responsive {
+        overflow: visible;
+        margin: 0;
+        padding: 0;
+    }
+
+    .mobile-card-view .low-stock {
+        border-color: var(--danger);
+        border-left: 3px solid var(--danger);
+    }
+}

@@ -1,0 +1,394 @@
+/* ===================================
+   تحسينات الهاتف النقال
+   Mobile Enhancements: Bottom Nav, User Sidebar, Touch, Utilities
+   =================================== */
+
+/* === Safe Area (iPhone notch) === */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+    .mobile-bottom-nav {
+        padding-bottom: env(safe-area-inset-bottom);
+        height: calc(60px + env(safe-area-inset-bottom));
+    }
+    .navbar {
+        padding-top: env(safe-area-inset-top);
+    }
+}
+
+/* === شريط التنقل السفلي للهاتف === */
+.mobile-bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: var(--white);
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    z-index: 999;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0;
+    border-top: 1px solid var(--gray-200);
+}
+
+.mobile-bottom-nav .bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    text-decoration: none;
+    color: var(--gray-400);
+    font-size: 0.65rem;
+    font-weight: 500;
+    padding: 6px 4px;
+    min-height: 44px;
+    transition: var(--transition);
+    flex: 1;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-bottom-nav .bottom-nav-item svg {
+    width: 20px;
+    height: 20px;
+    transition: var(--transition);
+}
+
+.mobile-bottom-nav .bottom-nav-item.active {
+    color: var(--primary);
+}
+
+.mobile-bottom-nav .bottom-nav-item.active svg {
+    transform: scale(1.1);
+}
+
+/* === معلومات المستخدم في القائمة الجانبية === */
+.mobile-user-dropdown {
+    display: none;
+}
+
+.mobile-user-toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 20px;
+    background: var(--gray-50);
+    border: none;
+    border-bottom: 1px solid var(--gray-200);
+    cursor: pointer;
+    transition: background 0.2s ease;
+    font-family: inherit;
+}
+
+.mobile-user-toggle:hover {
+    background: var(--gray-100);
+}
+
+.mobile-user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.mobile-user-details {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    text-align: right;
+}
+
+.mobile-user-name {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--gray-800);
+}
+
+.mobile-user-role {
+    font-size: 0.75rem;
+    color: var(--gray-500);
+}
+
+.mobile-user-arrow {
+    color: var(--gray-400);
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.mobile-user-dropdown.open .mobile-user-arrow {
+    transform: rotate(180deg);
+}
+
+.mobile-user-dropdown.open .mobile-user-toggle {
+    background: var(--primary-light);
+}
+
+.mobile-user-dropdown.open .mobile-user-toggle .mobile-user-name {
+    color: var(--primary);
+}
+
+.mobile-nav-divider {
+    height: 1px;
+    background: var(--gray-200);
+    margin: 0 1rem;
+}
+
+/* === إظهار العناصر على الهاتف === */
+@media (max-width: 768px) {
+    .mobile-bottom-nav {
+        display: flex;
+    }
+
+    .mobile-user-dropdown {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* إضافة مسافة سفلية لتجنب شريط التنقل السفلي */
+    .footer {
+        padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
+        margin-bottom: 0;
+    }
+
+    .container {
+        padding-bottom: 0.5rem;
+    }
+
+    /* تحسين حجم خط عنوان الصفحة */
+    .page-header .btn-group {
+        width: 100%;
+        display: flex;
+        gap: 6px;
+    }
+
+    .page-header .btn-group .btn {
+        flex: 1;
+        min-width: 0;
+        white-space: nowrap;
+        font-size: 0.8rem;
+        padding: 10px 8px;
+    }
+
+    .page-header .btn-group .btn svg {
+        display: none;
+    }
+
+    /* تحسين أزرار الإجراءات في الجداول */
+    .btn-group {
+        gap: 4px;
+    }
+
+    .btn-group form {
+        display: inline-flex;
+    }
+
+    .btn-group form .btn {
+        padding: 7px 10px;
+        font-size: 0.73rem;
+        min-height: 36px;
+    }
+
+    /* تحسين العنوان على الهاتف */
+    .page-header h1 span {
+        font-size: 0.65rem;
+    }
+
+    /* تحسين الأزرار المنسدلة للمستخدم */
+    .mobile-user-actions {
+        display: none;
+        flex-direction: column;
+        padding: 0;
+        gap: 0;
+        background: var(--white);
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+
+    .mobile-user-dropdown.open .mobile-user-actions {
+        display: flex;
+        padding: 0.5rem 1rem;
+        max-height: 300px;
+        border-bottom: 1px solid var(--gray-200);
+    }
+
+    .mobile-user-actions a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        color: var(--gray-700);
+        text-decoration: none;
+        font-size: 0.9rem;
+        border-radius: var(--radius);
+        transition: var(--transition);
+    }
+
+    .mobile-user-actions a:hover {
+        background: var(--gray-100);
+    }
+
+    .mobile-user-actions a svg {
+        width: 18px;
+        height: 18px;
+        color: var(--gray-400);
+        flex-shrink: 0;
+    }
+
+    .mobile-user-actions .mobile-logout-link {
+        color: var(--danger);
+        border-top: 1px solid var(--gray-200);
+        margin-top: 4px;
+        padding-top: 12px;
+    }
+
+    .mobile-user-actions .mobile-logout-link:hover {
+        background: var(--danger-light);
+    }
+}
+
+/* === 480px - الشاشات الصغيرة === */
+@media (max-width: 480px) {
+    .mobile-bottom-nav .bottom-nav-item {
+        font-size: 0.6rem;
+        gap: 1px;
+    }
+
+    .mobile-bottom-nav .bottom-nav-item svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    /* تحسين أزرار الإجراءات بشكل أكبر */
+    .btn-group {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 4px;
+        scrollbar-width: none;
+    }
+
+    .btn-group::-webkit-scrollbar {
+        display: none;
+    }
+
+    .btn-group form .btn {
+        padding: 8px 12px;
+        font-size: 0.75rem;
+        flex-shrink: 0;
+    }
+}
+
+/* === تحسين تجربة اللمس === */
+@media (max-width: 768px) {
+    /* تقليل تأثير الضغط على الروابط */
+    a, button, .btn {
+        -webkit-tap-highlight-color: rgba(37, 99, 235, 0.1);
+    }
+
+    /* تحسين منتقي الألوان */
+    .color-picker-group input[type="color"] {
+        width: 48px;
+        height: 44px;
+    }
+}
+
+/* === تحسين القائمة الجانبية على الهاتف === */
+@media (max-width: 768px) {
+    .navbar nav {
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+
+    .navbar nav::-webkit-scrollbar {
+        width: 3px;
+    }
+
+    .navbar nav::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .navbar nav::-webkit-scrollbar-thumb {
+        background: var(--gray-300);
+        border-radius: 3px;
+    }
+}
+
+/* === تحسين القائمة المنسدلة (select) على الهاتف === */
+@media (max-width: 768px) {
+    select.form-control {
+        min-height: 44px;
+        padding: 8px 36px 8px 12px;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3e%3cpath fill='%2364748b' d='M6 8L1 3h10z'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: left 12px center;
+        appearance: none;
+        -webkit-appearance: none;
+    }
+}
+
+/* === فئات مساعدة للوافقية === */
+.responsive-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+
+.responsive-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.75rem;
+}
+
+.responsive-grid-auto {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+}
+
+/* === مسافة سفلية للجسم لشريط التنقل السفلي === */
+@media (max-width: 768px) {
+    body {
+        padding-bottom: 70px !important;
+    }
+}
+
+/* === تحسين شريط الأدوات no-print للهاتف === */
+@media (max-width: 768px) {
+    .no-print {
+        padding: 10px 12px !important;
+        gap: 8px !important;
+    }
+    .no-print .btn-print,
+    .no-print .btn-back {
+        padding: 8px 16px !important;
+        font-size: 0.85rem !important;
+    }
+    .no-print .print-info {
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        gap: 10px !important;
+        font-size: 0.8rem !important;
+    }
+}
+
+/* === دعم safe-area-inset لشق آيفون === */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+    .mobile-bottom-nav {
+        padding-bottom: env(safe-area-inset-bottom) !important;
+    }
+    @media (max-width: 768px) {
+        body {
+            padding-bottom: calc(70px + env(safe-area-inset-bottom)) !important;
+        }
+    }
+}

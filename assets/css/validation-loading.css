@@ -1,0 +1,241 @@
+/* ===================================
+   أنماط التحقق من النماذج
+   Form Validation Styles
+   =================================== */
+
+/* === حالة الخطأ === */
+.field-invalid {
+    border-color: var(--danger, #ef4444) !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12) !important;
+    animation: fieldShake 0.4s ease;
+}
+
+.field-invalid:focus {
+    border-color: var(--danger, #ef4444) !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
+}
+
+/* === حالة النجاح === */
+.field-valid {
+    border-color: var(--success, #10b981) !important;
+}
+
+.field-valid:focus {
+    border-color: var(--success, #10b981) !important;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12) !important;
+}
+
+/* === رسالة الخطأ أسفل الحقل === */
+.field-error {
+    display: block;
+    color: var(--danger, #ef4444);
+    font-size: 0.8rem;
+    margin-top: 4px;
+    font-weight: 500;
+    line-height: 1.4;
+    min-height: 0;
+    overflow: hidden;
+    animation: errorSlideDown 0.25s ease;
+}
+
+.field-error:empty {
+    display: none;
+}
+
+/* === حركة الاهتزاز === */
+@keyframes fieldShake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(5px); }
+    60% { transform: translateX(-3px); }
+    80% { transform: translateX(2px); }
+}
+
+/* === ظهور رسالة الخطأ === */
+@keyframes errorSlideDown {
+    from { opacity: 0; transform: translateY(-4px); max-height: 0; }
+    to { opacity: 1; transform: translateY(0); max-height: 40px; }
+}
+
+/* === أيقونة تحقق (اختياري) === */
+.form-group.has-success::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: var(--success, #10b981);
+    font-weight: 700;
+    font-size: 1rem;
+    pointer-events: none;
+}
+
+
+/* ===================================
+   أنماط مؤشر التحميل الموحد
+   Unified Loading Indicator Styles
+   =================================== */
+
+/* === الطبقة الشفافة (Overlay) === */
+.app-loading-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.35);
+    backdrop-filter: blur(2px);
+    z-index: 9998;
+    justify-content: center;
+    align-items: center;
+    animation: loadingFadeIn 0.2s ease;
+}
+
+/* === محتوى مؤشر التحميل === */
+.app-loading-content {
+    background: #fff;
+    border-radius: 16px;
+    padding: 32px 40px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    min-width: 200px;
+    direction: rtl;
+}
+
+/* === الرسالة === */
+.app-loading-message {
+    font-size: 0.95rem;
+    color: var(--gray-700, #374151);
+    font-weight: 600;
+    font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+    text-align: center;
+}
+
+/* === الدوارات المتحركة (Spinner) === */
+.app-loading-spinner {
+    position: relative;
+    width: 48px;
+    height: 48px;
+}
+
+.app-loading-spinner .spinner-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    animation: spinnerRotate 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+.app-loading-spinner .spinner-ring:nth-child(1) {
+    border-top-color: var(--primary, #2563eb);
+    animation-delay: -0.45s;
+}
+
+.app-loading-spinner .spinner-ring:nth-child(2) {
+    border-top-color: var(--primary, #2563eb);
+    opacity: 0.6;
+    animation-delay: -0.3s;
+    width: 75%;
+    height: 75%;
+    top: 12.5%;
+    left: 12.5%;
+}
+
+.app-loading-spinner .spinner-ring:nth-child(3) {
+    border-top-color: var(--primary, #2563eb);
+    opacity: 0.3;
+    animation-delay: -0.15s;
+    width: 50%;
+    height: 50%;
+    top: 25%;
+    left: 25%;
+}
+
+@keyframes spinnerRotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* === مؤشر التحميل الداخلي (Inline) === */
+.app-loading-inline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    gap: 12px;
+    min-height: 80px;
+}
+
+.app-loading-inline-message {
+    font-size: 0.9rem;
+    color: var(--gray-500, #6b7280);
+    font-weight: 500;
+}
+
+.app-loading-spinner-sm {
+    position: relative;
+    width: 32px;
+    height: 32px;
+}
+
+.app-loading-spinner-sm .spinner-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2.5px solid transparent;
+    animation: spinnerRotate 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+.app-loading-spinner-sm .spinner-ring:nth-child(1) {
+    border-top-color: var(--primary, #2563eb);
+    animation-delay: -0.3s;
+}
+
+.app-loading-spinner-sm .spinner-ring:nth-child(2) {
+    border-top-color: var(--primary, #2563eb);
+    opacity: 0.4;
+    animation-delay: -0.15s;
+    width: 65%;
+    height: 65%;
+    top: 17.5%;
+    left: 17.5%;
+}
+
+/* === ظهور التحميل === */
+@keyframes loadingFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* === دعم RTL/LTR === */
+[dir="ltr"] .app-loading-content {
+    direction: ltr;
+}
+
+[dir="rtl"] .app-loading-content {
+    direction: rtl;
+}
+
+/* === تحسينات الهاتف === */
+@media (max-width: 480px) {
+    .app-loading-content {
+        padding: 24px 28px;
+        border-radius: 12px;
+    }
+
+    .app-loading-spinner {
+        width: 40px;
+        height: 40px;
+    }
+
+    .app-loading-message {
+        font-size: 0.85rem;
+    }
+}

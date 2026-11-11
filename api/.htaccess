@@ -1,0 +1,15 @@
+# ===== إعادة توجيه إصدار API =====
+# يدعم المسارات /api/v1/endpoint.php → /api/endpoint.php
+# هذا يسمح بإضافة إصدارات مستقبلية (v2, v3...) بدون كسر التوافق
+#
+# مثال:
+#   /api/v1/search_products.php?q=test → /api/search_products.php?q=test
+#   /api/search_products.php?q=test   → /api/search_products.php?q=test (يعمل كما هو)
+
+RewriteEngine On
+
+# إعادة توجيه /api/v1/xxx إلى /api/xxx (الإصدار الحالي)
+RewriteRule ^v1/(.*)$ $1 [L,QSA]
+
+# رفض الوصول المباشر لملفات PHP التي لا يجب استدعاؤها مباشرة
+# (مثل ملفات التهيئة والثوابت)
