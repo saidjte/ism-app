@@ -15,6 +15,17 @@ ob_start();
 
 require_once __DIR__ . '/../includes/bootstrap.php';
 
+// v6.3.2 (أمني — المرحلة 0): هذا المسار كان متاحاً بدون مصادقة ويكشف خريطة
+// صور المنتجات لأي زائر. فحص الجلسة إلزامي الآن — استجابة JSON 401 بدل التحويل
+// لأن المستهلك هنا طلب fetch يتوقع JSON
+if (!function_exists('isLoggedIn') || !isLoggedIn()) {
+    ob_end_clean();
+    http_response_code(401);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['success' => false, 'error' => 'unauthorized'], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
 // v6.1.4 (W8 إصلاح): لا نكتم الأخطاء — bootstrap.php يضبط مستوى التسجيل المناسب.
 // الأخطاء تُسجّل في السجل (وليس في الإخراج) حتى لا تُفْسِد استجابة JSON.
 // نضمن فقط أن display_errors=0 في الإنتاج حتى لا تتسرّب تفاصيل للمستخدم.

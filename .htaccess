@@ -14,6 +14,17 @@
     Require all denied
 </FilesMatch>
 
+# v6.3.2 (أمني — المرحلة 0): منع الوصول لأي ملف .lock (مثل config/installed.lock)
+<FilesMatch "\.lock$">
+    Require all denied
+</FilesMatch>
+
+# v6.3.2 (أمني — المرحلة 0): حجب سكربتات التشخيص المؤقتة كخط دفاع أخير
+# (المفروض حذفها من الخادم نهائياً — راجع scripts/security-cleanup.sh)
+<FilesMatch "^diag-">
+    Require all denied
+</FilesMatch>
+
 # حماية ملفات composer و package manager
 <FilesMatch "^(composer\.(json|lock)|package\.json|package-lock\.json|yarn\.lock|\.npmrc)$">
     Require all denied

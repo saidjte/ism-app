@@ -2,6 +2,46 @@
 // ملف تثبيت التطبيق - إنشاء قاعدة البيانات والجداول
 header('Content-Type: text/html; charset=utf-8');
 
+/**
+ * v6.3.2 (أمني — المرحلة 0):
+ * 1) قفل التثبيت: بعد التثبيت الأول يُنشأ ملف config/installed.lock
+ *    ويتوقف هذا الملف عن العمل نهائياً.
+ * 2) fail-closed بدل fail-open: سابقاً كان أي خطأ أثناء فحص "مثبت مسبقاً"
+ *    يعني السماح بإعادة التثبيت — ما يتيح لمهاجم إرسال بيانات قاعدة
+ *    بيانات خاطئة لإعادة تهيئة التطبيق وإنشاء admin/admin123.
+ *    الآن: وجود .env فعلي + فشل التحقق = منع التثبيت.
+ * 3) فحص CSRF على معالج POST (كان غائباً).
+ * 4) تشفير DB_PASS بـ AES-256-GCM عند كتابة .env (كان نصاً صريحاً).
+ * 5) كلمة مرور admin عشوائية تُعرض مرة واحدة بدل admin123 الافتراضية.
+ */
+
+// ---- قفل التثبيت ----
+define('ISM_INSTALL_LOCK_FILE', __DIR__ . '/config/installed.lock');
+
+/**
+ * عرض صفحة حجب التثبيت (مقفل / خطأ تحقق)
+ */
+function ism_install_blocked_page(string $title, string $detail): void {
+    http_response_code(403);
+    echo '<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">'
+        . '<meta name="viewport" content="width=device-width, initial-scale=1.0">'
+        . '<title>مثبّت مقفل</title></head>'
+        . '<body style="font-family:\'Segoe UI\',Tahoma,sans-serif;text-align:center;padding:3rem 1.5rem;background:#f8fafc;color:#1e293b;">'
+        . '<div style="max-width:520px;margin:0 auto;background:#fff;border-radius:14px;padding:2.5rem;box-shadow:0 10px 40px rgba(0,0,0,.12);">'
+        . '<h1 style="color:#dc2626;margin-bottom:1rem;">' . "\u{1F512}" . ' ' . htmlspecialchars($title) . '</h1>'
+        . '<p style="color:#334155;line-height:1.8;">' . htmlspecialchars($detail) . '</p>'
+        . '<p style="color:#64748b;font-size:.9rem;margin-top:1.5rem;">لمسؤول النظام: لإعادة التثبيت عمداً احذف الملف <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;">config/installed.lock</code> من الخادم يدوياً.</p>'
+        . '</div></body></html>';
+    exit;
+}
+
+if (file_exists(ISM_INSTALL_LOCK_FILE)) {
+    ism_install_blocked_page(
+        'التثبيت مقفل',
+        'التطبيق مثبت مسبقاً — معلّم التثبيت معطّل لأسباب أمنية.'
+    );
+}
+
 // تحميل الملفات المطلوبة أولاً (لا تحتاج قاعدة بيانات)
 require_once __DIR__ . '/config/upgrades.php';
 require_once __DIR__ . '/includes/csrf.php';
@@ -10,8 +50,9 @@ require_once __DIR__ . '/includes/csrf.php';
 // التحقق من أن التطبيق مثبت بالفعل: يجب أن يوجد ملف .env + اتصال ناجح + جداول محملة
 $already_installed = false;
 $env_file = __DIR__ . '/.env';
+$env_exists = file_exists($env_file) && filesize($env_file) > 50;
 
-if (file_exists($env_file) && filesize($env_file) > 50) {
+if ($env_exists) {
     try {
         @require_once __DIR__ . '/config/database.php';
         if (function_exists('getDBConnection')) {
@@ -24,12 +65,23 @@ if (file_exists($env_file) && filesize($env_file) > 50) {
             }
         }
     } catch (Throwable $e) {
-        // أي خطأ (استثناء أو خطأ PHP) = السماح بالتثبيت
-        $already_installed = false;
+        // v6.3.2 (أمني): fail-closed — وجود .env فعلي + فشل التحقق = منع
+        // التثبيت بدل السماح به (كان السلوك القديم يسمح بإعادة التثبيت عند أي خطأ)
+        // سجل السبب الحقيقي للتشخيص
+        $logDir = __DIR__ . '/logs';
+        if (!is_dir($logDir)) @mkdir($logDir, 0755, true);
+        @file_put_contents($logDir . '/install-blocked.log', date('Y-m-d H:i:s') . ' — فحص التثبيت فشل: ' . $e->getMessage() . "\n", FILE_APPEND);
+        ism_install_blocked_page(
+            'التثبيت مقفل',
+            'يوجد ملف إعدادات (.env) على الخادم، ولم يتمكن النظام من التحقق من حالة التثبيت. لمنع إعادة التهيئة غير المصرح بها تم تعطيل معلّم التثبيت. راجع logs/install-blocked.log للمزيد.'
+        );
     }
 }
 
 if ($already_installed) {
+    // v6.3.2 (أمني): إنشاء القفل تلقائياً عند اكتشاف تثبيت سليم (ترقية ذاتية للتركيبات القديمة)
+    @mkdir(__DIR__ . '/config', 0755, true);
+    @file_put_contents(ISM_INSTALL_LOCK_FILE, 'installed:' . date('c') . "\n");
     header("Location: index.php");
     exit;
 }
@@ -44,6 +96,10 @@ $db_pass = $_POST['db_pass'] ?? '';
 $db_name = $_POST['db_name'] ?? 'inventory_db';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['install'])) {
+    // v6.3.2 (أمني): فحص CSRF قبل أي معالجة (كان غائباً تماماً)
+    $csrf_ok = verifyCSRFToken($_POST['csrf_token'] ?? null);
+    
+    if ($csrf_ok) {
     try {
         // الاتصال بـ MySQL بدون تحديد قاعدة بيانات
         $pdo = new PDO(
@@ -79,26 +135,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['install'])) {
             updateDBVersion($pdo, APP_VERSION);
 
             // حفظ إعدادات الاتصال في ملف .env
+            // v6.3.2 (أمني): توليد APP_ENCRYPTION_KEY وتشفير DB_PASS بـ AES-256-GCM
+            // بدل كتابتها نصاً صريحاً (كانت تظهر للجميع في الملف)
+            $newEncryptionKey = base64_encode(random_bytes(32));
+            putenv('APP_ENCRYPTION_KEY=' . $newEncryptionKey);
+            if (!class_exists('EnvEncryptor')) {
+                require_once __DIR__ . '/includes/EnvEncryptor.php';
+            }
+            $encryptedDbPass = EnvEncryptor::encrypt($db_pass);
+            
             $env_content = "# إعدادات قاعدة البيانات\n";
             $env_content .= "# تم إنشاؤه تلقائياً بواسطة معلّم التثبيت في " . date('Y-m-d H:i:s') . "\n";
             $env_content .= "DB_HOST=" . $db_host . "\n";
             $env_content .= "DB_NAME=" . $db_name . "\n";
             $env_content .= "DB_USER=" . $db_user . "\n";
-            $env_content .= "DB_PASS=" . $db_pass . "\n";
+            $env_content .= "# مشفّرة بـ AES-256-GCM — لا تحذف APP_ENCRYPTION_KEY أبداً!\n";
+            $env_content .= "DB_PASS=" . $encryptedDbPass . "\n";
+            $env_content .= "# مفتاح تشفير القيم الحساسة في هذا الملف (32 بايت base64)\n";
+            $env_content .= "APP_ENCRYPTION_KEY=" . $newEncryptionKey . "\n";
             
             file_put_contents(__DIR__ . '/.env', $env_content);
+            @chmod(__DIR__ . '/.env', 0640);
 
             // إنشاء المستخدم الافتراضي (مدير النظام)
             // التحقق مما إذا كان التحديث 3.0.0 يُنشئ المستخدمين تلقائياً
             try {
                 $admin_exists = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
                 if ($admin_exists == 0) {
-                    $admin_pass = password_hash('admin123', PASSWORD_DEFAULT);
+                    // v6.3.2 (أمني): كلمة مرور عشوائية بدل admin123 المعروفة — تُعرض مرة واحدة
+                    $admin_password_plain = bin2hex(random_bytes(8)); // 16 حرفاً عشوائياً
+                    $admin_pass = password_hash($admin_password_plain, PASSWORD_DEFAULT);
                     $pdo->prepare("INSERT INTO users (username, password, full_name, email, role, password_changed_at) VALUES (?, ?, ?, ?, ?, NOW())")->execute(['admin', $admin_pass, 'مدير النظام', 'admin@example.com', 'admin']);
+                    $generated_admin_password = $admin_password_plain;
                 }
             } catch (Throwable $e) {
                 // جدول المستخدمين قد لا يكون موجوداً بعد - سيتم إنشاؤه عند التحديث
             }
+
+            // v6.3.2 (أمني): قفل التثبيت فور النجاح
+            @mkdir(__DIR__ . '/config', 0755, true);
+            @file_put_contents(ISM_INSTALL_LOCK_FILE, 'installed:' . date('c') . "\n");
 
             $success = true;
             $message = 'تم تثبيت التطبيق بنجاح! الإصدار: ' . APP_VERSION;
@@ -111,6 +187,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['install'])) {
         $logDir = __DIR__ . '/logs';
         if (!is_dir($logDir)) @mkdir($logDir, 0755, true);
         @file_put_contents($logDir . '/install-error.log', date('Y-m-d H:i:s') . ' — ' . $e->getMessage() . "\n", FILE_APPEND);
+    }
+    } else {
+        // فشل CSRF — رسالة عامة بدون تفاصيل
+        $message = 'انتهت صلاحية الجلسة الأمنية. أعد تحميل الصفحة وحاول مرة أخرى.';
     }
 }
 ?>
@@ -250,7 +330,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['install'])) {
             <h3 style="margin-top:1rem;">بيانات الدخول الافتراضية:</h3>
             <ul>
                 <li><strong>اسم المستخدم:</strong> admin</li>
-                <li><strong>كلمة المرور:</strong> admin123</li>
+                <li><strong>كلمة المرور:</strong>
+                <?php if (!empty($generated_admin_password)): ?>
+                    <span style="font-family:monospace;background:#fef3c7;padding:2px 8px;border-radius:4px;font-weight:700;font-size:1rem;"><?php echo htmlspecialchars($generated_admin_password); ?></span>
+                    <br><em style="color:#dc2626;font-style:normal;display:inline-block;margin-top:6px;">⚠️ انسخها الآن — لن تُعرض مرة أخرى! غيّرها من صفحة المستخدمين بعد أول دخول.</em>
+                <?php else: ?>
+                    <span style="color:#64748b;">حساب admin موجود مسبقاً — استخدم كلمة المرور الحالية</span>
+                <?php endif; ?>
+                </li>
             </ul>
         </div>
     </div>

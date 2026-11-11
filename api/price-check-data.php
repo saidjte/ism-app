@@ -3,11 +3,16 @@
  * ========================================================================
  *  API بيانات التحقق من الأسعار
  *  يُرجع بيانات المنتجات بصيغة JSON للتخزين المؤقت في PWA
- *  يعمل بدون مصادقة — بيانات عامة (أسماء + أسعار + باركود فقط)
+ *  يعمل بدون مصادقة — بيانات عامة (أسماء + أسعار بيع + باركود فقط)
  * ========================================================================
  *  v4.15.11 — إصلاح حرج: كشف ديناميكي للأعمدة + إضافة حقل الباركود
  *  - إذا عمود غير موجود (مثل barcode أو min_quantity) لا يفشل الاستعلام
  *  - إضافة حقل barcode لتفعيل البحث بمسح الباركود في صفحة أسعاري
+ *  v6.3.2 (أمني — المرحلة 0):
+ *  - حذف سعر الشراء (purchase_price) من الاستجابة نهائياً — كشف تكلفة
+ *    الشراء للعالم عبر نقطة عامة كان تسريباً تجارياً خطيراً
+ *  - حذف الكمية الدقيقة (quantity) وحد التنبيه (min_quantity) واستبدالهما
+ *    بحالة مخزون مبسطة (stock: ok|low|out) تحفظ تجربة المستخدم دون كشف الأرقام
  */
 
 // تحميل الإعدادات مباشرة (بدون bootstrap الكامل — لسرعة الاستجابة)
@@ -32,13 +37,13 @@ try {
     } catch (\Throwable $e) {
         ErrorHandler::logException($e, 'price-check-data::columnDetection');
         // إذا فشل كشف الأعمدة، نستخدم القائمة الافتراضية
-        $existingCols = ['id', 'code', 'name', 'selling_price', 'purchase_price', 'unit', 'quantity'];
+        $existingCols = ['id', 'code', 'name', 'selling_price', 'unit', 'quantity'];
     }
 
     $hasBarcode      = in_array('barcode', $existingCols);
     $hasMinQuantity   = in_array('min_quantity', $existingCols);
     $hasSellingPrice  = in_array('selling_price', $existingCols);
-    $hasPurchasePrice = in_array('purchase_price', $existingCols);
+    // v6.3.2: purchase_price لم يُرسل بعد الآن — احذف الاعتماد عليه
     $hasUnit          = in_array('unit', $existingCols);
     $hasPrimaryImage  = in_array('primary_image', $existingCols);
     $hasCategory      = false;
@@ -50,10 +55,11 @@ try {
     }
 
     // === بناء أعمدة SELECT ديناميكياً ===
+    // ملاحظة أمنية v6.3.2: quantity وmin_quantity يُجلبان لاحتساب حالة
+    // المخزون داخلياً فقط ثم يُحذفان من الاستجابة — لا يُرسلان للعميل أبداً
     $selectCols = ['p.id', 'p.code', 'p.name'];
     if ($hasBarcode)      $selectCols[] = 'p.barcode';
     if ($hasSellingPrice)  $selectCols[] = 'p.selling_price';
-    if ($hasPurchasePrice) $selectCols[] = 'p.purchase_price';
     if ($hasUnit)          $selectCols[] = 'p.unit';
     $selectCols[] = 'p.quantity';
     if ($hasMinQuantity)   $selectCols[] = 'p.min_quantity';
@@ -167,9 +173,23 @@ try {
         }
         // تحويل الأرقام — مع فحص وجود الحقل
         if (isset($product['selling_price']))  $product['selling_price']  = floatval($product['selling_price']);
-        if (isset($product['purchase_price'])) $product['purchase_price'] = floatval($product['purchase_price']);
-        $product['quantity'] = floatval($product['quantity']);
-        if (isset($product['min_quantity']))   $product['min_quantity']   = floatval($product['min_quantity']);
+        
+        // v6.3.2 (أمني): احتساب حالة المخزون داخلياً ثم حذف الأرقام الفعلية
+        // كانت الاستجابة تكشف: سعر الشراء + الكمية الدقيقة + حد التنبيه للعالم
+        $pQty  = isset($product['quantity'])    ? floatval($product['quantity'])    : 0;
+        $pMin  = isset($product['min_quantity']) ? floatval($product['min_quantity']) : 0;
+        if ($pQty <= 0) {
+            $product['stock'] = 'out';
+        } elseif ($pMin > 0 && $pQty <= $pMin) {
+            $product['stock'] = 'low';
+        } else {
+            $product['stock'] = 'ok';
+        }
+        unset(
+            $product['quantity'],
+            $product['min_quantity'],
+            $product['purchase_price']
+        );
         // barcode يبقى كنص (قد يحتوي أصفار بادئة)
         if (!isset($product['barcode'])) $product['barcode'] = '';
         if (!$hasCategory) $product['category_name'] = '';

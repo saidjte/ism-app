@@ -1057,13 +1057,13 @@ $nonce = base64_encode(random_bytes(16));
             const catIdx = categories.indexOf(p.category_name);
             const colorClass = catIdx >= 0 ? `color-cat-${(catIdx % 8) + 1}` : 'color-cat-0';
 
-            // حالة المخزون
+            // حالة المخزون — v6.3.2: الخادم يرسل الحالة مباشرة (stock: ok|low|out)
+            // بدل الكمية الدقيقة وحد التنبيه (لا تُكشف أرقام المخزون للعملاء)
             let stockTag = '';
-            const qty = parseFloat(p.quantity) || 0;
-            const minQty = parseFloat(p.min_quantity) || 0;
-            if (qty <= 0) {
+            const stockState = p.stock || 'ok';
+            if (stockState === 'out') {
                 stockTag = '<span class="stock-tag stock-out">نفذ</span>';
-            } else if (minQty > 0 && qty <= minQty) {
+            } else if (stockState === 'low') {
                 stockTag = '<span class="stock-tag stock-low">منخفض</span>';
             } else {
                 stockTag = '<span class="stock-tag stock-ok">متوفر</span>';

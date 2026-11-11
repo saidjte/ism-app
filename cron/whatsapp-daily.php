@@ -6,9 +6,12 @@
  * It checks for expired/expiring products and sends a WhatsApp alert automatically.
  * 
  * Usage: Call this URL daily via Windows Task Scheduler or cron job
- * Example: http://localhost/is-app/cron/whatsapp-daily.php?key=YOUR_KEY
+ * Example: http://localhost/is-app/cron/whatsapp-daily.php?key=YOUR_SECRET_KEY
  * 
- * Security: Protected by a dynamic key (changes daily)
+ * Security: v6.3.2 (أمني — المرحلة 0) — مفتاح ثابت عشوائي من الإعدادات
+ * (cron_secret_key) مع مقارنة hash_equals — بدل المفتاح اليومي القابل للحساب
+ * md5(DB_NAME . 'cron_wa_' . date('Y-m-d')) الذي كان أي شخص يستطيع تخمينه.
+ * ضبط المفتاح: صفحة الإعدادات → حقل "مفتاح أمان cron" (نفس مفتاح auto-backup)
  */
 
 // Prevent direct browser access (only allow via server/cron)
@@ -34,11 +37,24 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Security check - verify the cron key
-$expected_key = md5(DB_NAME . 'cron_wa_' . date('Y-m-d'));
+// Security check — v6.3.2 (أمني — المرحلة 0):
+// سابقاً: $expected_key = md5(DB_NAME . 'cron_wa_' . date('Y-m-d')) — قابل
+// للحساب من قبل أي شخص يعرف اسم قاعدة البيانات (الافتراضي inventory_db)!
+// الآن: سر ثابت عشوائي من إعدادات النظام (نفس نمط cron/auto-backup.php)
+// مع مقارنة timing-safe عبر hash_equals
 $provided_key = $_GET['key'] ?? '';
+$config_key = '';
+try {
+    $config_key = trim((string) getSetting('cron_secret_key', ''));
+} catch (Exception $e) { ErrorHandler::logException($e, 'whatsapp-daily::cronKey'); }
 
-if ($provided_key !== $expected_key) {
+if ($config_key === '') {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'مفتاح cron غير مُعد — عيّن "مفتاح أمان cron" من صفحة الإعدادات أولاً'], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+if ($provided_key === '' || !hash_equals($config_key, $provided_key)) {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => 'مفتاح غير صالح'], JSON_UNESCAPED_UNICODE);
     exit;
