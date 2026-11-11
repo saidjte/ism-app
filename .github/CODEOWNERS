@@ -1,0 +1,25 @@
+# CODEOWNERS — ISM POS
+# مالكو الأجزاء الرئيسية — مرجع لمراجعات الكود (راجع خطة الإصلاح، المرحلة 2)
+# غيّر الحسابات حسب فريقك الفعلي
+
+# كل شيء افتراضياً
+*                           @saidjte
+
+# النواة الأمنية — أي تعديل يتطلب مراجعة مشددة
+/includes/auth.php          @saidjte
+/includes/csrf.php          @saidjte
+/config/session.php         @saidjte
+/config/database.php        @saidjte
+/includes/EnvEncryptor.php  @saidjte
+/.htaccess                  @saidjte
+/config/env.example         @saidjte
+
+# نظام الترقيات والمخطط
+/includes/upgrades/         @saidjte
+/sql/                       @saidjte
+/scripts/                   @saidjte
+
+# نقطة البيع وواجهات API
+/pos.php                    @saidjte
+/api/                       @saidjte
+/includes/Controllers/      @saidjte

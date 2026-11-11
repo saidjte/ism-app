@@ -13,7 +13,7 @@
 // PATCH (+1): إصلاحات أمنية وأخطاء
 // MINOR (+1): ميزات جديدة متوافقة مع الإصدارات السابقة
 // MAJOR (+1): تغييرات غير متوافقة
-define('APP_VERSION', '6.3.1');
+define('APP_VERSION', '6.3.3');
 
 // ===== قائمة فحص الملفات لكل إصدار =====
 $FILE_CHECKS = [
@@ -926,6 +926,7 @@ $DB_UPDATES = [
     ['version' => '6.1.10', 'desc' => 'إصلاح حرج: متغير CSRF خاطئ في doProcessReturn() (csrfToken→POS_CSRF) يمنع تنفيذ الإرجاع + رفع z-index نافذة التأكيد فوق نافذة الإرجاع + إخفاء نافذة الإرجاع عند ظهور خطأ'],
     ['version' => '6.2.0', 'desc' => 'إصلاحات متوسطة: Rate Limiting (10/نوع/دقيقة + 60/عام/دقيقة) + timeAgo i18n في MobileNotificationController + دعم عدم الاتصال (IndexedDB + Background Sync) + تفضيلات إشعارات المستخدم + رفع LIMIT pollNew من 10 إلى 50 + تتبع Analytics (قراءة/حذف/نقر/إغلاق)'],
     ['version' => '6.2.1', 'desc' => 'ضمان تطبيق ترقية قاعدة البيانات: إنشاء جدول user_notification_prefs + جدول notification_analytics + فهارس (idempotent — CREATE TABLE IF NOT EXISTS)'],
+    ['version' => '6.3.3', 'desc' => 'المرحلة 1 من خطة الإصلاح — تنظيف المستودع: إسقاط جدول user_notification_preferences المهمل (الجدول الحي user_notification_prefs منذ v6.2.1 ولا يشير الكود للقديم إطلاقاً — فارغ في أحدث نسخة إنتاجية؛ إن وُجدت بيانات يُؤرشف بإعادة تسمية بدل الإسقاط) + حذف fork وحدات القياس القديم والنسخ الميتة + تصدير المخطط الرسمي sql/schema.sql'],
     ['version' => '6.3.1', 'desc' => 'تحسين تجربة الإرجاع في POS: محدد نوع البحث (رقم إيصال / أرقام أصناف) + منشئ رقم الإيصال (اختيار التاريخ + كتابة الرقم) بدل إدخال اليدوي'],
     ['version' => '6.3.0', 'desc' => 'تحسينات الإشعارات الفورية: SSE (Server-Sent Events) بدل polling + بحث FULLTEXT (MATCH...AGAINST) بدل LIKE + تحديث مخطط db_upgrade_5_0_0() القديم + إعداد SSE + إعداد TTL في صفحة الإعدادات'],
     ['version' => '6.2.2', 'desc' => 'إصلاحات مخططية: إضافة أعمدة i18n في مخطط notifications الأساسي + جدول archive_notifications (أرشفة بدل حذف) + فهرس FULLTEXT للبحث + إزالة CREATE TABLE من catch في MobilePushController + TTL للإشعارات غير المقروءة'],

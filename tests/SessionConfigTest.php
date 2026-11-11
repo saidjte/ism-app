@@ -218,9 +218,6 @@ class SessionConfigTest extends TestCase
             'api/send-whatsapp-alert.php',
             'api/test-ultramsg.php',
             'cron/whatsapp-daily.php',
-            'units/api/search_products.php',
-            'units/api/get_units.php',
-            'units/api/get_batches.php',
         ];
 
         $inconsistent = [];

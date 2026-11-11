@@ -2306,3 +2306,35 @@ function db_upgrade_6_3_0($pdo) {
         }
     }
 }
+
+/**
+ * v6.3.3 — تنظيف مخططي: إسقاط جدول user_notification_preferences المهمل
+ * (المرحلة 1 من خطة الإصلاح — REPAIR_PLAN.md)
+ *
+ * الجدول الحي هو user_notification_prefs (بنية JSON: user_id + prefs)
+ * منذ v6.2.1 ويستهلكه api/notifications.php — بينما الجدول القديم
+ * (بنية قياسية: notif_type/channel/enabled) لا يشير إليه أي كود إطلاقاً،
+ * وهو فارغ في أحدث نسخة إنتاجية (backup_2026-11-10).
+ * للأمان: إن وُجدت بيانات في تركيبة ما، يُؤرشف الجدول بإعادة تسمية
+ * بدل إسقاطه نهائياً.
+ */
+function db_upgrade_6_3_3($pdo) {
+    try {
+        $exists = $pdo->query("SHOW TABLES LIKE 'user_notification_preferences'")->fetchColumn();
+        if (!$exists) {
+            return; // غير موجود — لا شيء للتنظيف (idempotent)
+        }
+        $count = (int) $pdo->query("SELECT COUNT(*) FROM user_notification_preferences")->fetchColumn();
+        if ($count > 0) {
+            // احتياط أمان: أرشفة بدل فقدان بيانات غير متوقعة
+            $pdo->exec("RENAME TABLE `user_notification_preferences` TO `user_notification_preferences_archived_6_3_3`");
+        } else {
+            $pdo->exec("DROP TABLE `user_notification_preferences`");
+        }
+    } catch (\Throwable $e) {
+        if (class_exists('ErrorHandler')) {
+            ErrorHandler::logException($e, 'db_upgrade_6_3_3::dropLegacyPrefsTable');
+        }
+        // الإسقاط غير حرج لعمل التطبيق — لا نرمي الاستثناء حتى لا يفشل الترقيم
+    }
+}
