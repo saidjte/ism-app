@@ -1,0 +1,36 @@
+/* ============================================================================
+ * pages-add-purchase.css — مستخرج من purchases/add-purchase.php في المرحلة 3 (M3)
+ * الإصدار: v=6.3.5 — أي تعديل يتطلب رفع $css_version في includes/header.php
+ * ============================================================================ */
+/* === تحسين الوافقية مع الهواتف لصفحة المشتريات === */
+@keyframes fadeSlideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@media (max-width: 768px) {
+    .remise-search-wrapper input,
+    .remise-search-wrapper select,
+    .product-row input,
+    .product-row select {
+        font-size: 16px !important;
+    }
+    .product-row-fields,
+    .product-row-summary,
+    .product-row-grid {
+        grid-template-columns: 1fr !important;
+    }
+    .product-row {
+        padding: 12px;
+    }
+}
+@media (max-width: 480px) {
+    .alert {
+        padding: 10px 12px !important;
+        font-size: 0.82rem !important;
+    }
+    .alert svg {
+        display: none !important;
+    }
+}
+/* تأثير hover لزر حذف المنتج */
+.product-row .product-row-remove:hover { background: #fee2e2 !important; }
