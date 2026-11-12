@@ -5,6 +5,9 @@ parameters:
         - .
     excludePaths:
         - vendor
+        # أقسام توثيق API (M3): قوالب عرض جزئية تُضمَّن داخل نطاق api-docs.php
+        # (متغيرات مثل $base_url معرفة في المضيف — لا معنى لتحليلها منفردة)
+        - templates/api-docs
     reportUnmatchedIgnoredErrors: false
 includes:
     - phpstan-baseline.neon
