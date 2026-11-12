@@ -4,6 +4,32 @@
 
 ---
 
+## [6.3.5] - 2025-11-12
+
+### تفكيك الملفات العملاقة — المرحلة 3 من خطة الإصلاح
+
+فصل الأنماط والمنطق التفاعلي عن ملفات PHP العملاقة إلى أصول خارجية قابلة للتخزين المؤقت، كل ملف في commit مستقل دون أي تغيير وظيفي.
+
+| الملف | قبل | بعد | الاستخراج |
+|---|---|---|---|
+| `pos.php` | 182KB | **39KB** | `assets/css/pages-pos.css` (63KB) + `assets/js/pages-pos.js` (84KB) + جسر مضمّن (16 ثابتاً + `window.PTXT` بـ64 نصاً مترجماً) |
+| `api-docs.php` | 215KB | **6KB** | متحكم نظيف + `templates/api-docs/sections/` (29 قسماً) + CSS/JS خارجيان |
+| `add-purchase.php` | 126KB | **46KB** | `assets/css/pages-add-purchase.css` + `assets/js/pages-add-purchase.js` + جسر `CURRENCY_SYMBOL` |
+| `edit-product.php` | 122KB | **65KB** | `assets/css/pages-edit-product.css` + JS للوحدات/الأسعار + JS لنظام الصور + جسرا `var` |
+| `deployer.php` | 96KB | **75KB** | `assets/css/pages-deployer.css` + `assets/js/pages-deployer.js` (الباقي منطق نشر PHP صرف) |
+| `settings/system-settings.php` | 149KB | **133KB** | `assets/js/pages-system-settings.js` (دمج 3 كتل JS — الباقي نماذج إعدادات) |
+
+مكاسب عرضية:
+- صفحات POS وapi-docs أصبحت خالية من آلاف الأسطر داخل CSP nonce — الأنماط والسكربتات تُخدَّم بـ304 من الكاش.
+- إصلاح `>` شاردة كانت تُطبع أعلى واجهة POS.
+- سكربت api-docs المضمّن (بلا nonce) أصبح خارجياً — متوافق مع CSP الصارم.
+
+منهجية التحقق (بدون PHP CLI في بيئة التطوير): فاحص بنيوي آلة-حالات لكل ملف معدّل، `node --check` للـJS الخارجي والجسور المصيَّرة، مطابقة 64/64 مفتاح PTXT، إعادة بناء بايت-ببايت لمحتوى api-docs (200,735 بايت مطابقة)، وصفر معرفات POS/THERMAL معلقة.
+
+مؤجل موثق (يتطلب اختباراً تشغيلياً): التقسيم الهيكلي لأقسام `settings/system-settings.php` و`deployer.php` وفكّ `includes/upgrades/upgrade-constants.php` (مع المرحلة 4).
+
+---
+
 ## [6.3.4] - 2025-11-12
 
 ### أتمتة الجودة — المرحلة 2 من خطة الإصلاح (CI/CD + PHPUnit)

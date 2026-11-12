@@ -125,6 +125,8 @@ secret-scan:      # gitleaks — يمنع تكرار كارثة .env (قائمة
 
 ## 🟠 المرحلة 3 — تفكيك الملفات العملاقة (الشهر 2–3)
 
+> **✅ حالة التنفيذ (v6.3.5):** البنود منفّذة بمنهجية "كل ملف في commit مستقل" — `pos.php` 182KB→39KB (CSS+JS خارجيان + جسر PTXT للنصوص المترجمة)، `api-docs.php` 215KB→6KB (متحكم + 29 قسماً في templates/api-docs/sections/ بمطابقة بايت-ببايت)، `add-purchase.php` 126KB→46KB، `edit-product.php` 122KB→65KB (JS مستقلان + جسرا var)، `deployer.php` 96KB→75KB (CSS+JS خارجيان)، `system-settings.php` 149KB→133KB (دمج 3 كتل JS). التحقق بلا PHP CLI: فاحص بنيوي + node --check للجسور المصيَّرة والملفات الخارجية. **مؤجل موثق:** التقسيم الهيكلي لأقسام system-settings وdeployer وupgrade-constants (مع المرحلة 4) — يتطلب اختباراً تشغيلياً على الخادم.
+
 | الملف | الحجم | خطة التقسيم |
 |---|---|---|
 | `pos.php` | 190KB / 5,547 سطر | استخراج CSS (أسطر 521–3479 ≈ 2,950 سطراً) → `assets/css/pages-pos.css`؛ JS (أسطر 3482–5544 ≈ 2,060 سطراً) → `assets/js/pages-pos.js`. يبقى PHP فقط (~50KB). *مكسب فوري: قابلية تخزين مؤقت + إزالة آلاف الأسطر من CSP nonce* |
