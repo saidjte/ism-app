@@ -11,8 +11,8 @@ class CsrfTest extends TestCase
 {
     protected function setUp(): void
     {
-        // لا نحاول بدء الجلسة هنا - تم بدؤها بالفعل في run.php
-        // output buffering في TestCase::runAll() يمنع أي تحذيرات من العبث بالإخراج
+        // لا نحاول بدء الجلسة هنا - تم بدؤها بالفعل في tests/bootstrap.php
+        // PHPUnit يدير إخراج كل اختبار على حدة، ويمنع أي تحذيرات من العبث بالنتائج
         // تنظيف حالة CSRF السابقة
         unset($_SESSION['csrf_token'], $_SESSION['csrf_token_time']);
     }

@@ -130,7 +130,6 @@ if ($isCLI) {
     echo $result['success']
         ? "[cleanup-notifications] {$result['message']}\n"
         : "[cleanup-notifications] خطأ: {$result['error']}\n";
-}
 } else {
     echo json_encode($result, JSON_UNESCAPED_UNICODE);
 }

@@ -15,7 +15,7 @@ class SaleServiceTest extends TestCase
 {
     private static ?PDO $sqlite = null;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         self::$sqlite = new PDO('sqlite::memory:');
         self::$sqlite->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -44,6 +44,7 @@ class SaleServiceTest extends TestCase
             original_quantity REAL NOT NULL DEFAULT 0,
             remaining_quantity REAL NOT NULL DEFAULT 0,
             purchase_price REAL NOT NULL DEFAULT 0,
+            actual_purchase_price REAL NOT NULL DEFAULT 0,
             purchase_date TEXT DEFAULT NULL,
             expiry_date TEXT DEFAULT NULL
         )");
@@ -104,7 +105,7 @@ class SaleServiceTest extends TestCase
         $this->injectSqliteConnection(self::$sqlite);
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         if (self::$sqlite !== null) {
             self::$sqlite->exec("DELETE FROM sale_batch_items");

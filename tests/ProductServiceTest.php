@@ -18,7 +18,7 @@ class ProductServiceTest extends TestCase
     /**
      * إعداد قاعدة بيانات SQLite في الذاكرة قبل كل اختبار
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         // إنشاء اتصال SQLite في الذاكرة
         self::$sqlite = new PDO('sqlite::memory:');
@@ -124,7 +124,7 @@ class ProductServiceTest extends TestCase
     /**
      * تنظيف بعد كل اختبار
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         if (self::$sqlite !== null) {
             self::$sqlite->exec("DELETE FROM inventory_counts");

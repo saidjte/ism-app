@@ -9,204 +9,120 @@
  * 4. الثوابت معرّفة بشكل صحيح
  *
  * @since v4.16.9
+ * @updated v6.3.4 — ترحيل إلى PHPUnit (المرحلة 2 — أتمتة الجودة)
  */
 
-require_once __DIR__ . '/TestCase.php';
+declare(strict_types=1);
 
 class SessionConfigTest extends TestCase
 {
-    protected string $testName = 'توحيد إعدادات الجلسة';
+    // ========================================================================
+    //  اختبارات الثوابت والدوال المركزية
+    // ========================================================================
 
-    /**
-     * تشغيل جميع اختبارات إعدادات الجلسة
-     */
-    public function run(): array
-    {
-        $results = [];
-
-        $results[] = $this->testSessionConstantsDefined();
-        $results[] = $this->testCentralFunctionsExist();
-        $results[] = $this->testGetSessionTimeoutDefault();
-        $results[] = $this->testGetSessionTimeoutMinValue();
-        $results[] = $this->testSessionConfigFileExists();
-        $results[] = $this->testNoHardcodedTimeoutInAuthMiddleware();
-        $results[] = $this->testNoHardcodedTimeoutInAuth();
-        $results[] = $this->testSessionCookieSettingsConsistency();
-        $results[] = $this->testStartSecureSessionIdempotent();
-
-        return $results;
-    }
-
-    /**
-     * اختبار: ثوابت الجلسة معرّفة بشكل صحيح
-     */
-    private function testSessionConstantsDefined(): array
+    public function testSessionConstantsDefined(): void
     {
         // تحميل ملف التكوين المركزي
         require_once __DIR__ . '/../config/session.php';
 
-        $constants = [
-            'SESSION_DEFAULT_TIMEOUT' => 1800,
-            'SESSION_MIN_TIMEOUT' => 60,
-            'SESSION_TIMEOUT_SETTING_KEY' => 'session_timeout_minutes',
-        ];
-
-        foreach ($constants as $name => $expectedValue) {
-            if (!defined($name)) {
-                return $this->fail("الثابت {$name} غير معرّف");
-            }
-            if (constant($name) !== $expectedValue) {
-                return $this->fail("الثابت {$name} = " . constant($name) . " — المتوقع: {$expectedValue}");
-            }
-        }
-
-        return $this->pass('جميع ثوابت الجلسة معرّفة بشكل صحيح');
+        $this->assertSame(1800, SESSION_DEFAULT_TIMEOUT, 'الثابت SESSION_DEFAULT_TIMEOUT يجب أن يساوي 1800');
+        $this->assertSame(60, SESSION_MIN_TIMEOUT, 'الثابت SESSION_MIN_TIMEOUT يجب أن يساوي 60');
+        $this->assertSame(
+            'session_timeout_minutes',
+            SESSION_TIMEOUT_SETTING_KEY,
+            'الثابت SESSION_TIMEOUT_SETTING_KEY يجب أن يساوي session_timeout_minutes'
+        );
     }
 
-    /**
-     * اختبار: الدوال المركزية موجودة
-     */
-    private function testCentralFunctionsExist(): array
+    public function testCentralFunctionsExist(): void
     {
-        $functions = ['configureSessionCookies', 'getSessionTimeout', 'startSecureSession'];
-
-        foreach ($functions as $func) {
-            if (!function_exists($func)) {
-                return $this->fail("الدالة المركزية {$func} غير موجودة");
-            }
+        foreach (['configureSessionCookies', 'getSessionTimeout', 'startSecureSession'] as $func) {
+            $this->assertTrue(
+                function_exists($func),
+                "الدالة المركزية {$func} غير موجودة"
+            );
         }
-
-        return $this->pass('جميع الدوال المركزية للجلسة موجودة');
     }
 
-    /**
-     * اختبار: getSessionTimeout تعيد القيمة الافتراضية الصحيحة
-     */
-    private function testGetSessionTimeoutDefault(): array
+    public function testGetSessionTimeoutDefault(): void
     {
         $timeout = getSessionTimeout();
 
-        if ($timeout !== SESSION_DEFAULT_TIMEOUT) {
-            return $this->fail("getSessionTimeout() = {$timeout} — المتوقع: " . SESSION_DEFAULT_TIMEOUT);
-        }
-
-        return $this->pass("getSessionTimeout() تعيد القيمة الافتراضية الصحيحة ({$timeout} ثانية)");
+        $this->assertSame(
+            SESSION_DEFAULT_TIMEOUT,
+            $timeout,
+            "getSessionTimeout() تعيد {$timeout} — المتوقع القيمة الافتراضية " . SESSION_DEFAULT_TIMEOUT
+        );
     }
 
-    /**
-     * اختبار: getSessionTimeout لا تعيد قيمة أقل من الحد الأدنى
-     */
-    private function testGetSessionTimeoutMinValue(): array
+    public function testGetSessionTimeoutMinValue(): void
     {
         $timeout = getSessionTimeout();
 
-        if ($timeout < SESSION_MIN_TIMEOUT) {
-            return $this->fail("مهلة الجلسة ({$timeout}) أقل من الحد الأدنى (" . SESSION_MIN_TIMEOUT . ")");
-        }
-
-        return $this->pass("مهلة الجلسة ({$timeout} ثانية) لا تقل عن الحد الأدنى (" . SESSION_MIN_TIMEOUT . ")");
+        $this->assertGreaterThanOrEqual(
+            SESSION_MIN_TIMEOUT,
+            $timeout,
+            "مهلة الجلسة ({$timeout}) أقل من الحد الأدنى (" . SESSION_MIN_TIMEOUT . ")"
+        );
     }
 
-    /**
-     * اختبار: ملف التكوين المركزي موجود
-     */
-    private function testSessionConfigFileExists(): array
+    public function testSessionConfigFileExists(): void
     {
-        $configFile = __DIR__ . '/../config/session.php';
-
-        if (!file_exists($configFile)) {
-            return $this->fail('ملف config/session.php غير موجود');
-        }
-
-        return $this->pass('ملف config/session.php موجود');
+        $this->assertFileExists(__DIR__ . '/../config/session.php');
     }
 
-    /**
-     * اختبار: لا توجد قيمة مشفرة 1800 في AuthMiddleware.php
-     */
-    private function testNoHardcodedTimeoutInAuthMiddleware(): array
+    // ========================================================================
+    //  اختبارات عدم وجود قيم مشفرة (Hardcoded)
+    // ========================================================================
+
+    public function testNoHardcodedTimeoutInAuthMiddleware(): void
     {
         $file = __DIR__ . '/../includes/Router/Middleware/AuthMiddleware.php';
 
         if (!file_exists($file)) {
-            return $this->skip('ملف AuthMiddleware.php غير موجود');
+            $this->markTestSkipped('ملف AuthMiddleware.php غير موجود');
         }
 
         $content = file_get_contents($file);
+        $found = $this->findHardcodedTimeout($content, '/>\s*1800\b/', '/==\s*1800\b/');
 
-        // البحث عن القيمة المشفرة 1800 (ليست ضمن تعليق أو ثابت)
-        // نستبعد الأسطر التي تحتوي على تعليقات أو تعريفات ثوابت
-        $lines = explode("\n", $content);
-        $found = false;
-        foreach ($lines as $lineNum => $line) {
-            $trimmed = trim($line);
-            // تجاهل التعليقات
-            if (str_starts_with($trimmed, '//') || str_starts_with($trimmed, '*') || str_starts_with($trimmed, '/*')) {
-                continue;
-            }
-            // البحث عن 1800 كقيمة مهلة مشفرة
-            if (preg_match('/>\s*1800\b/', $line) || preg_match('/==\s*1800\b/', $line)) {
-                $found = true;
-                break;
-            }
-        }
-
-        if ($found) {
-            return $this->fail('تم العثور على قيمة مشفرة 1800 في AuthMiddleware.php — يجب استخدام getSessionTimeout()');
-        }
-
-        // التحقق من استخدام الدالة المركزية
-        if (strpos($content, 'getSessionTimeout') === false) {
-            return $this->fail('AuthMiddleware.php لا يستخدم الدالة المركزية getSessionTimeout()');
-        }
-
-        return $this->pass('AuthMiddleware.php يستخدم getSessionTimeout() بدلاً من القيمة المشفرة');
+        $this->assertFalse(
+            $found,
+            'تم العثور على قيمة مشفرة 1800 في AuthMiddleware.php — يجب استخدام getSessionTimeout()'
+        );
+        $this->assertStringContainsString(
+            'getSessionTimeout',
+            $content,
+            'AuthMiddleware.php لا يستخدم الدالة المركزية getSessionTimeout()'
+        );
     }
 
-    /**
-     * اختبار: لا توجد قيمة مشفرة 1800 كمهلة في auth.php
-     */
-    private function testNoHardcodedTimeoutInAuth(): array
+    public function testNoHardcodedTimeoutInAuth(): void
     {
         $file = __DIR__ . '/../includes/auth.php';
 
         if (!file_exists($file)) {
-            return $this->skip('ملف auth.php غير موجود');
+            $this->markTestSkipped('ملف auth.php غير موجود');
         }
 
         $content = file_get_contents($file);
+        $found = $this->findHardcodedTimeout($content, '/session_timeout\s*=\s*1800\b/');
 
-        // البحث عن القيمة المشفرة 1800 (ليست ضمن تعليق)
-        $lines = explode("\n", $content);
-        $found = false;
-        foreach ($lines as $lineNum => $line) {
-            $trimmed = trim($line);
-            if (str_starts_with($trimmed, '//') || str_starts_with($trimmed, '*') || str_starts_with($trimmed, '/*')) {
-                continue;
-            }
-            // البحث عن تعيين 1800 كقيمة مهلة
-            if (preg_match('/session_timeout\s*=\s*1800\b/', $line)) {
-                $found = true;
-                break;
-            }
-        }
-
-        if ($found) {
-            return $this->fail('تم العثور على قيمة مشفرة 1800 في auth.php — يجب استخدام getSessionTimeout()');
-        }
-
-        // التحقق من استخدام الدالة المركزية
-        if (strpos($content, 'getSessionTimeout') === false) {
-            return $this->fail('auth.php لا يستخدم الدالة المركزية getSessionTimeout()');
-        }
-
-        return $this->pass('auth.php يستخدم getSessionTimeout() بدلاً من القيمة المشفرة');
+        $this->assertFalse(
+            $found,
+            'تم العثور على قيمة مشفرة 1800 في auth.php — يجب استخدام getSessionTimeout()'
+        );
+        $this->assertStringContainsString(
+            'getSessionTimeout',
+            $content,
+            'auth.php لا يستخدم الدالة المركزية getSessionTimeout()'
+        );
     }
 
     /**
-     * اختبار: جميع الملفات تستخدم startSecureSession() بدلاً من ini_set يدوي
+     * جميع الملفات تستخدم startSecureSession() بدلاً من ini_set يدوي
      */
-    private function testSessionCookieSettingsConsistency(): array
+    public function testSessionCookieSettingsConsistency(): void
     {
         $filesToCheck = [
             'includes/bootstrap.php',
@@ -240,26 +156,50 @@ class SessionConfigTest extends TestCase
             }
         }
 
-        if (!empty($inconsistent)) {
-            return $this->fail('الملفات التالية لا تزال تستخدم ini_set يدوي لإعدادات الكوكيز: ' . implode(', ', $inconsistent));
-        }
-
-        return $this->pass('جميع الملفات تستخدم startSecureSession() المركزية');
+        $this->assertSame(
+            [],
+            $inconsistent,
+            'الملفات التالية لا تزال تستخدم ini_set يدوي لإعدادات الكوكيز: ' . implode(', ', $inconsistent)
+        );
     }
 
-    /**
-     * اختبار: startSecureSession آمنة للاستدعاء المتكرر (idempotent)
-     */
-    private function testStartSecureSessionIdempotent(): array
+    // ========================================================================
+    //  اختبارات السلوك
+    // ========================================================================
+
+    public function testStartSecureSessionIdempotent(): void
     {
-        try {
+        $this->assertDoesNotThrow(function () {
             // استدعاء الدالة مرتين — يجب ألا يسبب خطأ
             startSecureSession();
             startSecureSession();
+        }, 'startSecureSession() تسبب خطأ عند الاستدعاء المتكرر');
+    }
 
-            return $this->pass('startSecureSession() آمنة للاستدعاء المتكرر (idempotent)');
-        } catch (\Throwable $e) {
-            return $this->fail('startSecureSession() تسبب خطأ عند الاستدعاء المتكرر: ' . $e->getMessage());
+    // ========================================================================
+    //  أدوات مساعدة
+    // ========================================================================
+
+    /**
+     * البحث عن قيمة مهلة مشفرة 1800 في نص ملف (مع تجاهل التعليقات)
+     *
+     * @param string ...$patterns أنماط البحث عن القيمة المشفرة
+     */
+    private function findHardcodedTimeout(string $content, string ...$patterns): bool
+    {
+        $lines = explode("\n", $content);
+        foreach ($lines as $line) {
+            $trimmed = trim($line);
+            // تجاهل التعليقات
+            if (str_starts_with($trimmed, '//') || str_starts_with($trimmed, '*') || str_starts_with($trimmed, '/*')) {
+                continue;
+            }
+            foreach ($patterns as $pattern) {
+                if (preg_match($pattern, $line)) {
+                    return true;
+                }
+            }
         }
+        return false;
     }
 }

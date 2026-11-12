@@ -23,19 +23,10 @@ require_once __DIR__ . '/../config/upgrades.php';
 require_once __DIR__ . '/../includes/whatsapp_alert.php';
 if (!class_exists('ErrorHandler')) { require_once __DIR__ . '/../includes/ErrorHandler.php'; }
 
-// Start session for CSRF
-if (session_status() === PHP_SESSION_NONE) {
-    ini_set('session.cookie_httponly', '1');
-    ini_set('session.cookie_samesite', 'Lax');
-    ini_set('session.use_strict_mode', '1');
-    $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-        || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
-        || (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] === 443);
-    if ($isHttps) {
-        ini_set('session.cookie_secure', '1');
-    }
-    session_start();
-}
+// Start session for CSRF — v6.3.4: الإعدادات المركزية من config/session.php
+// بدلاً من ini_set يدوي (توحيد مع بقية التطبيق — راجع اختبار SessionConfigTest)
+require_once __DIR__ . '/../config/session.php';
+startSecureSession();
 
 // Security check — v6.3.2 (أمني — المرحلة 0):
 // سابقاً: $expected_key = md5(DB_NAME . 'cron_wa_' . date('Y-m-d')) — قابل

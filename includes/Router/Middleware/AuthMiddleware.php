@@ -60,8 +60,12 @@ class AuthMiddleware
                 return false;
             }
 
-            // التحقق من انتهاء الجلسة (30 دقيقة بدون نشاط)
-            if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > 1800) {
+            // التحقق من انتهاء الجلسة — v6.3.4: المهلة المركزية من config/session.php
+            // بدلاً من القيمة المشفرة 1800 (راجع اختبار SessionConfigTest)
+            $sessionTimeout = function_exists('getSessionTimeout')
+                ? getSessionTimeout()
+                : (defined('SESSION_DEFAULT_TIMEOUT') ? SESSION_DEFAULT_TIMEOUT : 1800);
+            if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $sessionTimeout) {
                 // إنهاء الجلسة المنتهية
                 session_unset();
                 session_destroy();

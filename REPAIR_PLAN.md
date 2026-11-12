@@ -97,22 +97,29 @@ rm -rf upgrade_file_backup/ upgrade_backups/ includes/upgrades/upgrade_backups/
 
 ## 🟡 المرحلة 2 — أتمتة الجودة (CI/CD) (الأسبوع 2–4)
 
-### 2.1 GitHub Actions (`.github/workflows/ci.yml`)
+> **✅ حالة التنفيذ (v6.3.4):** البنود 2.1 و2.2 **منفّذة ومرفوعة** — CI رباعي البوابات (lint + PHPUnit على PHP 8.1/8.3 + PHPStan level 1 مع baseline + gitleaks) يعمل على كل push و PR، و404 اختباراً (15 فئة) خضراء عبر PHPUnit 10.5 مع طبقة توافق للإطار المنزلي. **بند 2.3 (حماية الفرع):** فعّلها يدوياً من Settings → Branches (لا يمكن ضبطها من الملفات) — انظر التعليمات أدناه.
+
+### 2.1 GitHub Actions (`.github/workflows/ci.yml`) ✅
 ```yaml
-name: CI
-on: [push, pull_request]
-jobs:
-  lint:        # php -l على كل ملف PHP
-  tests:       # php tests/run.php
-  static-analysis:  # PHPStan level 1 → ارفع تدريجياً
-  secret-scan: # gitleaks — يمنع تكرار كارثة .env
+lint:             # php -l على كل ملف PHP متتبع — كشف فوراً Parse error حقيقي في cron/cleanup-notifications.php
+tests:            # PHPUnit 10.5 على مصفوفة PHP 8.1 + 8.3 (SQLite في الذاكرة — بلا MySQL)
+static-analysis:  # PHPStan level 1 — 410 خطأ قديم في phpstan-baseline.neon، أي خطأ جديد يُفشل CI
+secret-scan:      # gitleaks — يمنع تكرار كارثة .env (قائمة سماح موثقة في .gitleaks.toml)
 ```
+مرافق: `.github/dependabot.yml` (تحديثات أسبوعية) + `PULL_REQUEST_TEMPLATE.md` + `composer.lock` مثبت للإنشاء المتكافئ في CI.
 
-### 2.2 ترحيل الاختبارات إلى PHPUnit
-الإطار المنزلي في `tests/TestCase.php` جيد لكن معزول. 15 فئة اختبار موجودة (Csrf, Pagination, Cache, Database, ApiRouter, OrderByWhitelist...) — حوّلها إلى PHPUnit تدريجياً وأضف تغطية للـ Mobile API (27 controller بلا أي اختبار!).
+### 2.2 ترحيل الاختبارات إلى PHPUnit ✅
+- PHPUnit 10.5 (متوافق PHP ≥ 8.1) + `phpunit.xml.dist` + `tests/bootstrap.php` (نفس تهيئة المشغّل القديم).
+- `tests/TestCase.php` أصبح **طبقة توافق** ترث `PHPUnit\Framework\TestCase` وتوفر أسماء التأكيدات القديمة — 15 فئة اختبار تشتغل الآن (كان 13 في المشغّل المنزلي) بـ 404 اختبار / 798 تأكيد.
+- تفعيل الاختبارين المتروكين كشف **6 مشاكل حقيقية** أُصلحت: Parse error في cron، منطق مهلة جلسة مكرر في auth.php، قيمة مشفرة 1800 في AuthMiddleware، ini_set يدوي في cron/whatsapp-daily.php، مخطط SQLite قديم في اختبارات المشتريات (كانت تفشل قبل هذا الإصدار أيضاً)، واختبار OrderByWhitelist لواجهة غير موجودة أُعيد توجيهه للواجهة الحالية.
+- **التغطية القادمة (داخل المرحلة 3+):** إضافة اختبارات لـ Mobile API (27 controller بلا أي اختبار).
 
-### 2.3 حماية الفرع الرئيسي
-Settings → Branches → Require PR + status checks. أضف `CODEOWNERS`.
+### 2.3 حماية الفرع الرئيسي (يدوي — دقيقتان)
+Settings → Branches → Add branch protection rule → `main`:
+1. ✅ **Require status checks to pass** → اختر: `PHP Syntax Lint`، `PHPUnit (PHP 8.1)`، `PHPUnit (PHP 8.3)`، `PHPStan (level 1)`، `Gitleaks`.
+2. ✅ Require branches to be up to date قبل الدمج.
+3. اترك **Require a pull request** معطلاً إن كنت تعمل مباشرة على main بمفردك (أو فعّله مع موافقة 1 عند وجود فريق).
+4. `CODEOWNERS` جاهز فعلاً (`.github/CODEOWNERS`).
 
 ---
 
@@ -154,7 +161,7 @@ Settings → Branches → Require PR + status checks. أضف `CODEOWNERS`.
 |---|---|
 | 0 | لا ملف diag/install متاح؛ كل endpoints تستجيب 401/403 بدون جلسة؛ `price-check-data` لا يُرجع تكلفة/كمية؛ سر cron عشوائي |
 | 1 | `git ls-files` خالٍ من *.old/*.bkp/نسخ؛ `sql/schema.sql` موجود ومطابق؛ grep لا يجد `user_notification_preferences` |
-| 2 | CI أخضر على كل push؛ gitleaks نشط؛ PHPUnit يعمل 15+ فئة |
+| 2 | CI أخضر على كل push؛ gitleaks نشط؛ PHPUnit يعمل 15+ فئة (404 اختباراً) |
 | 3 | لا ملف PHP > 60KB؛ pos.php يُحمّل CSS/JS منفصلة مع كاش 304 |
 | 4 | Composer autoload يعمل؛ صفر `require '../` في الكود؛ بيانات التشغيل خارج webroot |
 

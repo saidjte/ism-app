@@ -15,7 +15,7 @@ class PurchaseServiceTest extends TestCase
 {
     private static ?PDO $sqlite = null;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         self::$sqlite = new PDO('sqlite::memory:');
         self::$sqlite->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -44,12 +44,14 @@ class PurchaseServiceTest extends TestCase
             original_quantity REAL NOT NULL DEFAULT 0,
             remaining_quantity REAL NOT NULL DEFAULT 0,
             purchase_price REAL NOT NULL DEFAULT 0,
+            actual_purchase_price REAL NOT NULL DEFAULT 0,
             purchase_date TEXT DEFAULT NULL,
             expiry_date TEXT DEFAULT NULL
         )");
 
         self::$sqlite->exec("CREATE TABLE IF NOT EXISTS purchases (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            order_id INTEGER DEFAULT NULL,
             product_id INTEGER NOT NULL,
             quantity REAL NOT NULL DEFAULT 0,
             purchase_price REAL NOT NULL DEFAULT 0,
@@ -57,6 +59,7 @@ class PurchaseServiceTest extends TestCase
             tax_rate REAL NOT NULL DEFAULT 0,
             tax_amount REAL NOT NULL DEFAULT 0,
             tax_name TEXT DEFAULT NULL,
+            grand_total REAL NOT NULL DEFAULT 0,
             purchase_date TEXT DEFAULT NULL,
             notes TEXT DEFAULT NULL
         )");
@@ -86,6 +89,7 @@ class PurchaseServiceTest extends TestCase
         self::$sqlite->exec("CREATE TABLE IF NOT EXISTS purchase_remises (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             purchase_id INTEGER NOT NULL,
+            order_id INTEGER DEFAULT NULL,
             type TEXT NOT NULL DEFAULT '',
             product_id INTEGER DEFAULT NULL,
             quantity REAL DEFAULT NULL,
@@ -113,7 +117,7 @@ class PurchaseServiceTest extends TestCase
         $this->injectSqliteConnection(self::$sqlite);
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         if (self::$sqlite !== null) {
             self::$sqlite->exec("DELETE FROM sale_batch_items");

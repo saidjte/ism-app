@@ -4,6 +4,55 @@
 
 ---
 
+## [6.3.4] - 2025-11-12
+
+### أتمتة الجودة — المرحلة 2 من خطة الإصلاح (CI/CD + PHPUnit)
+
+أربع بوابات جودة تعمل على كل push و PR عبر GitHub Actions، وترحيل كامل للاختبارات إلى PHPUnit. التفاصيل في REPAIR_PLAN.md.
+
+#### CI/CD (`.github/workflows/ci.yml`)
+
+| البوابة | الوظيفة |
+|---|---|
+| **PHP Syntax Lint** | `php -l` لكل ملف PHP متتبع — كشف فوراً خلل صياغة كان موجوداً في `cron/cleanup-notifications.php` |
+| **PHPUnit (PHP 8.1 + 8.3)** | 404 اختباراً / 798 تأكيداً على مصفوفتي PHP (SQLite في الذاكرة — بلا خادم MySQL) |
+| **PHPStan (level 1)** | تحليل ساكن للكود كله؛ أخطاء الكود القديم (410) مسجلة في `phpstan-baseline.neon` وأي خطأ **جديد** يُفشل الـ CI |
+| **Gitleaks** | فحص أسرار كامل تاريخ المستودع مع قائمة سماح موثقة `.gitleaks.toml` — يمنع تكرار كارثة `.env` |
+
+إضافات مرافقة: `.github/dependabot.yml` (تحديثات أسبوعية لـ composer وactions)، `.github/PULL_REQUEST_TEMPLATE.md`، وإدخال `vendor/` في `.gitignore` مع تثبيت `composer.lock`.
+
+#### ترحيل الاختبارات إلى PHPUnit
+
+| # | التغيير |
+|---|---|
+| 1 | `composer.json` + `composer.lock` — PHPUnit 10.5 (متوافق مع PHP ≥ 8.1) وPHPStan 2.x كتبعيات تطوير |
+| 2 | `phpunit.xml.dist` — تكوين الرسمي (bootstrap + مجموعة اختبارات مجلد `tests/`) |
+| 3 | `tests/bootstrap.php` — نفس تهيئة المشغّل القديم (أصناف النظام + دوال مساعدة + i18n + إعدادات الجلسة) |
+| 4 | `tests/TestCase.php` — طبقة توافق: أصناف الاختبار ترث `PHPUnit\Framework\TestCase` مع أسماء بديلة للتأكيدات القديمة (`assertEqual`, `assertStringContains`, `assertMatchesRegex`, `assertFloatEqual`, `assertThrows`...) |
+| 5 | `tests/run.php` — غلاف خفيف يفوّض إلى PHPUnit (سطر أوامر فقط — أُزيل وضع الويب لأسباب أمنية) |
+| 6 | `tests/SessionConfigTest.php` — أُعيدت كتابته على نمط PHPUnit (كان بلا تأكيدات فعلية ولم يشغّله المشغّل القديم قط) |
+| 7 | `tests/OrderByWhitelistTest.php` — أُعيدت كتابته لتطابق واجهة `buildOrderBy()` الحالية (كان يختبر واجهة سياقات غير موجودة) |
+| 8 | PHPUnit يكتشف **15** فئة اختبار الآن (المشغّل القديم كان يشغّل 13 فقط) |
+
+#### إصلاحات كشفها تفعيل الاختبارات المتروكة
+
+| الملف | المشكلة | الإصلاح |
+|---|---|---|
+| `cron/cleanup-notifications.php` | **Parse error** — قوس زائد من المرحلة 1 جعل الملف غير قابل للتنفيذ | حذف القوس الزائد |
+| `includes/auth.php` | نسخة محلية مكررة من منطق مهلة الجلسة بدل الدالة المركزية | استخدام `getSessionTimeout()` من `config/session.php` |
+| `includes/Router/Middleware/AuthMiddleware.php` | قيمة مشفرة `1800` (مهلة 30 دقيقة) تتجاهل إعداد `session_timeout_minutes` | استخدام `getSessionTimeout()` مع مرجع احتياطي |
+| `cron/whatsapp-daily.php` | `ini_set` يدوي لإعدادات كوكيز الجلسة خارج التكوين المركزي | استخدام `startSecureSession()` المركزية |
+| `tests/PurchaseServiceTest.php` | مخطط SQLite للاختبار أقدم من الخدمة (أعمدة `order_id`, `grand_total`, `actual_purchase_price` مفقودة) — 37 اختباراً كانت تفشل **قبل** هذا الإصدار أيضاً | تحديث المخطط؛ المجموعة كلها خضراء الآن |
+| `tests/ProductServiceTest.php` وغيرها | `public setUp()/tearDown()` | `protected` وفق متطلبات PHPUnit |
+
+#### ملاحظات الترقية
+
+1. لا ترحيل قاعدة بيانات في هذا الإصدار (لا يوجد `db_upgrade_6_3_4`).
+2. على الخادم المحلي شغّل `composer install` أولاً ثم `vendor/bin/phpunit` لتشغيل الاختبارات.
+3. حماية الفرع الرئيسي: فعّل "Require status checks" من Settings → Branches واختر الفحوصات الخمسة (راجع REPAIR_PLAN.md — المرحلة 2.3).
+
+---
+
 ## [6.3.3] - 2025-11-11
 
 ### تنظيف — المرحلة 1 من خطة الإصلاح (نظافة المستودع)

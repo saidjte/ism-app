@@ -319,17 +319,9 @@ class AppAuth
             // لا نوقف التطبيق — نتابع بشكل طبيعي مع تجاهل فحص كلمة المرور
         }
 
-        // تم الإصلاح: استخدام إعداد session_timeout_minutes القابل للتكوين بدلاً من القيمة المشفرة 1800
-        $session_timeout_seconds = 1800; // القيمة الافتراضية: 30 دقيقة
-        try {
-            $configured_minutes = intval(getSetting('session_timeout_minutes', '30'));
-            if ($configured_minutes >= 1) {
-                $session_timeout_seconds = $configured_minutes * 60;
-            }
-        } catch (\Throwable $e) {
-            ErrorHandler::logException($e, 'auth::requireLogin_sessionTimeout');
-            // في حالة خطأ قاعدة البيانات، نستخدم القيمة الافتراضية
-        }
+        // v6.3.4: استخدام الدالة المركزية getSessionTimeout() من config/session.php
+        // (توحيد المهلة في كل التطبيق — كان هناك نسخة محلية مكررة من نفس المنطق)
+        $session_timeout_seconds = getSessionTimeout();
 
         if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $session_timeout_seconds) {
             session_unset();

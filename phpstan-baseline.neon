@@ -1,0 +1,1231 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Variable \$logEntries in empty\(\) always exists and is always falsy\.$#'
+			identifier: empty.variable
+			count: 1
+			path: admin/view-logs.php
+
+		-
+			message: '#^Anonymous function has an unused use \$missingControllers\.$#'
+			identifier: closure.unusedUse
+			count: 1
+			path: api/mobile/index.php
+
+		-
+			message: '#^Variable \$pdo might not be defined\.$#'
+			identifier: variable.undefined
+			count: 5
+			path: api/pos-held-carts.php
+
+		-
+			message: '#^Variable \$all_sale_ids in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
+			count: 1
+			path: api/pos-process-sale.php
+
+		-
+			message: '#^Variable \$cols_result might not be defined\.$#'
+			identifier: variable.undefined
+			count: 4
+			path: api/pos-process-sale.php
+
+		-
+			message: '#^Variable \$pdo_check might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: api/pos-process-sale.php
+
+		-
+			message: '#^Variable \$directMatch in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
+			count: 1
+			path: api/search_products.php
+
+		-
+			message: '#^Call to an undefined static method ErrorHandler\:\:logMessage\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: config/backup.php
+
+		-
+			message: '#^Variable \$pass in empty\(\) always exists and is always falsy\.$#'
+			identifier: empty.variable
+			count: 2
+			path: config/backup.php
+
+		-
+			message: '#^Variable \$debug_log in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
+			count: 1
+			path: create-api-table.php
+
+		-
+			message: '#^Variable \$providedKey might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: cron/auto-backup.php
+
+		-
+			message: '#^Call to static method getInstance\(\) on an unknown class Database\.$#'
+			identifier: class.notFound
+			count: 1
+			path: cron/cleanup-notifications.php
+
+		-
+			message: '#^Variable \$providedKey might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: cron/cleanup-notifications.php
+
+		-
+			message: '#^Call to an undefined static method SearchService\:\:search\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: includes/Controllers/Mobile/MobileProductController.php
+
+		-
+			message: '#^Access to private property \$settingsCache of class AppDatabase\.$#'
+			identifier: staticProperty.private
+			count: 1
+			path: includes/Controllers/Mobile/MobileSystemController.php
+
+		-
+			message: '#^Function sendWhatsAppAlertAuto invoked with 2 parameters, 0 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: includes/Controllers/Mobile/MobileWhatsAppController.php
+
+		-
+			message: '#^Function appLog not found\.$#'
+			identifier: function.notFound
+			count: 3
+			path: includes/Controllers/PriceCheckController.php
+
+		-
+			message: '#^Function appLog not found\.$#'
+			identifier: function.notFound
+			count: 5
+			path: includes/Controllers/ProductApiController.php
+
+		-
+			message: '#^Variable \$srcImage in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.variable
+			count: 1
+			path: includes/ProductImageService.php
+
+		-
+			message: '#^Variable \$where in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
+			count: 1
+			path: includes/Services/SearchService.php
+
+		-
+			message: '#^Result of static method AppAuth\:\:checkRememberMe\(\) \(void\) is used\.$#'
+			identifier: staticMethod.void
+			count: 1
+			path: includes/auth.php
+
+		-
+			message: '#^Result of static method AppAuth\:\:clearIPRateLimit\(\) \(void\) is used\.$#'
+			identifier: staticMethod.void
+			count: 1
+			path: includes/auth.php
+
+		-
+			message: '#^Result of static method AppAuth\:\:logout\(\) \(void\) is used\.$#'
+			identifier: staticMethod.void
+			count: 1
+			path: includes/auth.php
+
+		-
+			message: '#^Result of static method AppAuth\:\:recordFailedAttempt\(\) \(void\) is used\.$#'
+			identifier: staticMethod.void
+			count: 1
+			path: includes/auth.php
+
+		-
+			message: '#^Result of static method AppAuth\:\:recordIPFailedAttempt\(\) \(void\) is used\.$#'
+			identifier: staticMethod.void
+			count: 1
+			path: includes/auth.php
+
+		-
+			message: '#^Result of static method AppAuth\:\:requireAdmin\(\) \(void\) is used\.$#'
+			identifier: staticMethod.void
+			count: 1
+			path: includes/auth.php
+
+		-
+			message: '#^Result of static method AppAuth\:\:requireLogin\(\) \(void\) is used\.$#'
+			identifier: staticMethod.void
+			count: 1
+			path: includes/auth.php
+
+		-
+			message: '#^Result of static method AppAuth\:\:requirePasswordChange\(\) \(void\) is used\.$#'
+			identifier: staticMethod.void
+			count: 1
+			path: includes/auth.php
+
+		-
+			message: '#^Result of static method AppCsrf\:\:require\(\) \(void\) is used\.$#'
+			identifier: staticMethod.void
+			count: 1
+			path: includes/csrf.php
+
+		-
+			message: '#^Variable \$nav_expired_count on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.variable
+			count: 7
+			path: includes/header.php
+
+		-
+			message: '#^Variable \$nav_expiring_count on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.variable
+			count: 3
+			path: includes/header.php
+
+		-
+			message: '#^Array has 2 duplicate keys with value ''validation_max'' \(''validation_max'', ''validation_max''\)\.$#'
+			identifier: array.duplicateKey
+			count: 1
+			path: includes/languages/ar.php
+
+		-
+			message: '#^Array has 2 duplicate keys with value ''validation_step'' \(''validation_step'', ''validation_step''\)\.$#'
+			identifier: array.duplicateKey
+			count: 1
+			path: includes/languages/ar.php
+
+		-
+			message: '#^Function usort invoked with 1 parameter, 2 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: includes/logger.php
+
+		-
+			message: '#^Undefined variable\: \$base_url$#'
+			identifier: variable.undefined
+			count: 1
+			path: includes/permissions.php
+
+		-
+			message: '#^Function ensureIndex invoked with 4 parameters, 2 required\.$#'
+			identifier: arguments.count
+			count: 2
+			path: includes/upgrades/upgrade-++db.php
+
+		-
+			message: '#^Function ensureIndex invoked with 4 parameters, 2 required\.$#'
+			identifier: arguments.count
+			count: 2
+			path: includes/upgrades/upgrade-db.php
+
+		-
+			message: '#^Variable \$CHANGELOG might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: includes/upgrades/upgrade-ui.php
+
+		-
+			message: '#^Variable \$baseDir might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: includes/upgrades/upgrade-ui.php
+
+		-
+			message: '#^Variable \$can_connect might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: includes/upgrades/upgrade-ui.php
+
+		-
+			message: '#^Variable \$check might not be defined\.$#'
+			identifier: variable.undefined
+			count: 4
+			path: includes/upgrades/upgrade-ui.php
+
+		-
+			message: '#^Variable \$currentVersion might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: includes/upgrades/upgrade-ui.php
+
+		-
+			message: '#^Variable \$db_error might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: includes/upgrades/upgrade-ui.php
+
+		-
+			message: '#^Variable \$message might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: includes/upgrades/upgrade-ui.php
+
+		-
+			message: '#^Variable \$msgType might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: includes/upgrades/upgrade-ui.php
+
+		-
+			message: '#^Variable \$base_url might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: index.php
+
+		-
+			message: '#^Variable \$expiry_popup_signature on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.variable
+			count: 1
+			path: index.php
+
+		-
+			message: '#^Variable \$DB_UPDATES might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: install.php
+
+		-
+			message: '#^Variable \$base_url might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: notifications/index.php
+
+		-
+			message: '#^Path in require_once\(\) "\.\./includes/barcode\-scanner\.php" is not a file or it does not exist\.$#'
+			identifier: requireOnce.fileNotFound
+			count: 1
+			path: products/Templates/add-product-template.php
+
+		-
+			message: '#^Variable \$base_units_by_type might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/add-product-template.php
+
+		-
+			message: '#^Variable \$created_code might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/add-product-template.php
+
+		-
+			message: '#^Variable \$created_id might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/add-product-template.php
+
+		-
+			message: '#^Variable \$custom_unit_conversion might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/add-product-template.php
+
+		-
+			message: '#^Variable \$custom_unit_selling_price might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/add-product-template.php
+
+		-
+			message: '#^Variable \$custom_unit_type might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/add-product-template.php
+
+		-
+			message: '#^Variable \$has_expiry might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/add-product-template.php
+
+		-
+			message: '#^Variable \$next_code might not be defined\.$#'
+			identifier: variable.undefined
+			count: 4
+			path: products/Templates/add-product-template.php
+
+		-
+			message: '#^Variable \$show_success might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/add-product-template.php
+
+		-
+			message: '#^Variable \$success might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/add-product-template.php
+
+		-
+			message: '#^Variable \$unit_types_for_custom might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/add-product-template.php
+
+		-
+			message: '#^Variable \$units might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/add-product-template.php
+
+		-
+			message: '#^Variable \$base_units_by_type might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/edit-product-template.php
+
+		-
+			message: '#^Variable \$custom_unit_conversion might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: products/Templates/edit-product-template.php
+
+		-
+			message: '#^Variable \$custom_unit_name might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/edit-product-template.php
+
+		-
+			message: '#^Variable \$custom_unit_selling_price might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/edit-product-template.php
+
+		-
+			message: '#^Variable \$custom_unit_type might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/edit-product-template.php
+
+		-
+			message: '#^Variable \$id might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: products/Templates/edit-product-template.php
+
+		-
+			message: '#^Variable \$product might not be defined\.$#'
+			identifier: variable.undefined
+			count: 16
+			path: products/Templates/edit-product-template.php
+
+		-
+			message: '#^Variable \$success might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/edit-product-template.php
+
+		-
+			message: '#^Variable \$success_msg might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/edit-product-template.php
+
+		-
+			message: '#^Variable \$unit_types_for_custom might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/edit-product-template.php
+
+		-
+			message: '#^Variable \$display_total_batches might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: products/Templates/expiry-report-template.php
+
+		-
+			message: '#^Variable \$display_total_qty might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/expiry-report-template.php
+
+		-
+			message: '#^Variable \$display_total_value might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: products/Templates/expiry-report-template.php
+
+		-
+			message: '#^Variable \$display_unique_products might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: products/Templates/expiry-report-template.php
+
+		-
+			message: '#^Variable \$filter_category might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/expiry-report-template.php
+
+		-
+			message: '#^Variable \$filter_days might not be defined\.$#'
+			identifier: variable.undefined
+			count: 6
+			path: products/Templates/expiry-report-template.php
+
+		-
+			message: '#^Variable \$filter_status might not be defined\.$#'
+			identifier: variable.undefined
+			count: 14
+			path: products/Templates/expiry-report-template.php
+
+		-
+			message: '#^Variable \$search_query might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/expiry-report-template.php
+
+		-
+			message: '#^Variable \$total_expired_count might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/expiry-report-template.php
+
+		-
+			message: '#^Variable \$total_expired_qty might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/expiry-report-template.php
+
+		-
+			message: '#^Variable \$total_expired_value might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: products/Templates/expiry-report-template.php
+
+		-
+			message: '#^Variable \$total_expiring_count might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/expiry-report-template.php
+
+		-
+			message: '#^Variable \$total_expiring_qty might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/expiry-report-template.php
+
+		-
+			message: '#^Variable \$total_expiring_value might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/expiry-report-template.php
+
+		-
+			message: '#^Variable \$total_valid_count might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/expiry-report-template.php
+
+		-
+			message: '#^Variable \$total_valid_qty might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/expiry-report-template.php
+
+		-
+			message: '#^Variable \$total_valid_value might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/expiry-report-template.php
+
+		-
+			message: '#^Variable \$last_inventory might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/inventory-count-template.php
+
+		-
+			message: '#^Variable \$products might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/inventory-count-template.php
+
+		-
+			message: '#^Variable \$success might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/inventory-count-template.php
+
+		-
+			message: '#^Variable \$success_msg might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/inventory-count-template.php
+
+		-
+			message: '#^Variable \$filter_category might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: products/Templates/list-products-template.php
+
+		-
+			message: '#^Variable \$pagination might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: products/Templates/list-products-template.php
+
+		-
+			message: '#^Variable \$search might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/list-products-template.php
+
+		-
+			message: '#^Variable \$success_msg might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/list-products-template.php
+
+		-
+			message: '#^Variable \$filter_date_from might not be defined\.$#'
+			identifier: variable.undefined
+			count: 6
+			path: products/Templates/price-history-template.php
+
+		-
+			message: '#^Variable \$filter_date_to might not be defined\.$#'
+			identifier: variable.undefined
+			count: 6
+			path: products/Templates/price-history-template.php
+
+		-
+			message: '#^Variable \$filter_type might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/price-history-template.php
+
+		-
+			message: '#^Variable \$last_change might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/price-history-template.php
+
+		-
+			message: '#^Variable \$offset might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/price-history-template.php
+
+		-
+			message: '#^Variable \$page might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/price-history-template.php
+
+		-
+			message: '#^Variable \$purchase_price_changes might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/price-history-template.php
+
+		-
+			message: '#^Variable \$search_product might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/price-history-template.php
+
+		-
+			message: '#^Variable \$selling_price_changes might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/price-history-template.php
+
+		-
+			message: '#^Variable \$total_changes might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/price-history-template.php
+
+		-
+			message: '#^Variable \$total_pages might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/price-history-template.php
+
+		-
+			message: '#^Variable \$total_records might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/price-history-template.php
+
+		-
+			message: '#^Variable \$additional_units_count might not be defined\.$#'
+			identifier: variable.undefined
+			count: 6
+			path: products/Templates/price-list-template.php
+
+		-
+			message: '#^Variable \$au_position might not be defined\.$#'
+			identifier: variable.undefined
+			count: 4
+			path: products/Templates/price-list-template.php
+
+		-
+			message: '#^Variable \$categories might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/price-list-template.php
+
+		-
+			message: '#^Variable \$categoriesJson might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/price-list-template.php
+
+		-
+			message: '#^Variable \$categories_mode might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/price-list-template.php
+
+		-
+			message: '#^Variable \$currency might not be defined\.$#'
+			identifier: variable.undefined
+			count: 6
+			path: products/Templates/price-list-template.php
+
+		-
+			message: '#^Variable \$currency_position might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: products/Templates/price-list-template.php
+
+		-
+			message: '#^Variable \$grouped might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/price-list-template.php
+
+		-
+			message: '#^Variable \$has_au might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/price-list-template.php
+
+		-
+			message: '#^Variable \$layout might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: products/Templates/price-list-template.php
+
+		-
+			message: '#^Variable \$print_mode might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/price-list-template.php
+
+		-
+			message: '#^Variable \$show_additional_units might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: products/Templates/price-list-template.php
+
+		-
+			message: '#^Variable \$show_code might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: products/Templates/price-list-template.php
+
+		-
+			message: '#^Variable \$show_unit might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: products/Templates/price-list-template.php
+
+		-
+			message: '#^Variable \$store_address might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: products/Templates/price-list-template.php
+
+		-
+			message: '#^Variable \$store_name might not be defined\.$#'
+			identifier: variable.undefined
+			count: 4
+			path: products/Templates/price-list-template.php
+
+		-
+			message: '#^Variable \$store_phone might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: products/Templates/price-list-template.php
+
+		-
+			message: '#^Variable \$total_categories might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: products/Templates/price-list-template.php
+
+		-
+			message: '#^Variable \$total_products might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: products/Templates/price-list-template.php
+
+		-
+			message: '#^Variable \$unit_position might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: products/Templates/price-list-template.php
+
+		-
+			message: '#^Variable \$use_page_break might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/price-list-template.php
+
+		-
+			message: '#^Path in require_once\(\) "\.\./includes/barcode\-scanner\.php" is not a file or it does not exist\.$#'
+			identifier: requireOnce.fileNotFound
+			count: 1
+			path: products/Templates/print-labels-template.php
+
+		-
+			message: '#^Variable \$all_products might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: products/Templates/print-labels-template.php
+
+		-
+			message: '#^Variable \$barcode_format might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/print-labels-template.php
+
+		-
+			message: '#^Variable \$base_url might not be defined\.$#'
+			identifier: variable.undefined
+			count: 5
+			path: products/Templates/print-labels-template.php
+
+		-
+			message: '#^Variable \$boost_name might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: products/Templates/print-labels-template.php
+
+		-
+			message: '#^Variable \$boost_price might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: products/Templates/print-labels-template.php
+
+		-
+			message: '#^Variable \$categories might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/print-labels-template.php
+
+		-
+			message: '#^Variable \$code_type might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/print-labels-template.php
+
+		-
+			message: '#^Variable \$cols might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: products/Templates/print-labels-template.php
+
+		-
+			message: '#^Variable \$currency might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/print-labels-template.php
+
+		-
+			message: '#^Variable \$current_layout might not be defined\.$#'
+			identifier: variable.undefined
+			count: 27
+			path: products/Templates/print-labels-template.php
+
+		-
+			message: '#^Variable \$labels_data might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/print-labels-template.php
+
+		-
+			message: '#^Variable \$layouts might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/print-labels-template.php
+
+		-
+			message: '#^Variable \$pages might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: products/Templates/print-labels-template.php
+
+		-
+			message: '#^Variable \$per_page might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/print-labels-template.php
+
+		-
+			message: '#^Variable \$price_display might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/print-labels-template.php
+
+		-
+			message: '#^Variable \$print_mode might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/print-labels-template.php
+
+		-
+			message: '#^Variable \$show_barcode might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/print-labels-template.php
+
+		-
+			message: '#^Variable \$show_category might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/print-labels-template.php
+
+		-
+			message: '#^Variable \$show_code might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/print-labels-template.php
+
+		-
+			message: '#^Variable \$show_date might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/print-labels-template.php
+
+		-
+			message: '#^Variable \$show_purchase might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/print-labels-template.php
+
+		-
+			message: '#^Variable \$store_name might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/print-labels-template.php
+
+		-
+			message: '#^Variable \$unit_with_price might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/print-labels-template.php
+
+		-
+			message: '#^Variable \$visible_elements might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/print-labels-template.php
+
+		-
+			message: '#^Variable \$products might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/stock-transfer-template.php
+
+		-
+			message: '#^Variable \$success might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/stock-transfer-template.php
+
+		-
+			message: '#^Variable \$transfer_info might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/stock-transfer-template.php
+
+		-
+			message: '#^Variable \$expired_batches might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/view-product-template.php
+
+		-
+			message: '#^Variable \$expiring_soon_batches might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/view-product-template.php
+
+		-
+			message: '#^Variable \$expiry_alert_days_view might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/view-product-template.php
+
+		-
+			message: '#^Variable \$expiry_limit_view might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/view-product-template.php
+
+		-
+			message: '#^Variable \$id might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/view-product-template.php
+
+		-
+			message: '#^Variable \$primaryImage might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/view-product-template.php
+
+		-
+			message: '#^Variable \$product might not be defined\.$#'
+			identifier: variable.undefined
+			count: 10
+			path: products/Templates/view-product-template.php
+
+		-
+			message: '#^Variable \$productImages might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: products/Templates/view-product-template.php
+
+		-
+			message: '#^Variable \$today might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: products/Templates/view-product-template.php
+
+		-
+			message: '#^Variable \$total_expired_qty might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/view-product-template.php
+
+		-
+			message: '#^Variable \$total_expiring_soon_qty might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: products/Templates/view-product-template.php
+
+		-
+			message: '#^Variable \$total_profit might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/view-product-template.php
+
+		-
+			message: '#^Variable \$total_purchased might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/view-product-template.php
+
+		-
+			message: '#^Variable \$total_sold might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/Templates/view-product-template.php
+
+		-
+			message: '#^Variable \$code on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.variable
+			count: 1
+			path: products/add-product.php
+
+		-
+			message: '#^Variable \$created_product_code might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/add-product.php
+
+		-
+			message: '#^Variable \$pdo might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: products/add-product.php
+
+		-
+			message: '#^Variable \$purchase_unit in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.variable
+			count: 1
+			path: products/add-product.php
+
+		-
+			message: '#^Variable \$purchase_unit_factor on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.variable
+			count: 1
+			path: products/add-product.php
+
+		-
+			message: '#^Variable \$new_expiry_dates in empty\(\) always exists and is always falsy\.$#'
+			identifier: empty.variable
+			count: 1
+			path: products/edit-product.php
+
+		-
+			message: '#^Variable \$pdo might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: products/edit-product.php
+
+		-
+			message: '#^Variable \$directMatch in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
+			count: 1
+			path: products/list-products.php
+
+		-
+			message: '#^Variable \$pdo might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: purchases/add-purchase.php
+
+		-
+			message: '#^Variable \$p1_month might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: reports/period-comparison.php
+
+		-
+			message: '#^Variable \$p1_quarter might not be defined\.$#'
+			identifier: variable.undefined
+			count: 4
+			path: reports/period-comparison.php
+
+		-
+			message: '#^Variable \$p1_year might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: reports/period-comparison.php
+
+		-
+			message: '#^Variable \$p2_month might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: reports/period-comparison.php
+
+		-
+			message: '#^Variable \$p2_quarter might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: reports/period-comparison.php
+
+		-
+			message: '#^Variable \$p2_year might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: reports/period-comparison.php
+
+		-
+			message: '#^Variable \$newDbPassEnc might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: scripts/rotate-secrets.php
+
+		-
+			message: '#^Variable \$newDeployerEnc might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: scripts/rotate-secrets.php
+
+		-
+			message: '#^Variable \$base_url might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: settings/system-settings.php
+
+		-
+			message: '#^Variable \$debug_log in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
+			count: 1
+			path: setup-api.php
+
+		-
+			message: '#^Variable \$expired_financial_loss might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: templates/dashboard/_expiry-alerts.php
+
+		-
+			message: '#^Variable \$expired_products_count might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: templates/dashboard/_expiry-alerts.php
+
+		-
+			message: '#^Variable \$expiring_soon_count might not be defined\.$#'
+			identifier: variable.undefined
+			count: 4
+			path: templates/dashboard/_expiry-alerts.php
+
+		-
+			message: '#^Variable \$expiry_alert_days_setting might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: templates/dashboard/_expiry-alerts.php
+
+		-
+			message: '#^Variable \$expiry_alert_enabled might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: templates/dashboard/_expiry-alerts.php
+
+		-
+			message: '#^Variable \$expiry_batches_count might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: templates/dashboard/_expiry-alerts.php
+
+		-
+			message: '#^Variable \$expiry_tracked_count might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: templates/dashboard/_expiry-alerts.php
+
+		-
+			message: '#^Variable \$total_stock_value might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: templates/dashboard/view.php
+
+		-
+			message: '#^Variable \$total_stock_value_retail might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: templates/dashboard/view.php
+
+		-
+			message: '#^Variable \$user might not be defined\.$#'
+			identifier: variable.undefined
+			count: 12
+			path: templates/users/edit-user.php
+
+		-
+			message: '#^Variable \$success_msg might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: templates/users/list-users.php
+
+		-
+			message: '#^Variable \$users might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: templates/users/list-users.php
+
+		-
+			message: '#^Variable \$BUG_FIXES might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: upgrade.php
+
+		-
+			message: '#^Variable \$DB_UPDATES might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: upgrade.php

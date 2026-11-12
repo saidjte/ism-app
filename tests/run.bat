@@ -1,12 +1,17 @@
 @echo off
 chcp 65001 > nul
 echo ============================================
-echo   نظام اختبارات الحماية من الانحدار
-echo   is-app - نظام إدارة المخزون
+echo   اختبارات PHPUnit — ISM POS
 echo ============================================
 echo.
 
-php tests\run.php %*
+if not exist "vendor\bin\phpunit" (
+    echo ❌ PHPUnit غير مثبت — شغّل أولاً: composer install
+    pause
+    exit /b 1
+)
+
+php vendor\bin\phpunit -c phpunit.xml.dist %*
 
 if %ERRORLEVEL% NEQ 0 (
     echo.

@@ -1,0 +1,114 @@
+# ==============================================================================
+# CI — ISM POS (المرحلة 2 — أتمتة الجودة)
+# ==============================================================================
+# أربع بوابات جودة على كل push و PR:
+#   1. lint            — فحص صياغة PHP لكل ملف متتبع (php -l)
+#   2. tests           — PHPUnit على PHP 8.1 و 8.3 (باستخدام SQLite في الذاكرة)
+#   3. static-analysis — PHPStan مستوى 1 (مع baseline تدريجي)
+#   4. secret-scan     — gitleaks لمنع تكرار كارثة رفع .env
+# ==============================================================================
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: PHP Syntax Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          coverage: none
+
+      - name: فحص صياغة كل ملفات PHP المتتبعة
+        run: |
+          set -e
+          fail=0
+          while IFS= read -r f; do
+            if ! php -l "$f" >/dev/null 2>/tmp/lint_err; then
+              echo "::error file=$f::$(cat /tmp/lint_err | head -1)"
+              fail=1
+            fi
+          done < <(git ls-files '*.php')
+          if [ "$fail" -ne 0 ]; then
+            echo "فشل فحص الصياغة — راجع الأخطاء أعلاه"
+          fi
+          exit $fail
+
+  tests:
+    name: PHPUnit (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.1', '8.3']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: pdo_sqlite, sqlite3, mbstring
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Run PHPUnit
+        run: vendor/bin/phpunit --testdox
+
+  static-analysis:
+    name: PHPStan (level 1)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Run PHPStan
+        # المخطط الأساسي (phpstan-baseline.neon) يحوي أخطاء الكود القديم؛
+        # أي خطأ جديد في الكود سيُفشل الـ CI فوراً. ارفع المستوى تدريجياً
+        # (level 2 ثم 3...) وأعد توليد الـ baseline بانضباط:
+        #   vendor/bin/phpstan analyse --generate-baseline
+        run: vendor/bin/phpstan analyse --no-progress --memory-limit=1G --error-format=github
+
+  secret-scan:
+    name: Gitleaks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

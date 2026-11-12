@@ -64,6 +64,7 @@ desktop.ini
 *.swo
 .phpunit.result.cache
 .phpcs-cache
+vendor/
 
 # ---- مجلدات مساعدة خاصة بالأدوات ----
 .zcode/
