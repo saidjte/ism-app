@@ -97,7 +97,7 @@ rm -rf upgrade_file_backup/ upgrade_backups/ includes/upgrades/upgrade_backups/
 
 ## 🟡 المرحلة 2 — أتمتة الجودة (CI/CD) (الأسبوع 2–4)
 
-> **✅ حالة التنفيذ (v6.3.4):** البنود 2.1 و2.2 **منفّذة ومرفوعة** — CI رباعي البوابات (lint + PHPUnit على PHP 8.1/8.3 + PHPStan level 1 مع baseline + gitleaks) يعمل على كل push و PR، و404 اختباراً (15 فئة) خضراء عبر PHPUnit 10.5 مع طبقة توافق للإطار المنزلي. **بند 2.3 (حماية الفرع):** فعّلها يدوياً من Settings → Branches (لا يمكن ضبطها من الملفات) — انظر التعليمات أدناه.
+> **✅ حالة التنفيذ (v6.3.4):** البنود 2.1 و2.2 و2.3 **منفّذة ومرفوعة** — CI رباعي البوابات (lint + PHPUnit على PHP 8.1/8.3 + PHPStan level 1 مع baseline + gitleaks) أخضر على push الأولى، و404 اختباراً (15 فئة) خضراء عبر PHPUnit 10.5 مع طبقة توافق للإطار المنزلي، وحماية الفرع main مفعّلة عبر API (الفحوصات الخمسة إلزامية + منع force-push، مع إبقاء الدفع المباشر متاحاً للمالك).
 
 ### 2.1 GitHub Actions (`.github/workflows/ci.yml`) ✅
 ```yaml
@@ -114,12 +114,12 @@ secret-scan:      # gitleaks — يمنع تكرار كارثة .env (قائمة
 - تفعيل الاختبارين المتروكين كشف **6 مشاكل حقيقية** أُصلحت: Parse error في cron، منطق مهلة جلسة مكرر في auth.php، قيمة مشفرة 1800 في AuthMiddleware، ini_set يدوي في cron/whatsapp-daily.php، مخطط SQLite قديم في اختبارات المشتريات (كانت تفشل قبل هذا الإصدار أيضاً)، واختبار OrderByWhitelist لواجهة غير موجودة أُعيد توجيهه للواجهة الحالية.
 - **التغطية القادمة (داخل المرحلة 3+):** إضافة اختبارات لـ Mobile API (27 controller بلا أي اختبار).
 
-### 2.3 حماية الفرع الرئيسي (يدوي — دقيقتان)
-Settings → Branches → Add branch protection rule → `main`:
-1. ✅ **Require status checks to pass** → اختر: `PHP Syntax Lint`، `PHPUnit (PHP 8.1)`، `PHPUnit (PHP 8.3)`، `PHPStan (level 1)`، `Gitleaks`.
-2. ✅ Require branches to be up to date قبل الدمج.
-3. اترك **Require a pull request** معطلاً إن كنت تعمل مباشرة على main بمفردك (أو فعّله مع موافقة 1 عند وجود فريق).
-4. `CODEOWNERS` جاهز فعلاً (`.github/CODEOWNERS`).
+### 2.3 حماية الفرع الرئيسي ✅ (مفعّلة عبر API)
+تم ضبطها مباشرة على `main` (لا حاجة لخطوات يدوية):
+1. ✅ **Required status checks** (strict): `PHP Syntax Lint`، `PHPUnit (PHP 8.1)`، `PHPUnit (PHP 8.3)`، `PHPStan (level 1)`، `Gitleaks`.
+2. ✅ منع force-push وحذف الفرع.
+3. ✅ `enforce_admins: false` — يبقى الدفع المباشر متاحاً للمالك أثناء العمل الفردي (فعّل Require PR + موافقة 1 عند وجود فريق).
+4. ✅ `CODEOWNERS` جاهز (`.github/CODEOWNERS`).
 
 ---
 
