@@ -120,8 +120,12 @@ class CsrfTest extends TestCase
         $token = AppCsrf::generateToken();
 
         // حتى مع رمز مشابه جداً، يجب أن يفشل التحقق
-        $similarToken = $token;
-        $similarToken = substr($similarToken, 0, 62) . 'ff';
+        // (v6.3.5 إصلاح اختبار متقلب: كان يفشل احتمالياً 1/256 إذا انتهى الرمز
+        //  الأصلي بـ 'ff' أصلاً — الآن قلب حتمي لآخر حرفين مهما كانا)
+        $flip = static function (string $c): string {
+            return $c === 'f' ? '0' : 'f';
+        };
+        $similarToken = substr($token, 0, 62) . $flip($token[62]) . $flip($token[63]);
         $_POST['csrf_token'] = $similarToken;
         $this->assertFalse(AppCsrf::verify());
     }

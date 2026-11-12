@@ -18,6 +18,7 @@ useDefault = true
 description = "أمثلة التوثيق: api-docs.php يعرض أمثلة curl مع ترويسة Authorization وتوكنات تجريبية (ism_a1b2c3d4...) وليست أسراراً حقيقية؛ vendor/ تبعيات تطوير لا تُرفع للمستودع أصلاً"
 paths = [
     '''api-docs\.php$''',
+    '''(^|/)templates/api-docs/sections/''',
     '''(^|/)vendor/''',
 ]
 

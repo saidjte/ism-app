@@ -1648,7 +1648,7 @@ try {
     </form>
 </div>
 
-<script src="<?php echo $base_url; ?>/assets/js/pages-system-settings.js?v=6.3.5"></script>
+<script src="<?php echo $base_url ?? ''; ?>/assets/js/pages-system-settings.js?v=6.3.5"></script>
 
 <?php require_once '../includes/footer.php'; ?>
 </html>
