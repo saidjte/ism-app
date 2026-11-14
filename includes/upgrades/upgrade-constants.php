@@ -13,7 +13,7 @@
 // PATCH (+1): إصلاحات أمنية وأخطاء
 // MINOR (+1): ميزات جديدة متوافقة مع الإصدارات السابقة
 // MAJOR (+1): تغييرات غير متوافقة
-define('APP_VERSION', '6.3.5');
+define('APP_VERSION', '6.3.6');
 
 // ===== قائمة فحص الملفات لكل إصدار =====
 $FILE_CHECKS = [
@@ -926,6 +926,7 @@ $DB_UPDATES = [
     ['version' => '6.1.10', 'desc' => 'إصلاح حرج: متغير CSRF خاطئ في doProcessReturn() (csrfToken→POS_CSRF) يمنع تنفيذ الإرجاع + رفع z-index نافذة التأكيد فوق نافذة الإرجاع + إخفاء نافذة الإرجاع عند ظهور خطأ'],
     ['version' => '6.2.0', 'desc' => 'إصلاحات متوسطة: Rate Limiting (10/نوع/دقيقة + 60/عام/دقيقة) + timeAgo i18n في MobileNotificationController + دعم عدم الاتصال (IndexedDB + Background Sync) + تفضيلات إشعارات المستخدم + رفع LIMIT pollNew من 10 إلى 50 + تتبع Analytics (قراءة/حذف/نقر/إغلاق)'],
     ['version' => '6.2.1', 'desc' => 'ضمان تطبيق ترقية قاعدة البيانات: إنشاء جدول user_notification_prefs + جدول notification_analytics + فهارس (idempotent — CREATE TABLE IF NOT EXISTS)'],
+    ['version' => '6.3.6', 'desc' => 'إصلاح حرج لتسجيل دخول الهاتف: جدول api_tokens ينقصه token_hash — الإصلاح التلقائي وصفحات الإعداد لا تعرف هذا العمود (خطأ "أعمدة مفقودة" يظل يظهر حتى بعد الإصلاح) + هجرة رسمية db_upgrade_6_3_6 + تعبئة token_hash للرموز القديمة + توحيد إنشاء الرموز في settings/api-tokens.php و MobileApiTokenController (token = نص خام + token_hash = SHA-256)'],
     ['version' => '6.3.3', 'desc' => 'المرحلة 1 من خطة الإصلاح — تنظيف المستودع: إسقاط جدول user_notification_preferences المهمل (الجدول الحي user_notification_prefs منذ v6.2.1 ولا يشير الكود للقديم إطلاقاً — فارغ في أحدث نسخة إنتاجية؛ إن وُجدت بيانات يُؤرشف بإعادة تسمية بدل الإسقاط) + حذف fork وحدات القياس القديم والنسخ الميتة + تصدير المخطط الرسمي sql/schema.sql'],
     ['version' => '6.3.1', 'desc' => 'تحسين تجربة الإرجاع في POS: محدد نوع البحث (رقم إيصال / أرقام أصناف) + منشئ رقم الإيصال (اختيار التاريخ + كتابة الرقم) بدل إدخال اليدوي'],
     ['version' => '6.3.0', 'desc' => 'تحسينات الإشعارات الفورية: SSE (Server-Sent Events) بدل polling + بحث FULLTEXT (MATCH...AGAINST) بدل LIKE + تحديث مخطط db_upgrade_5_0_0() القديم + إعداد SSE + إعداد TTL في صفحة الإعدادات'],
@@ -959,6 +960,13 @@ $BUG_FIXES = [
 //                    سجل التغييرات التفصيلي (CHANGELOG)
 // ====================================================================
 $CHANGELOG = [
+    ['version' => '6.3.6', 'date' => '2026-11-14', 'type' => 'fix', 'changes' => [
+        ['type' => 'fix', 'text' => 'إصلاح حرج: تسجيل دخول الهاتف يفشل بـ "جدول api_tokens يحتاج إصلاح — أعمدة مفقودة" — كود الدخول يُدرج token_hash لكن جدول الخادم القديم لا يحتويه، وجميع أدوات الإصلاح الثلاث (auto-migration في api/mobile/index.php + create-api-table.php + api-test.php) لم تكن تعرف هذا العمود — فكان الإصلاح لا يحدث أبداً'],
+        ['type' => 'fix', 'text' => 'تحديث القائمة المطلوبة للأعمدة في مواضع الإصلاح الثلاثة لتشمل token_hash/token_name/scopes + فهرس UNIQUE idx_api_tokens_hash + لاحقة v2 لملف العلامة اليومية لإجبار تشغيل الإصلاح فوراً بعد رفع الكود'],
+        ['type' => 'fix', 'text' => 'تعبئة تلقائية token_hash = SHA2(token, 256) للصفوف القديمة — الرموز المُصدرة قبل تفعيل التخزين المجزّأ تبقى صالحة'],
+        ['type' => 'fix', 'text' => 'توحيد إنشاء الرموز: settings/api-tokens.php كان يخزّن الهاش في token بدون token_hash (رموز الواجهة لا تعمل مع الوسيط) + MobileApiTokenController كان يُغفل عمود token (NOT NULL) — كلاهما الآن: token = نص خام + token_hash = SHA-256 مثل MobileAuthController'],
+        ['type' => 'improvement', 'text' => 'هجرة رسمية db_upgrade_6_3_6 في نظام الترقيات (idempotent) — إصلاح الجدول من upgrade.php أيضاً + مزامنة sql/api_tokens.sql مع sql/schema.sql + رسالة خطأ أوضح في MobileAuthController'],
+    ]],
     ['version' => '6.3.1', 'date' => '2026-08-02', 'type' => 'improvement', 'changes' => [
         ['type' => 'improvement', 'text' => 'تحسين تجربة الإرجاع في POS — محدد نوع البحث (تبويبان: رقم الإيصال / أرقام الأصناف) بدل حقل واحد يكتشف تلقائياً'],
         ['type' => 'feature', 'text' => 'منشئ رقم الإيصال — اختيار التاريخ عبر date picker + كتابة الرقم (1-4 أرقام) + بناء تلقائي للصيغة YYYYMMDD-NNNN'],

@@ -2338,3 +2338,71 @@ function db_upgrade_6_3_3($pdo) {
         // الإسقاط غير حرج لعمل التطبيق — لا نرمي الاستثناء حتى لا يفشل الترقيم
     }
 }
+
+/**
+ * v6.3.6: إصلاح شامل لجدول api_tokens
+ * - إضافة الأعمدة المفقودة (token_hash / token_name / scopes) التي يحتاجها
+ *   كود تسجيل دخول الهاتف MobileAuthController ووسيط TokenAuthMiddleware
+ * - تعبئة token_hash = SHA2(token, 256) للصفوف القديمة — الرموز القديمة تبقى صالحة
+ * - فهرس UNIQUE idx_api_tokens_hash على token_hash
+ * idempotent — آمن للتنفيذ المتكرر
+ */
+function db_upgrade_6_3_6($pdo) {
+    try {
+        // فحص وجود الجدول
+        $exists = $pdo->query("SHOW TABLES LIKE 'api_tokens'")->fetchColumn();
+        if (!$exists) {
+            // الجدول غير موجود — إنشاؤه كاملاً (مطابق لـ sql/schema.sql)
+            $pdo->exec("CREATE TABLE IF NOT EXISTS api_tokens (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT NOT NULL,
+                token VARCHAR(128) NOT NULL,
+                token_hash VARCHAR(64) DEFAULT NULL,
+                token_name VARCHAR(255) DEFAULT 'Mobile App',
+                scopes VARCHAR(255) DEFAULT 'read,write',
+                device_name VARCHAR(255) DEFAULT '',
+                is_revoked TINYINT(1) DEFAULT 0,
+                expires_at DATETIME DEFAULT NULL,
+                last_used_at DATETIME DEFAULT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (id),
+                UNIQUE KEY token (token),
+                UNIQUE KEY idx_api_tokens_hash (token_hash),
+                KEY idx_api_tokens_user (user_id),
+                KEY idx_api_tokens_expires (expires_at),
+                KEY idx_api_tokens_revoked (is_revoked)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+            return;
+        }
+
+        // كشف الأعمدة الموجودة
+        $colStmt = $pdo->query("SHOW COLUMNS FROM api_tokens");
+        $existing = [];
+        while ($row = $colStmt->fetch(PDO::FETCH_ASSOC)) {
+            $existing[] = $row['Field'];
+        }
+
+        // إضافة الأعمدة المفقودة (بدون AFTER — أبسط وأكثر موثوقية)
+        $columns = [
+            'token_hash' => "ALTER TABLE api_tokens ADD COLUMN token_hash VARCHAR(64) DEFAULT NULL",
+            'token_name' => "ALTER TABLE api_tokens ADD COLUMN token_name VARCHAR(255) DEFAULT 'Mobile App'",
+            'scopes'     => "ALTER TABLE api_tokens ADD COLUMN scopes VARCHAR(255) DEFAULT 'read,write'",
+        ];
+        foreach ($columns as $col => $sql) {
+            if (!in_array($col, $existing, true)) {
+                try { $pdo->exec($sql); } catch (\Throwable $e) { /* العمود موجود */ }
+            }
+        }
+
+        // تعبئة token_hash للرموز القديمة المخزّنة نصاً — تبقى صالحة
+        $pdo->exec("UPDATE api_tokens SET token_hash = SHA2(token, 256) WHERE token_hash IS NULL AND token IS NOT NULL AND token != ''");
+
+        // فهرس UNIQUE على token_hash
+        try { $pdo->exec("ALTER TABLE api_tokens ADD UNIQUE INDEX idx_api_tokens_hash (token_hash)"); } catch (\Throwable $e) { /* الفهرس موجود */ }
+    } catch (\Throwable $e) {
+        if (class_exists('ErrorHandler')) {
+            ErrorHandler::logException($e, 'db_upgrade_6_3_6::apiTokensRepair');
+        }
+        // الإصلاح غير حرج لعمل التطبيق — لا نرمي الاستثناء حتى لا يفشل الترقيم
+    }
+}

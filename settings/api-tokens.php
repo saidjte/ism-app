@@ -98,10 +98,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_token'])) {
         }
 
         // حفظ في قاعدة البيانات
-        // العمود يُسمى 'token' (يحتوي على SHA-256 hash)
+        // v6.3.6: إصلاح حرج — كان الهاش يُخزَّن في token فقط بدون token_hash
+        // والوسيط TokenAuthMiddleware يبحث في token_hash فقط — فكانت الرموز لا تعمل!
+        // التوحيد مع MobileAuthController: token = النص الخام، token_hash = SHA-256
         insertData(
-            "INSERT INTO api_tokens (user_id, token, device_name, expires_at) VALUES (?, ?, ?, ?)",
-            [$user_id, $token_hash, $device_name, $expires_at]
+            "INSERT INTO api_tokens (user_id, token, token_hash, device_name, expires_at) VALUES (?, ?, ?, ?, ?)",
+            [$user_id, $token_plain, $token_hash, $device_name, $expires_at]
         );
 
         // تسجيل النشاط

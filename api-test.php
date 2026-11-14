@@ -60,7 +60,8 @@ $tableExists = false;
 $tableHealthy = true;
 $tokenCount = 0;
 $missingColumns = [];
-$requiredColumns = ['id', 'user_id', 'token', 'device_name', 'is_revoked', 'expires_at', 'last_used_at', 'created_at'];
+// v6.3.6: أضيفت token_hash/token_name/scopes — مطلوبة لتسجيل دخول الهاتف
+$requiredColumns = ['id', 'user_id', 'token', 'token_hash', 'token_name', 'scopes', 'device_name', 'is_revoked', 'expires_at', 'last_used_at', 'created_at'];
 
 try {
     $db = AppDatabase::getInstance();

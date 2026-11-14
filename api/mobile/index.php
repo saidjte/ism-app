@@ -121,9 +121,11 @@ if (ob_get_level()) ob_clean();
 
 // === إصلاح تلقائي لجدول api_tokens ===
 // v4.41.0: تشغيل مرة واحدة فقط يومياً (تخزين مؤقت في ملف) لتجنب إبطاء كل طلب
-// كشف الأعمدة المفقودة وإضافتها تلقائياً
-// هذا يمنع خطأ "Column not found" عند تسجيل الدخول أو إنشاء الرموز
-$migrationFlagFile = __DIR__ . '/../../logs/.api_tokens_migrated_' . date('Y-m-d');
+// v6.3.6 (v4.44.0): إصلاح حرج — القائمة القديمة لم تشمل token_hash/token_name/scopes
+//          مما كان يجعل خطأ "Column not found: token_hash" يستمر حتى بعد الإصلاح!
+//          + تعبئة token_hash تلقائياً من token للصفوف القديمة (الرموز القديمة تبقى صالحة)
+//          + لاحقة v2 في ملف العلامة لإجبار التشغيل الفوري بعد رفع الكود المحدّث
+$migrationFlagFile = __DIR__ . '/../../logs/.api_tokens_migrated_v2_' . date('Y-m-d');
 $needsMigration = !file_exists($migrationFlagFile);
 
 if ($needsMigration) {
@@ -142,6 +144,9 @@ try {
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 user_id INT NOT NULL,
                 token VARCHAR(128) NOT NULL UNIQUE,
+                token_hash VARCHAR(64) DEFAULT NULL,
+                token_name VARCHAR(255) DEFAULT 'Mobile App',
+                scopes VARCHAR(255) DEFAULT 'read,write',
                 device_name VARCHAR(255) DEFAULT '',
                 is_revoked TINYINT(1) DEFAULT 0,
                 expires_at DATETIME DEFAULT NULL,
@@ -151,6 +156,7 @@ try {
                 INDEX idx_api_tokens_token (token),
                 INDEX idx_api_tokens_revoked (is_revoked),
                 INDEX idx_api_tokens_expires (expires_at),
+                UNIQUE INDEX idx_api_tokens_hash (token_hash),
                 CONSTRAINT fk_api_tokens_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
             error_log("API auto-migration: created api_tokens table");
@@ -161,6 +167,9 @@ try {
                     id INT AUTO_INCREMENT PRIMARY KEY,
                     user_id INT NOT NULL,
                     token VARCHAR(128) NOT NULL UNIQUE,
+                    token_hash VARCHAR(64) DEFAULT NULL,
+                    token_name VARCHAR(255) DEFAULT 'Mobile App',
+                    scopes VARCHAR(255) DEFAULT 'read,write',
                     device_name VARCHAR(255) DEFAULT '',
                     is_revoked TINYINT(1) DEFAULT 0,
                     expires_at DATETIME DEFAULT NULL,
@@ -169,7 +178,8 @@ try {
                     INDEX idx_api_tokens_user (user_id),
                     INDEX idx_api_tokens_token (token),
                     INDEX idx_api_tokens_revoked (is_revoked),
-                    INDEX idx_api_tokens_expires (expires_at)
+                    INDEX idx_api_tokens_expires (expires_at),
+                    UNIQUE INDEX idx_api_tokens_hash (token_hash)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
                 error_log("API auto-migration: created api_tokens table (no FK)");
             } catch (\Throwable $e2) {
@@ -184,7 +194,8 @@ try {
             $existingCols[] = $row['Field'];
         }
 
-        $requiredCols = ['id', 'user_id', 'token', 'device_name', 'is_revoked', 'expires_at', 'last_used_at', 'created_at'];
+        // v6.3.6: أضيفت token_hash/token_name/scopes — كانت السبب في فشل تسجيل دخول الهاتف
+        $requiredCols = ['id', 'user_id', 'token', 'token_hash', 'token_name', 'scopes', 'device_name', 'is_revoked', 'expires_at', 'last_used_at', 'created_at'];
         $missingCols = array_diff($requiredCols, $existingCols);
 
         if (!empty($missingCols)) {
@@ -202,6 +213,9 @@ try {
             $alterDefs = [
                 'user_id'      => "ALTER TABLE api_tokens ADD COLUMN user_id INT NULL DEFAULT NULL",
                 'token'        => "ALTER TABLE api_tokens ADD COLUMN token VARCHAR(128) NULL DEFAULT NULL",
+                'token_hash'   => "ALTER TABLE api_tokens ADD COLUMN token_hash VARCHAR(64) NULL DEFAULT NULL",
+                'token_name'   => "ALTER TABLE api_tokens ADD COLUMN token_name VARCHAR(255) DEFAULT 'Mobile App'",
+                'scopes'       => "ALTER TABLE api_tokens ADD COLUMN scopes VARCHAR(255) DEFAULT 'read,write'",
                 'device_name'  => "ALTER TABLE api_tokens ADD COLUMN device_name VARCHAR(255) DEFAULT ''",
                 'is_revoked'   => "ALTER TABLE api_tokens ADD COLUMN is_revoked TINYINT(1) DEFAULT 0",
                 'expires_at'   => "ALTER TABLE api_tokens ADD COLUMN expires_at DATETIME DEFAULT NULL",
@@ -249,10 +263,22 @@ try {
                 'idx_api_tokens_user'    => 'ALTER TABLE api_tokens ADD INDEX idx_api_tokens_user (user_id)',
                 'idx_api_tokens_revoked' => 'ALTER TABLE api_tokens ADD INDEX idx_api_tokens_revoked (is_revoked)',
                 'idx_api_tokens_expires' => 'ALTER TABLE api_tokens ADD INDEX idx_api_tokens_expires (expires_at)',
+                'idx_api_tokens_hash'    => 'ALTER TABLE api_tokens ADD UNIQUE INDEX idx_api_tokens_hash (token_hash)',
             ];
             foreach ($indexes as $name => $sql) {
                 try { $pdo->exec($sql); } catch (\Throwable $e) { /* فهرس موجود مسبقاً */ }
             }
+        }
+
+        // === v6.3.6: تعبئة token_hash للصفوف القديمة (تُنفَّذ دائماً — حتى بدون أعمدة مفقودة) ===
+        // الرموز القديمة المخزّنة نصاً في token تبقى صالحة: token_hash = SHA2(token, 256)
+        try {
+            $backfilled = $pdo->exec("UPDATE api_tokens SET token_hash = SHA2(token, 256) WHERE token_hash IS NULL AND token IS NOT NULL AND token != ''");
+            if ($backfilled > 0) {
+                error_log("API auto-migration: backfilled token_hash for {$backfilled} legacy rows");
+            }
+        } catch (\Throwable $e) {
+            error_log("API auto-migration: backfill token_hash failed: " . $e->getMessage());
         }
     }
 } catch (\Throwable $e) {

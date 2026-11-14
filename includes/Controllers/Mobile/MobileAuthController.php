@@ -87,10 +87,12 @@ class MobileAuthController extends ApiController
             $statusCode = 500;
             $msg = $e->getMessage();
             if (strpos($msg, 'Column not found') !== false || strpos($msg, 'Champ') !== false) {
-                $errorMsg = 'جدول api_tokens يحتاج إصلاح — أعمدة مفقودة. يرجى زيارة صفحة إعداد API.';
+                // v6.3.6: الإصلاح التلقائي في api/mobile/index.php يعالج الأعمدة المفقودة
+                // عند كل محاولة دخول — أعد المحاولة بعد لحظات إن فشلت المحاولة الأولى
+                $errorMsg = 'جدول api_tokens يحتاج إصلاح — أعمدة مفقودة. أعد المحاولة بعد لحظات (الإصلاح تلقائي)، أو افتح صفحة create-api-table.php من المتصفح.';
                 $errType = 'db_schema_error';
             } elseif (strpos($msg, 'Table') !== false && strpos($msg, 'doesn\'t exist') !== false) {
-                $errorMsg = 'جدول api_tokens غير موجود. يرجى زيارة صفحة إعداد API لإنشائه.';
+                $errorMsg = 'جدول api_tokens غير موجود. أعد المحاولة بعد لحظات (يُنشأ تلقائياً)، أو افتح صفحة create-api-table.php من المتصفح.';
                 $errType = 'db_table_missing';
             } elseif (strpos($msg, 'SQLSTATE') !== false) {
                 $errorMsg = 'خطأ في قاعدة البيانات أثناء تسجيل الدخول. يرجى المحاولة لاحقاً.';

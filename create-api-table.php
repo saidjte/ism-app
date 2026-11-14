@@ -2,6 +2,9 @@
 /**
  * ===== صفحة إعداد API الهاتف — النسخة 4 =====
  * v4.36.1: كشف الأعمدة المفقودة وإصلاح الجدول الموجود
+ * v6.3.6 (4.2): إصلاح حرج — القائمة لم تشمل token_hash/token_name/scopes
+ *          مما كان يجعل الإصلاح غير كافٍ لتسجيل دخول الهاتف (Column not found: token_hash)
+ *          + تعبئة token_hash تلقائياً من token للصفوف القديمة
  *
  * التغييرات عن النسخة السابقة:
  *   - كشف الأعمدة المفقودة في جدول api_tokens وإضافتها
@@ -11,8 +14,8 @@
  */
 
 // ===== مؤشر الإصدار — إذا لم ترَ هذا في الصفحة، فالملف لم يُرفع =====
-$SETUP_API_VERSION = '4.1';
-$SETUP_API_BUILD = '2025-05-20-D';
+$SETUP_API_VERSION = '4.2';
+$SETUP_API_BUILD = '2026-11-14-A';
 
 ob_start();
 set_error_handler(function($severity, $message, $file, $line) {
@@ -54,10 +57,14 @@ $existing_columns = [];
 $columns_fixed = false;
 
 // ===== الأعمدة المطلوبة =====
+// v6.3.6: أضيفت token_hash/token_name/scopes — مطلوبة لتسجيل دخول الهاتف
 $required_columns = [
     'id'           => 'INT AUTO_INCREMENT PRIMARY KEY',
     'user_id'      => 'INT NOT NULL',
     'token'        => 'VARCHAR(128) NOT NULL UNIQUE',
+    'token_hash'   => 'VARCHAR(64) DEFAULT NULL',
+    'token_name'   => "VARCHAR(255) DEFAULT 'Mobile App'",
+    'scopes'       => "VARCHAR(255) DEFAULT 'read,write'",
     'device_name'  => "VARCHAR(255) DEFAULT ''",
     'is_revoked'   => 'TINYINT(1) DEFAULT 0',
     'expires_at'   => 'DATETIME DEFAULT NULL',
@@ -133,6 +140,9 @@ $SQL_WITH_FK = "CREATE TABLE IF NOT EXISTS api_tokens (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     token VARCHAR(128) NOT NULL UNIQUE,
+    token_hash VARCHAR(64) DEFAULT NULL,
+    token_name VARCHAR(255) DEFAULT 'Mobile App',
+    scopes VARCHAR(255) DEFAULT 'read,write',
     device_name VARCHAR(255) DEFAULT '',
     is_revoked TINYINT(1) DEFAULT 0,
     expires_at DATETIME DEFAULT NULL,
@@ -142,6 +152,7 @@ $SQL_WITH_FK = "CREATE TABLE IF NOT EXISTS api_tokens (
     INDEX idx_api_tokens_token (token),
     INDEX idx_api_tokens_revoked (is_revoked),
     INDEX idx_api_tokens_expires (expires_at),
+    UNIQUE INDEX idx_api_tokens_hash (token_hash),
     CONSTRAINT fk_api_tokens_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
@@ -149,6 +160,9 @@ $SQL_NO_FK = "CREATE TABLE IF NOT EXISTS api_tokens (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     token VARCHAR(128) NOT NULL UNIQUE,
+    token_hash VARCHAR(64) DEFAULT NULL,
+    token_name VARCHAR(255) DEFAULT 'Mobile App',
+    scopes VARCHAR(255) DEFAULT 'read,write',
     device_name VARCHAR(255) DEFAULT '',
     is_revoked TINYINT(1) DEFAULT 0,
     expires_at DATETIME DEFAULT NULL,
@@ -157,7 +171,8 @@ $SQL_NO_FK = "CREATE TABLE IF NOT EXISTS api_tokens (
     INDEX idx_api_tokens_user (user_id),
     INDEX idx_api_tokens_token (token),
     INDEX idx_api_tokens_revoked (is_revoked),
-    INDEX idx_api_tokens_expires (expires_at)
+    INDEX idx_api_tokens_expires (expires_at),
+    UNIQUE INDEX idx_api_tokens_hash (token_hash)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
 // ===== SQL لإضافة أعمدة مفقودة =====
@@ -165,7 +180,10 @@ $SQL_NO_FK = "CREATE TABLE IF NOT EXISTS api_tokens (
 $ALTER_SQL_STEP1 = [
     'user_id'      => "ALTER TABLE api_tokens ADD COLUMN user_id INT NULL DEFAULT NULL AFTER id",
     'token'        => "ALTER TABLE api_tokens ADD COLUMN token VARCHAR(128) NULL DEFAULT NULL AFTER user_id",
-    'device_name'  => "ALTER TABLE api_tokens ADD COLUMN device_name VARCHAR(255) DEFAULT '' AFTER token",
+    'token_hash'   => "ALTER TABLE api_tokens ADD COLUMN token_hash VARCHAR(64) NULL DEFAULT NULL AFTER token",
+    'token_name'   => "ALTER TABLE api_tokens ADD COLUMN token_name VARCHAR(255) DEFAULT 'Mobile App' AFTER token_hash",
+    'scopes'       => "ALTER TABLE api_tokens ADD COLUMN scopes VARCHAR(255) DEFAULT 'read,write' AFTER token_name",
+    'device_name'  => "ALTER TABLE api_tokens ADD COLUMN device_name VARCHAR(255) DEFAULT '' AFTER scopes",
     'is_revoked'   => "ALTER TABLE api_tokens ADD COLUMN is_revoked TINYINT(1) DEFAULT 0 AFTER device_name",
     'expires_at'   => "ALTER TABLE api_tokens ADD COLUMN expires_at DATETIME DEFAULT NULL AFTER is_revoked",
     'last_used_at' => "ALTER TABLE api_tokens ADD COLUMN last_used_at DATETIME DEFAULT NULL AFTER expires_at",
@@ -255,6 +273,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fix_columns'])) {
             'idx_api_tokens_token'   => 'ALTER TABLE api_tokens ADD INDEX idx_api_tokens_token (token)',
             'idx_api_tokens_revoked' => 'ALTER TABLE api_tokens ADD INDEX idx_api_tokens_revoked (is_revoked)',
             'idx_api_tokens_expires' => 'ALTER TABLE api_tokens ADD INDEX idx_api_tokens_expires (expires_at)',
+            'idx_api_tokens_hash'    => 'ALTER TABLE api_tokens ADD UNIQUE INDEX idx_api_tokens_hash (token_hash)',
         ];
         foreach ($indexes as $name => $sql) {
             try {
@@ -270,6 +289,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fix_columns'])) {
         }
 
         // التحقق النهائي
+        // v6.3.6: تعبئة token_hash للصفوف القديمة — الرموز القديمة تبقى صالحة
+        try {
+            $backfilled = $pdo->exec("UPDATE api_tokens SET token_hash = SHA2(token, 256) WHERE token_hash IS NULL AND token IS NOT NULL AND token != ''");
+            if ($backfilled > 0) {
+                $debug_log[] = "تمت تعبئة token_hash لـ {$backfilled} رمز قديم (تبقى صالحة)";
+            }
+        } catch (\Throwable $e) {
+            $debug_log[] = "تعبئة token_hash: " . $e->getMessage();
+        }
+
         $colStmt = $pdo->query("SHOW COLUMNS FROM api_tokens");
         $final_columns = [];
         while ($row = $colStmt->fetch(PDO::FETCH_ASSOC)) {

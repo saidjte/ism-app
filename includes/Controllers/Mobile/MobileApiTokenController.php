@@ -160,9 +160,11 @@ class MobileApiTokenController extends ApiController
             $db = AppDatabase::getInstance();
             $pdo = $db->getConnection();
 
-            $stmt = $pdo->prepare("INSERT INTO api_tokens (user_id, token_hash, device_name, expires_at, created_at)
-                VALUES (?, ?, ?, ?, NOW())");
-            $stmt->execute([$userId, $tokenHash, $deviceName, $expiresAt]);
+            // v6.3.6: إضافة عمود token (NOT NULL في المخطط) — الإغفال كان يسبب فشل INSERT
+            // التوحيد مع MobileAuthController: token = النص الخام، token_hash = SHA-256
+            $stmt = $pdo->prepare("INSERT INTO api_tokens (user_id, token, token_hash, device_name, expires_at, created_at)
+                VALUES (?, ?, ?, ?, ?, NOW())");
+            $stmt->execute([$userId, $plainToken, $tokenHash, $deviceName, $expiresAt]);
             $tokenId = intval($pdo->lastInsertId());
 
             // تسجيل في سجل التدقيق
