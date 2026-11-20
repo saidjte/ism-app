@@ -13,6 +13,14 @@
  *   $expiry_tracked_count, $expiry_batches_count
  */
 ?>
+<?php
+// حماية دفاعية (v6.3.6): القالب الجزئي يعتمد على متغيرات المضيف —
+// إن لم يمرّر المضيف عدّاد التتبع نستخدم صفراً بدلاً من خطأ PHP
+// (يحل أيضاً فشل PHPStan 2.3.6: variable.undefined يُبلَّغ مرتين الآن)
+if (!isset($expiry_tracked_count)) {
+    $expiry_tracked_count = 0;
+}
+?>
 <?php if ($expiry_alert_enabled && ($expired_products_count > 0 || $expiring_soon_count > 0)): ?>
 <div class="card" style="border: 2px solid <?php echo $expired_products_count > 0 ? '#fca5a5' : '#fcd34d'; ?>; margin-bottom: 1rem;">
     <div class="card-header" style="background:<?php echo $expired_products_count > 0 ? '#fee2e2' : '#fef3c7'; ?>; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
