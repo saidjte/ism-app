@@ -37,9 +37,20 @@ try {
 
 if (ob_get_level()) ob_clean();
 
-// === فحص تسجيل الدخول ===
+// === فحص تسجيل الدخول — جلسة الويب أو توكن الهاتف (نفس جدول api_tokens) ===
+// v6.1.7: التطبيق لا يملك جلسة PHP — يصادق بتوكن api_tokens عبر TokenAuthMiddleware،
+// فتظهر الطلبات المعلقة من التطبيق في نقطة البيع على الويب والعكس (قائمة مشتركة).
+$authViaToken = false;
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['logged_in'])) {
-    heldCartsJsonError('يجب تسجيل الدخول أولاً.', 401);
+    if (!class_exists('TokenAuthMiddleware')) {
+        @require_once __DIR__ . '/../includes/Router/Middleware/TokenAuthMiddleware.php';
+    }
+    $mobileToken = $_GET['token'] ?? ($_SERVER['HTTP_X_API_TOKEN'] ?? '');
+    if ($mobileToken !== '' && class_exists('TokenAuthMiddleware') && TokenAuthMiddleware::handle()) {
+        $authViaToken = true;
+    } else {
+        heldCartsJsonError('يجب تسجيل الدخول أولاً.', 401);
+    }
 }
 
 // === فحص الصلاحية ===
@@ -57,7 +68,8 @@ $userId = (int) $_SESSION['user_id'];
 $action = $_GET['action'] ?? '';
 
 // === التحقق من CSRF للطلبات المُعدِّلة ===
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+// توكن الهاتف لا يعتمد على كوكيز الجلسة — هجوم CSRF لا ينطبق عليه
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$authViaToken) {
     $rawInput = file_get_contents('php://input');
     $input = json_decode($rawInput, true) ?: [];
     $csrfToken = $input['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
