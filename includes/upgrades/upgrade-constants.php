@@ -13,7 +13,7 @@
 // PATCH (+1): إصلاحات أمنية وأخطاء
 // MINOR (+1): ميزات جديدة متوافقة مع الإصدارات السابقة
 // MAJOR (+1): تغييرات غير متوافقة
-define('APP_VERSION', '6.3.7');
+define('APP_VERSION', '6.3.8');
 
 // ===== قائمة فحص الملفات لكل إصدار =====
 $FILE_CHECKS = [
@@ -926,7 +926,7 @@ $DB_UPDATES = [
     ['version' => '6.1.10', 'desc' => 'إصلاح حرج: متغير CSRF خاطئ في doProcessReturn() (csrfToken→POS_CSRF) يمنع تنفيذ الإرجاع + رفع z-index نافذة التأكيد فوق نافذة الإرجاع + إخفاء نافذة الإرجاع عند ظهور خطأ'],
     ['version' => '6.2.0', 'desc' => 'إصلاحات متوسطة: Rate Limiting (10/نوع/دقيقة + 60/عام/دقيقة) + timeAgo i18n في MobileNotificationController + دعم عدم الاتصال (IndexedDB + Background Sync) + تفضيلات إشعارات المستخدم + رفع LIMIT pollNew من 10 إلى 50 + تتبع Analytics (قراءة/حذف/نقر/إغلاق)'],
     ['version' => '6.2.1', 'desc' => 'ضمان تطبيق ترقية قاعدة البيانات: إنشاء جدول user_notification_prefs + جدول notification_analytics + فهارس (idempotent — CREATE TABLE IF NOT EXISTS)'],
-    ['version' => '6.3.7', 'desc' => 'مصادقة توكن الهاتف في api/pos-held-carts.php — قائمة السلات المعلقة مشتركة بين نقطة البيع على الويب وتطبيق الهاتف: جلسة الويب أو توكن api_tokens عبر TokenAuthMiddleware (Authorization/X-Api-Token/?token=) + تخطي CSRF لطلبات التوكن (لا جلسة حقيقية لا يمكن استغلالها عبر CSRF)'],
+    ['version' => '6.3.8', 'desc' => 'مصادقة توكن الهاتف في api/pos-held-carts.php — قائمة السلات المعلقة مشتركة بين نقطة البيع على الويب وتطبيق الهاتف: جلسة الويب أو توكن api_tokens عبر TokenAuthMiddleware (Authorization/X-Api-Token/?token=) + تخطي CSRF لطلبات التوكن (لا جلسة حقيقية لا يمكن استغلالها عبر CSRF)'],
     ['version' => '6.3.6', 'desc' => 'إصلاح حرج لتسجيل دخول الهاتف: جدول api_tokens ينقصه token_hash — الإصلاح التلقائي وصفحات الإعداد لا تعرف هذا العمود (خطأ "أعمدة مفقودة" يظل يظهر حتى بعد الإصلاح) + هجرة رسمية db_upgrade_6_3_6 + تعبئة token_hash للرموز القديمة + توحيد إنشاء الرموز في settings/api-tokens.php و MobileApiTokenController (token = نص خام + token_hash = SHA-256)'],
     ['version' => '6.3.3', 'desc' => 'المرحلة 1 من خطة الإصلاح — تنظيف المستودع: إسقاط جدول user_notification_preferences المهمل (الجدول الحي user_notification_prefs منذ v6.2.1 ولا يشير الكود للقديم إطلاقاً — فارغ في أحدث نسخة إنتاجية؛ إن وُجدت بيانات يُؤرشف بإعادة تسمية بدل الإسقاط) + حذف fork وحدات القياس القديم والنسخ الميتة + تصدير المخطط الرسمي sql/schema.sql'],
     ['version' => '6.3.1', 'desc' => 'تحسين تجربة الإرجاع في POS: محدد نوع البحث (رقم إيصال / أرقام أصناف) + منشئ رقم الإيصال (اختيار التاريخ + كتابة الرقم) بدل إدخال اليدوي'],
@@ -961,7 +961,7 @@ $BUG_FIXES = [
 //                    سجل التغييرات التفصيلي (CHANGELOG)
 // ====================================================================
 $CHANGELOG = [
-    ['version' => '6.3.7', 'date' => '2026-11-21', 'type' => 'feature', 'changes' => [
+    ['version' => '6.3.8', 'date' => '2026-11-21', 'type' => 'feature', 'changes' => [
         ['type' => 'feature', 'text' => 'قائمة السلات المعلقة مشتركة الآن بين نقطة البيع على الويب وتطبيق الهاتف — طلب معلّق من التطبيق يظهر على الويب والعكس (نفس المستخدم، نفس جدول held_carts)'],
         ['type' => 'feature', 'text' => 'api/pos-held-carts.php يقبل مصادقة توكن api_tokens (Authorization: Bearer / X-Api-Token / ?token=) عبر TokenAuthMiddleware — بديل جلسة الويب للتطبيق الذي لا يملك جلسة PHP'],
         ['type' => 'improvement', 'text' => 'تخطي فحص CSRF لطلبات التوكن فقط — التوكن لا يعتمد على كوكيز الجلسة فلا ينطبق عليه هجوم CSRF، والفحص باقٍ كاملاً لطلبات جلسة الويب'],

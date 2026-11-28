@@ -67,18 +67,22 @@ header('Cache-Control: no-cache, no-store');
 $userId = (int) $_SESSION['user_id'];
 $action = $_GET['action'] ?? '';
 
-// === التحقق من CSRF للطلبات المُعدِّلة ===
-// توكن الهاتف لا يعتمد على كوكيز الجلسة — هجوم CSRF لا ينطبق عليه
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$authViaToken) {
+// === قراءة جسم الطلب JSON لكل طلبات POST (التطبيق والويب) ===
+// v6.3.8 إصلاح حرج: كان $input يُفرَّغ عند المصادقة بتوكن الهاتف فتفشل
+// save/delete من التطبيق دائماً بـ«بيانات السلة مفقودة» رغم وصول الجسم سليماً
+$input = [];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $rawInput = file_get_contents('php://input');
     $input = json_decode($rawInput, true) ?: [];
-    $csrfToken = $input['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
-    $sessionToken = $_SESSION['csrf_token'] ?? '';
-    if (empty($csrfToken) || empty($sessionToken) || !hash_equals($sessionToken, $csrfToken)) {
-        heldCartsJsonError('انتهت صلاحية الأمان. يرجى تحديث الصفحة.', 403);
+    // === التحقق من CSRF لطلبات جلسة الويب فقط ===
+    // توكن الهاتف لا يعتمد على كوكيز الجلسة — هجوم CSRF لا ينطبق عليه
+    if (!$authViaToken) {
+        $csrfToken = $input['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+        $sessionToken = $_SESSION['csrf_token'] ?? '';
+        if (empty($csrfToken) || empty($sessionToken) || !hash_equals($sessionToken, $csrfToken)) {
+            heldCartsJsonError('انتهت صلاحية الأمان. يرجى تحديث الصفحة.', 403);
+        }
     }
-} else {
-    $input = [];
 }
 
 // === فحص وجود الجدول + إنشاء تلقائي ===
@@ -90,7 +94,7 @@ try {
             id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             user_id INT UNSIGNED NOT NULL,
             cart_id VARCHAR(50) NOT NULL,
-            cart_data JSON NOT NULL,
+            cart_data LONGTEXT NOT NULL,
             item_count INT UNSIGNED NOT NULL DEFAULT 0,
             total DECIMAL(12,2) NOT NULL DEFAULT 0.00,
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
